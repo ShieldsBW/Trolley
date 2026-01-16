@@ -10,37 +10,37 @@
   </style>
 </head>
 <body>
-<img id="menu-bg" src="menu_bg.png" alt="" style="position:fixed;left:0;top:0;width:100vw;height:100vh;object-fit:cover;z-index:-1;display:none;"/>
-<img id="level-bg" src="level_01_background.png" alt="" style="position:fixed;left:0;top:0;width:100vw;height:100vh;object-fit:cover;z-index:-1;display:none;"/>
-<img id="leaderboard-bg" src="leaderboard_bg.png" alt="" style="position:fixed;left:50%;top:50%;height:100vh;width:auto;transform:translate(-50%,-50%) scaleX(0.9);transform-origin:center;z-index:-1;display:none;"/>
-<img id="gameover-bg" src="gameOver_bg.png" alt="" style="position:fixed;left:0;top:0;width:100vw;height:100vh;object-fit:cover;z-index:-1;display:none;"/>
-<img id="go-title" src="text_gameOver.png" alt="Game Over Title" style="position:fixed;left:50%;top:75px;transform:translateX(-50%);height:auto;width:auto;z-index:9;display:none;"/>
-<img id="menu-logo" src="textLogo.png" alt="" style="position:fixed;left:calc(5vw - 125px);top:5px;width:45vw;height:auto;z-index:2;display:none;pointer-events:none;"/>
-<img id="btn-start" src="button_startGame.png" alt="Start Game"
+<img id="menu-bg" src="assets/backgrounds/menu_bg.png" alt="" style="position:fixed;left:0;top:0;width:100vw;height:100vh;object-fit:cover;z-index:-1;display:none;"/>
+<img id="level-bg" src="assets/backgrounds/level_01_background.png" alt="" style="position:fixed;left:0;top:0;width:100vw;height:100vh;object-fit:cover;z-index:-1;display:none;"/>
+<img id="leaderboard-bg" src="assets/backgrounds/leaderboard_bg.png" alt="" style="position:fixed;left:50%;top:50%;height:100vh;width:auto;transform:translate(-50%,-50%) scaleX(0.9);transform-origin:center;z-index:-1;display:none;"/>
+<img id="gameover-bg" src="assets/backgrounds/gameOver_bg.png" alt="" style="position:fixed;left:0;top:0;width:100vw;height:100vh;object-fit:cover;z-index:-1;display:none;"/>
+<img id="go-title" src="assets/text/text_gameOver.png" alt="Game Over Title" style="position:fixed;left:50%;top:75px;transform:translateX(-50%);height:auto;width:auto;z-index:9;display:none;"/>
+<img id="menu-logo" src="assets/text/textLogo.png" alt="" style="position:fixed;left:calc(5vw - 125px);top:5px;width:45vw;height:auto;z-index:2;display:none;pointer-events:none;"/>
+<img id="btn-start" src="assets/buttons/button_startGame.png" alt="Start Game"
      style="position:fixed;left:calc(50% + 343px);top:670px;transform:translateX(-50%) scale(1.5);
             width:235px;height:auto;z-index:3;display:none;cursor:pointer;"/>
-<img id="btn-leaderboard" src="button_leaderboard.png" alt="Leaderboard"
+<img id="btn-leaderboard" src="assets/buttons/button_leaderboard.png" alt="Leaderboard"
      style="position:fixed;left:calc(50% - 343px);top:670px;transform:translateX(-50%) scale(1.5);
             width:235px;height:auto;z-index:3;display:none;cursor:pointer;"/>
-<img id="btn-continue" src="button_continue.png" alt="Continue"
+<img id="btn-continue" src="assets/buttons/button_continue.png" alt="Continue"
      style="position:fixed;left:50%;top:430px;transform:translateX(-50%);
             width:220px;height:auto;z-index:10;display:none;cursor:pointer;"/>
-<img id="btn-next" src="button_nextLevel.png" alt="Next Level"
+<img id="btn-next" src="assets/buttons/button_nextLevel.png" alt="Next Level"
      style="position:fixed;left:50%;top:500px;transform:translateX(-50%);
             width:auto;height:auto;z-index:10;display:none;cursor:pointer;"/>
-<img id="btn-menu" src="button_menu.png" alt="Menu"
+<img id="btn-menu" src="assets/buttons/button_menu.png" alt="Menu"
      style="position:fixed;right:16px;bottom:16px;transform-origin: bottom right;transform: scale(0.5);
             width:auto;height:auto;z-index:10;display:none;cursor:pointer;"/>
-<img id="btn-submit" src="button_submitScore.png" alt="Submit Score"
+<img id="btn-submit" src="assets/buttons/button_submitScore.png" alt="Submit Score"
      style="position:fixed;left:50%;top:335px;transform:translateX(-50%);
             width:154px;height:auto;z-index:10;display:none;cursor:pointer;"/>
-<img id="btn-try" src="button_tryAgain.png" alt="Try Again"
+<img id="btn-try" src="assets/buttons/button_tryAgain.png" alt="Try Again"
      style="position:fixed;left:50%;top:455px;transform:translateX(-50%);
             width:260px;height:auto;z-index:10;display:none;cursor:pointer;"/>
-<img id="btn-quit" src="button_quit.png" alt="Quit"
+<img id="btn-quit" src="assets/buttons/button_quit.png" alt="Quit"
      style="position:fixed;left:50%;bottom:16px;transform:translateX(-50%);
             width:auto;height:auto;z-index:3;display:none;cursor:pointer;"/>
-<img id="consequence-bg" src="consequence_bg.png" alt="" style="position:fixed;left:50%;top:50%;height:70vh;width:auto;transform:translate(-50%,-50%);object-fit:contain;z-index:-1;display:none;"/>
+<img id="consequence-bg" src="assets/backgrounds/consequence_bg.png" alt="" style="position:fixed;left:50%;top:50%;height:70vh;width:auto;transform:translate(-50%,-50%);object-fit:contain;z-index:-1;display:none;"/>
 <script>
 // Leaderboard storage helpers
 function getLeaderboard() {
