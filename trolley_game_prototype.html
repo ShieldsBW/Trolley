@@ -1,0 +1,497 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Trolley Problem Prototype</title>
+  <script src="https://cdn.jsdelivr.net/npm/phaser@3/dist/phaser.min.js"></script>
+  <style>
+    body { margin: 0; padding: 0; }
+    canvas { display: block; margin: 0 auto; }
+  </style>
+</head>
+<body>
+<img id="menu-bg" src="menu_bg.png" alt="" style="position:fixed;left:0;top:0;width:100vw;height:100vh;object-fit:cover;z-index:-1;display:none;"/>
+<img id="level-bg" src="level_01_background.png" alt="" style="position:fixed;left:0;top:0;width:100vw;height:100vh;object-fit:cover;z-index:-1;display:none;"/>
+<img id="leaderboard-bg" src="leaderboard_bg.png" alt="" style="position:fixed;left:50%;top:50%;height:100vh;width:auto;transform:translate(-50%,-50%) scaleX(1.5);transform-origin:center;z-index:-1;display:none;"/>
+<img id="gameover-bg" src="gameOver_bg.png" alt="" style="position:fixed;left:0;top:0;width:100vw;height:100vh;object-fit:cover;z-index:-1;display:none;"/>
+<img id="menu-logo" src="textLogo.png" alt="" style="position:fixed;left:calc(5vw - 125px);top:5px;width:45vw;height:auto;z-index:2;display:none;pointer-events:none;"/>
+<img id="btn-start" src="button_startGame.png" alt="Start Game"
+     style="position:fixed;left:calc(50% + 268px);top:520px;transform:translateX(-50%);
+            width:235px;height:auto;z-index:3;display:none;cursor:pointer;"/>
+<img id="btn-leaderboard" src="button_leaderboard.png" alt="Leaderboard"
+     style="position:fixed;left:calc(50% - 218px);top:520px;transform:translateX(-50%);
+            width:235px;height:auto;z-index:3;display:none;cursor:pointer;"/>
+<img id="btn-continue" src="button_continue.png" alt="Continue"
+     style="position:fixed;left:50%;top:430px;transform:translateX(-50%);
+            width:220px;height:auto;z-index:10;display:none;cursor:pointer;"/>
+<img id="btn-next" src="button_nextLevel.png" alt="Next Level"
+     style="position:fixed;left:50%;top:500px;transform:translateX(-50%);
+            width:auto;height:auto;z-index:10;display:none;cursor:pointer;"/>
+<img id="btn-menu" src="button_menu.png" alt="Menu"
+     style="position:fixed;right:16px;bottom:16px;transform-origin: bottom right;transform: scale(0.5);
+            width:auto;height:auto;z-index:10;display:none;cursor:pointer;"/>
+<img id="btn-submit" src="button_submitScore.png" alt="Submit Score"
+     style="position:fixed;left:50%;top:335px;transform:translateX(-50%);
+            width:154px;height:auto;z-index:10;display:none;cursor:pointer;"/>
+<img id="btn-try" src="button_tryAgain.png" alt="Try Again"
+     style="position:fixed;left:50%;top:455px;transform:translateX(-50%);
+            width:260px;height:auto;z-index:10;display:none;cursor:pointer;"/>
+<img id="btn-quit" src="button_quit.png" alt="Quit"
+     style="position:fixed;left:50%;bottom:16px;transform:translateX(-50%);
+            width:auto;height:auto;z-index:3;display:none;cursor:pointer;"/>
+<img id="consequence-bg" src="consequence_bg.png" alt="" style="position:fixed;left:50%;top:50%;height:70vh;width:auto;transform:translate(-50%,-50%);object-fit:contain;z-index:-1;display:none;"/>
+<script>
+// Leaderboard storage helpers
+function getLeaderboard() {
+  const data = localStorage.getItem('trolley_leaderboard');
+  return data ? JSON.parse(data) : [];
+}
+function saveLeaderboard(list) {
+  localStorage.setItem('trolley_leaderboard', JSON.stringify(list));
+}
+
+class MainMenuScene extends Phaser.Scene {
+  constructor() { super('MainMenuScene'); }
+  create() {
+    const domBg = document.getElementById('menu-bg'); if (domBg) domBg.style.display = 'block';
+    const domLogo = document.getElementById('menu-logo'); if (domLogo) domLogo.style.display = 'block';
+    // Hide level background when on main menu
+    const levelBg = document.getElementById('level-bg'); if (levelBg) levelBg.style.display = 'none';
+    const leaderboardBg = document.getElementById('leaderboard-bg'); if (leaderboardBg) leaderboardBg.style.display = 'none';
+    const gameOverBg = document.getElementById('gameover-bg'); if (gameOverBg) gameOverBg.style.display='none';
+    document.body.style.backgroundColor = '';
+    const consBgHideGO = document.getElementById('consequence-bg'); if (consBgHideGO) consBgHideGO.style.display='none';
+
+    // Ensure menu button is hidden on main menu (we only show it in Level/GameOver)
+    const domMenuBtnMM = document.getElementById('btn-menu');
+    if (domMenuBtnMM) { domMenuBtnMM.style.display='none'; domMenuBtnMM.onclick=null; }
+
+    // Hide Game Over DOM buttons by default on menu
+    const btnSubmitImg = document.getElementById('btn-submit'); if (btnSubmitImg) { btnSubmitImg.style.display='none'; btnSubmitImg.onclick=null; }
+    const btnTryImg = document.getElementById('btn-try'); if (btnTryImg) { btnTryImg.style.display='none'; btnTryImg.onclick=null; }
+    const btnNextMM = document.getElementById('btn-next'); if (btnNextMM) { btnNextMM.style.display='none'; btnNextMM.onclick=null; }
+
+    // Show Quit image button on main menu (bottom-center)
+    const btnQuitMM = document.getElementById('btn-quit');
+    if (btnQuitMM) {
+      btnQuitMM.style.display = 'block';
+      btnQuitMM.style.left = 'calc(50% + 22px)';
+      btnQuitMM.style.bottom = '16px';
+      btnQuitMM.style.top = '';
+      btnQuitMM.style.right = '';
+      btnQuitMM.style.transform = 'translateX(-50%)';
+      btnQuitMM.onclick = () => window.close();
+    }
+
+    // Show DOM image buttons and wire events
+    const btnStart = document.getElementById('btn-start');
+    if (btnStart) {
+      btnStart.style.display = 'block';
+      btnStart.onclick = () => {
+        this.registry.set('health', 10);
+        this.registry.set('points', 0);
+        this.registry.set('level', 1);
+        this.registry.set('stage', 1);
+        this.scene.start('LevelScene');
+      };
+    }
+    const btnLeaderboard = document.getElementById('btn-leaderboard');
+    if (btnLeaderboard) {
+      btnLeaderboard.style.display = 'block';
+      btnLeaderboard.onclick = () => this.scene.start('LeaderboardScene');
+    }
+  }
+}
+
+class LevelScene extends Phaser.Scene {
+  constructor() { super('LevelScene'); }
+  init() {
+    if (this.registry.get('health')===undefined) this.registry.set('health',10);
+    if (this.registry.get('points')===undefined) this.registry.set('points',0);
+    if (this.registry.get('level')===undefined) this.registry.set('level',1);
+    if (this.registry.get('stage')===undefined) this.registry.set('stage',1);
+    this.consequences = [
+      'A stray dog trips over the tracks',
+      'A sudden rainstorm reduces visibility',
+      'You find an abandoned suitcase',
+      'A loose plank causes a bump',
+      'You spot an unexpected shortcut'
+    ];
+  }
+  create() {
+    // Hide menu DOM elements
+    const domBg = document.getElementById('menu-bg'); if (domBg) domBg.style.display = 'none';
+    const domLogo = document.getElementById('menu-logo'); if (domLogo) domLogo.style.display = 'none';
+    const leaderboardBgLV = document.getElementById('leaderboard-bg'); if (leaderboardBgLV) leaderboardBgLV.style.display='none';
+    const gameOverBgLV = document.getElementById('gameover-bg'); if (gameOverBgLV) gameOverBgLV.style.display='none';
+    document.body.style.backgroundColor = '';
+    const levelBgElHide = document.getElementById('level-bg'); if (levelBgElHide) levelBgElHide.style.display = 'block';
+    const btnStart = document.getElementById('btn-start'); if (btnStart) btnStart.style.display = 'none';
+    const btnLeaderboard = document.getElementById('btn-leaderboard'); if (btnLeaderboard) btnLeaderboard.style.display = 'none';
+    const btnContinue = document.getElementById('btn-continue'); if (btnContinue) { btnContinue.style.display = 'none';
+        btnContinue.onclick = null;
+        const consBgHide = document.getElementById('consequence-bg'); if (consBgHide) consBgHide.style.display='none';
+        const consBg2 = document.getElementById('consequence-bg'); if (consBg2) consBg2.style.display='none'; }
+    const btnQuitReset = document.getElementById('btn-quit'); if (btnQuitReset) { btnQuitReset.style.display='none'; btnQuitReset.onclick=null; }
+    const btnNextReset = document.getElementById('btn-next'); if (btnNextReset) { btnNextReset.style.display='none'; btnNextReset.onclick=null; }
+    const domMenuBtn = document.getElementById('btn-menu'); if (domMenuBtn) { domMenuBtn.style.display='none'; domMenuBtn.onclick=null; }
+    
+    const btnQuitLBHide = document.getElementById('btn-quit'); if (btnQuitLBHide) { btnQuitLBHide.style.display='none'; btnQuitLBHide.onclick=null; }
+    const btnSubmitImg2 = document.getElementById('btn-submit'); if (btnSubmitImg2) { btnSubmitImg2.style.display='none'; btnSubmitImg2.onclick=null; }
+    const btnTryImg2 = document.getElementById('btn-try'); if (btnTryImg2) { btnTryImg2.style.display='none'; btnTryImg2.onclick=null; }
+    const consBgReset = document.getElementById('consequence-bg'); if (consBgReset) { consBgReset.style.display='none'; }
+
+    // Background via DOM image
+    const levelBgEl = document.getElementById('level-bg'); if (levelBgEl) levelBgEl.style.display = 'block';
+
+    // UI
+    this.healthText = this.add.text(20,20, 'Health: ' + this.registry.get('health'), {font:'20px Arial', fill:'#fff'});
+    this.pointsText = this.add.text(20,50, 'Points: ' + this.registry.get('points'), {font:'20px Arial', fill:'#fff'});
+    this.levelText = this.add.text(780,20,'Level: '+this.registry.get('level'),{font:'18px Arial',fill:'#fff'}).setOrigin(1,0);
+    this.stageText = this.add.text(780,40,'Stage: '+this.registry.get('stage'),{font:'18px Arial',fill:'#fff'}).setOrigin(1,0);
+    this.promptText = this.add.text(400,100, '', {font:'24px Arial', fill:'#fff', align:'center', wordWrap:{width:600}}).setOrigin(0.5);
+
+    // Menu button (DOM image)
+    const domMenuBtn2 = document.getElementById('btn-menu');
+    if (domMenuBtn2) {
+      domMenuBtn2.style.display = 'block';
+      // Bottom-right placement at 50% scale during gameplay
+      domMenuBtn2.style.right = '16px';
+      domMenuBtn2.style.bottom = '16px';
+      domMenuBtn2.style.left = '';
+      domMenuBtn2.style.top = '';
+      domMenuBtn2.style.transformOrigin = 'bottom right';
+      domMenuBtn2.style.transform = 'scale(0.5)';
+      domMenuBtn2.onclick = () => this.scene.start('MainMenuScene');
+    }
+
+    // Quit button (DOM image) bottom-right, offset from Menu
+    const btnQuitLV = document.getElementById('btn-quit');
+    if (btnQuitLV) {
+      btnQuitLV.style.display = 'block';
+      btnQuitLV.style.right = '196px';
+      btnQuitLV.style.bottom = '16px';
+      btnQuitLV.style.left = '';
+      btnQuitLV.style.top = '';
+      btnQuitLV.style.transformOrigin = 'bottom right';
+      btnQuitLV.style.transform = 'scale(0.5)';
+      btnQuitLV.onclick = () => window.close();
+    }
+
+    // Options
+    this.optionTexts = [];
+    for (let i=0; i<2; i++) {
+      const x = 200 + 400*i, y = 270;
+      const t = this.add.text(x,y,'',{font:'18px Arial',fill:'#000',backgroundColor:'#fff',padding:{x:8,y:4}})
+        .setOrigin(0.5)
+        .setInteractive({useHandCursor:true})
+        .on('pointerdown',()=>this.handleChoice(i));
+      this.optionTexts.push(t);
+    }
+
+    // Next level uses DOM image button (btn-next). It will be shown on level completion.
+
+    // Start
+    this.generateJunctions();
+    this.junctionIndex = 0;
+    this.showJunction();
+  }
+  generateJunctions() {
+    const pool = [
+      {prompt:'Help child cross or save luggage?',opts:[{text:'Help child',pts:8,hp:0},{text:'Save luggage',pts:4,hp:0}]},
+      {prompt:'Find water or conserve energy?',opts:[{text:'Find water',pts:3,hp:3},{text:'Conserve energy',pts:5,hp:0}]},
+      {prompt:'Use first aid or press on?',opts:[{text:'Use first aid',pts:2,hp:4},{text:'Press on',pts:8,hp:-1}]},
+      {prompt:'Steer on grass or hit barrier?',opts:[{text:'Grass',pts:6,hp:-2},{text:'Barrier',pts:12,hp:-5}]},
+      {prompt:'Warn engineer or do nothing?',opts:[{text:'Warn',pts:10,hp:-1},{text:'Nothing',pts:0,hp:0}]}
+    ];
+    Phaser.Utils.Array.Shuffle(pool);
+    this.junctions = pool.slice(0,3);
+  }
+  showJunction() {
+    if (this.registry.get('health') <= 0) return this.scene.start('GameOverScene');
+    if (this.junctionIndex >= this.junctions.length) return this.onLevelComplete();
+    const j = this.junctions[this.junctionIndex];
+    this.promptText.setText(j.prompt);
+    j.opts.forEach((opt,i)=>{
+      const pts = (opt.pts>=0?'+':'')+opt.pts+' pts';
+      const hp = (opt.hp>=0?'+':'')+opt.hp+' HP';
+      this.optionTexts[i].setText(`${opt.text}
+(${pts}, ${hp})`).setVisible(true).setInteractive({useHandCursor:true});
+    });
+  }
+  handleChoice(idx) {
+    const j = this.junctions[this.junctionIndex], opt = j.opts[idx];
+    // base apply
+    this.registry.values.points += opt.pts;
+    this.registry.values.health += opt.hp;
+    {
+      const currentStage = this.registry.get('stage');
+      const maxStages = this.junctions.length;
+      const nextStage = Math.min(currentStage + 1, maxStages);
+      this.registry.set('stage', nextStage);
+    }
+    this.updateUI();
+    // disable options
+    this.optionTexts.forEach(t=>t.disableInteractive());
+    // risk-based consequence
+    const risk=opt.pts;
+    const randH=Phaser.Math.Between(-risk,Math.floor(risk*0.5));
+    const randP=Phaser.Math.Between(-Math.ceil(risk*0.5),Math.ceil(risk*0.5));
+    const desc=Phaser.Utils.Array.GetRandom(this.consequences);
+    this.showConsequencePopup(desc,randH,randP);
+  }
+  showConsequencePopup(desc, randH, randP) {
+    // Hide options while popup is active
+    this.optionTexts.forEach(t => t.setVisible(false));
+    const btnNextHide = document.getElementById('btn-next');
+    if (btnNextHide) { btnNextHide.style.display='none'; btnNextHide.onclick=null; }
+
+    // Show consequence background image
+    const consBg = document.getElementById('consequence-bg');
+    if (consBg) consBg.style.display='block';
+
+    // Overlay with white text
+    if (this.overlay) { this.overlay.destroy(); }
+    this.overlay = this.add.container();
+    const descText = this.add.text(400, 340, desc, {
+      font: '24px Arial',
+      fill: '#fff',
+      align: 'center',
+      wordWrap: { width: 460 }
+    }).setOrigin(0.5, 0);
+
+    const changeText = this.add.text(400, 420,
+      `Health: ${randH>=0?'+':''}${randH}  Points: ${randP>=0?'+':''}${randP}`,
+      { font: '20px Arial', fill: '#fff' }
+    ).setOrigin(0.5);
+
+    this.overlay.add([descText, changeText]);
+
+    // Improve readability over bright art
+    descText.setShadow(2,2,'#000',4);
+    changeText.setShadow(2,2,'#000',4);
+
+    // Show DOM continue button (works with file://)
+    const btnContinue = document.getElementById('btn-continue');
+    if (btnContinue) {
+      btnContinue.style.display = 'block';
+      btnContinue.style.top = '500px';
+      btnContinue.onclick = () => {
+        // Apply effects
+        this.registry.values.points += randP;
+        this.registry.values.health += randH;
+        this.updateUI();
+        // Cleanup and proceed
+        if (this.overlay) { this.overlay.destroy(); this.overlay = null; }
+        if (consBg) consBg.style.display='none';
+        btnContinue.style.display = 'none';
+        btnContinue.onclick = null;
+        this.junctionIndex++;
+        this.showJunction();
+      };
+    }
+  }
+  updateUI() {
+    this.healthText.setText('Health: '+this.registry.get('health'));
+    this.pointsText.setText('Points: '+this.registry.get('points'));
+    this.levelText.setText('Level: '+this.registry.get('level'));
+    this.stageText.setText('Stage: '+this.registry.get('stage'));
+  }
+  onLevelComplete() {
+    this.registry.values.level += 1;
+    this.registry.values.stage = 1;
+    this.optionTexts.forEach(t=>t.setVisible(false));
+    this.promptText.setText('Level Complete!');
+    const btnNextShow = document.getElementById('btn-next');
+    if (btnNextShow) {
+      btnNextShow.style.display = 'block';
+      btnNextShow.style.left = '50%';
+      btnNextShow.style.top = '500px';
+      btnNextShow.style.transform = 'translateX(-50%)';
+      btnNextShow.onclick = () => this.startNextLevel();
+    }
+    this.updateUI();
+  }
+  startNextLevel() {
+    const btnNextHide2 = document.getElementById('btn-next');
+    if (btnNextHide2) { btnNextHide2.style.display='none'; btnNextHide2.onclick=null; }
+    this.generateJunctions();
+    this.junctionIndex=0;
+    this.showJunction();
+  }
+}
+
+class GameOverScene extends Phaser.Scene {
+  constructor(){ super('GameOverScene'); }
+  init(){
+    const score = this.registry.get('points');
+    const high = this.registry.get('highScore') || 0;
+    if (score > high) this.registry.set('highScore', score);
+  }
+  create(){
+    // Hide menu DOM elements that don't belong on this screen
+    const domBg = document.getElementById('menu-bg'); if (domBg) domBg.style.display='none';
+    const domLogo = document.getElementById('menu-logo'); if (domLogo) domLogo.style.display='none';
+    const levelBgHide = document.getElementById('level-bg'); if (levelBgHide) levelBgHide.style.display='none';
+    const leaderboardBgHideGO = document.getElementById('leaderboard-bg'); if (leaderboardBgHideGO) leaderboardBgHideGO.style.display='none';
+    document.body.style.backgroundColor = '';
+    const gameOverBgShowGO = document.getElementById('gameover-bg'); if (gameOverBgShowGO) gameOverBgShowGO.style.display='block';
+    const btnStart = document.getElementById('btn-start'); if (btnStart) btnStart.style.display='none';
+    const btnLeaderboard = document.getElementById('btn-leaderboard'); if (btnLeaderboard) btnLeaderboard.style.display='none';
+        const btnContinue = document.getElementById('btn-continue'); if (btnContinue) { btnContinue.style.display='none'; btnContinue.onclick=null; }
+    const domMenuBtnX = document.getElementById('btn-menu'); if (domMenuBtnX) { domMenuBtnX.style.display='none'; domMenuBtnX.onclick=null; }
+    const btnQuitGOHide = document.getElementById('btn-quit'); if (btnQuitGOHide) { btnQuitGOHide.style.display='none'; btnQuitGOHide.onclick=null; }
+    const consBgHideFinal = document.getElementById('consequence-bg'); if (consBgHideFinal) consBgHideFinal.style.display='none';
+
+    // BG overlay + text
+    this.add.graphics().fillStyle(0x000000,0.5).fillRect(0,0,800,600);
+    const score = this.registry.get('points');
+    const highScore = this.registry.get('highScore') || 0;
+    this.add.text(400,150,'Game Over',{font:'48px Arial',fill:'#fff'}).setOrigin(0.5);
+    this.add.text(400,240,'Score: '+score,{font:'32px Arial',fill:'#fff'}).setOrigin(0.5);
+    this.add.text(400,280,'High Score: '+highScore,{font:'24px Arial',fill:'#fff'}).setOrigin(0.5);
+
+    // Submit Score image button
+    const btnSubmit = document.getElementById('btn-submit');
+    if (btnSubmit) {
+      btnSubmit.style.display = 'block';
+      btnSubmit.style.left = '50%';
+      btnSubmit.style.top = '335px';
+      btnSubmit.style.transform = 'translateX(-50%)';
+      btnSubmit.onclick = () => {
+        const initials = prompt('Enter initials','AAA') || '---';
+        const board = getLeaderboard();
+        board.push({ initials: initials.slice(0,3).toUpperCase(), score });
+        board.sort((a,b)=> b.score - a.score);
+        saveLeaderboard(board.slice(0,10));
+        this.scene.start('LeaderboardScene');
+      };
+    }
+
+    // Try Again image button
+    const btnTry = document.getElementById('btn-try');
+    if (btnTry) {
+      btnTry.style.display = 'block';
+      btnTry.style.left = '50%';
+      btnTry.style.top = '455px';
+      btnTry.style.transform = 'translateX(-50%)';
+      btnTry.onclick = () => {
+        this.registry.set('health',10);
+        this.registry.set('points',0);
+        this.registry.set('level',1);
+        this.registry.set('stage',1);
+        if (btnSubmit) { btnSubmit.style.display='none'; btnSubmit.onclick=null; }
+        btnTry.style.display='none'; btnTry.onclick=null;
+        this.scene.start('LevelScene');
+      };
+    }
+
+    // Full-size Menu button centered near bottom
+    const domMenuBtn3 = document.getElementById('btn-menu');
+    if (domMenuBtn3) {
+      domMenuBtn3.style.display = 'block';
+      domMenuBtn3.style.left = '50%';
+      domMenuBtn3.style.top = '550px';
+      domMenuBtn3.style.right = '';
+      domMenuBtn3.style.bottom = '';
+      domMenuBtn3.style.transform = 'translateX(-50%) scale(0.85)';
+      domMenuBtn3.style.transformOrigin = 'center';
+      domMenuBtn3.onclick = () => {
+        if (btnSubmit) { btnSubmit.style.display='none'; btnSubmit.onclick=null; }
+        const btnTry = document.getElementById('btn-try');
+        if (btnTry) { btnTry.style.display='none'; btnTry.onclick=null; }
+        domMenuBtn3.style.display='none'; domMenuBtn3.onclick=null;
+        this.scene.start('MainMenuScene');
+      };
+    }
+
+    // === Equal vertical spacing between buttons (Submit, Try Again, Menu) ===
+    const layoutEvenGO = () => {
+      const s = document.getElementById('btn-submit');
+      const t = document.getElementById('btn-try');
+      const m = document.getElementById('btn-menu');
+      if (!s || !t || !m) return;
+      const sRect = s.getBoundingClientRect();
+      const tRect = t.getBoundingClientRect();
+      const mRect = m.getBoundingClientRect();
+      if (sRect.height === 0 || tRect.height === 0 || mRect.height === 0) {
+        setTimeout(layoutEvenGO, 50);
+        return;
+      }
+      const GAP = 25; // pixels between elements
+      const sTop = parseFloat(s.style.top) || 335; // anchor
+      t.style.top = (sTop + sRect.height + GAP) + 'px';
+      const tTop = parseFloat(t.style.top) || (sTop + sRect.height + GAP);
+      m.style.top = (tTop + tRect.height + GAP) + 'px';
+    };
+    // run once DOM paints
+    setTimeout(layoutEvenGO, 0);
+    setTimeout(layoutEvenGO, 150);
+  }
+}
+
+class LeaderboardScene extends Phaser.Scene {
+  constructor(){ super('LeaderboardScene'); }
+  create(){
+    // Hide menu DOM/logo/buttons and any popup DOM controls
+    const domBg = document.getElementById('menu-bg'); if (domBg) domBg.style.display='none';
+    const domLogo = document.getElementById('menu-logo'); if (domLogo) domLogo.style.display='none';
+    const levelBgHide = document.getElementById('level-bg'); if (levelBgHide) levelBgHide.style.display='none';
+    const btnStart = document.getElementById('btn-start'); if (btnStart) btnStart.style.display='none';
+    const btnLeaderboard = document.getElementById('btn-leaderboard'); if (btnLeaderboard) btnLeaderboard.style.display='none';
+    const btnContinue = document.getElementById('btn-continue'); if (btnContinue) { btnContinue.style.display='none'; btnContinue.onclick=null; }
+    const domMenuBtn = document.getElementById('btn-menu'); if (domMenuBtn) { domMenuBtn.style.display='none'; domMenuBtn.onclick=null; }
+    const btnSubmitImgLB = document.getElementById('btn-submit'); if (btnSubmitImgLB) { btnSubmitImgLB.style.display='none'; btnSubmitImgLB.onclick=null; }
+    const btnTryImgLB = document.getElementById('btn-try'); if (btnTryImgLB) { btnTryImgLB.style.display='none'; btnTryImgLB.onclick=null; }
+    const consBgHideLB = document.getElementById('consequence-bg'); if (consBgHideLB) consBgHideLB.style.display='none';
+
+    // Show leaderboard background image and set dark gray page background
+    const leaderboardBg = document.getElementById('leaderboard-bg'); if (leaderboardBg) leaderboardBg.style.display='block';
+    document.body.style.backgroundColor = '#222';
+    // Title
+    this.add.text(400,80,'Leaderboard',{font:'48px Arial',fill:'#fff'}).setOrigin(0.5);
+
+    // Entries
+    const board = getLeaderboard();
+    board.forEach((e,i)=>{
+      this.add.text(300,150+i*40,`${i+1}. ${e.initials}`,{font:'24px Arial',fill:'#fff'});
+      this.add.text(500,150+i*40,`${e.score}`,{font:'24px Arial',fill:'#fff'}).setOrigin(1,0);
+    });
+
+    // Menu image button (full size) centered; scaled down 30%
+    const domMenuBtnLB = document.getElementById('btn-menu');
+    if (domMenuBtnLB) {
+      domMenuBtnLB.style.display = 'block';
+      domMenuBtnLB.style.left = '50%';
+      domMenuBtnLB.style.top = '500px';
+      domMenuBtnLB.style.right = '';
+      domMenuBtnLB.style.bottom = '';
+      domMenuBtnLB.style.transform = 'translateX(-50%) scale(0.7)';
+      domMenuBtnLB.style.transformOrigin = 'center';
+      domMenuBtnLB.onclick = () => { 
+        domMenuBtnLB.style.display='none'; domMenuBtnLB.onclick=null; 
+        const btnQuitLB2 = document.getElementById('btn-quit'); if (btnQuitLB2) { btnQuitLB2.style.display='none'; btnQuitLB2.onclick=null; }
+        this.scene.start('MainMenuScene'); 
+      };
+    }
+
+    // Quit image button (same column, scaled 30%)
+    const btnQuitLB = document.getElementById('btn-quit');
+    if (btnQuitLB) {
+      btnQuitLB.style.display = 'block';
+      btnQuitLB.style.left = '50%';
+      btnQuitLB.style.top = '610px';
+      btnQuitLB.style.right = '';
+      btnQuitLB.style.bottom = '';
+      btnQuitLB.style.transform = 'translateX(-50%) scale(0.7)';
+      btnQuitLB.style.transformOrigin = 'center';
+      btnQuitLB.onclick = () => window.close();
+    }
+  }
+}
+
+const config={type:Phaser.AUTO,width:800,height:600,transparent:true,scene:[MainMenuScene,LevelScene,GameOverScene,LeaderboardScene]};
+new Phaser.Game(config);
+</script>
+</body>
+</html>
