@@ -11,3 +11,22 @@ Thumbs.db
 
 # Logs
 *.log
+
+# API Keys and secrets
+documentation/keys*
+documentation/*.key
+documentation/*.keys
+.env
+.env.*
+*.env
+
+# Node.js
+node_modules/
+tools/node_modules/
+
+# Generated screenshots (for review)
+screenshots/
+
+# Temporary files
+*.tmp
+*.temp

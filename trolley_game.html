@@ -16,12 +16,21 @@
 <img id="gameover-bg" src="assets/backgrounds/gameOver_bg.png" alt="" style="position:fixed;left:0;top:0;width:100vw;height:100vh;object-fit:cover;z-index:-1;display:none;"/>
 <img id="go-title" src="assets/text/text_gameOver.png" alt="Game Over Title" style="position:fixed;left:50%;top:75px;transform:translateX(-50%);height:auto;width:auto;z-index:9;display:none;"/>
 <img id="menu-logo" src="assets/text/textLogo.png" alt="" style="position:fixed;left:calc(5vw - 125px);top:5px;width:45vw;height:auto;z-index:2;display:none;pointer-events:none;"/>
-<img id="btn-start" src="assets/buttons/button_startGame.png" alt="Start Game"
-     style="position:fixed;left:calc(50% + 343px);top:670px;transform:translateX(-50%) scale(1.5);
+<img id="btn-worldmap" src="assets/buttons/button_worldMap.png" alt="World Map"
+     style="position:fixed;left:50%;top:620px;transform:translateX(-50%) scale(0.55);
             width:235px;height:auto;z-index:3;display:none;cursor:pointer;"/>
 <img id="btn-leaderboard" src="assets/buttons/button_leaderboard.png" alt="Leaderboard"
-     style="position:fixed;left:calc(50% - 343px);top:670px;transform:translateX(-50%) scale(1.5);
+     style="position:fixed;left:50%;top:460px;transform:translateX(-50%) scale(0.4);
             width:235px;height:auto;z-index:3;display:none;cursor:pointer;"/>
+<img id="btn-shop" src="assets/buttons/button_shop.png" alt="Shop"
+     style="position:fixed;left:calc(50% - 70px);top:530px;transform:translateX(-50%) scale(0.4);
+            width:235px;height:auto;z-index:3;display:none;cursor:pointer;"/>
+<img id="btn-profile" src="assets/buttons/button_profile.png" alt="Profile"
+     style="position:fixed;left:calc(50% + 70px);top:530px;transform:translateX(-50%) scale(0.4);
+            width:235px;height:auto;z-index:3;display:none;cursor:pointer;"/>
+<img id="btn-logout" src="assets/buttons/button_logout.png" alt="Logout"
+     style="position:fixed;left:calc(50% - 150px);bottom:20px;transform:translateX(-50%) scale(0.45);
+            width:180px;height:auto;z-index:3;display:none;cursor:pointer;"/>
 <img id="btn-continue" src="assets/buttons/button_continue.png" alt="Continue"
      style="position:fixed;left:50%;top:430px;transform:translateX(-50%);
             width:220px;height:auto;z-index:10;display:none;cursor:pointer;"/>
@@ -37,10 +46,142 @@
 <img id="btn-try" src="assets/buttons/button_tryAgain.png" alt="Try Again"
      style="position:fixed;left:50%;top:455px;transform:translateX(-50%);
             width:260px;height:auto;z-index:10;display:none;cursor:pointer;"/>
+<img id="btn-worldmap-go" src="assets/buttons/button_worldMap.png" alt="World Map"
+     style="position:fixed;left:50%;top:505px;transform:translateX(-50%);
+            width:260px;height:auto;z-index:10;display:none;cursor:pointer;"/>
 <img id="btn-quit" src="assets/buttons/button_quit.png" alt="Quit"
      style="position:fixed;left:50%;bottom:16px;transform:translateX(-50%);
             width:auto;height:auto;z-index:3;display:none;cursor:pointer;"/>
 <img id="consequence-bg" src="assets/backgrounds/consequence_bg.png" alt="" style="position:fixed;left:50%;top:50%;height:70vh;width:auto;transform:translate(-50%,-50%);object-fit:contain;z-index:-1;display:none;"/>
+
+<!-- New Scene Backgrounds -->
+<img id="login-bg" src="assets/backgrounds/login_bg.png" alt="" style="position:fixed;left:0;top:0;width:100vw;height:100vh;object-fit:cover;z-index:99;display:none;"/>
+<img id="worldmap-bg" src="assets/backgrounds/worldmap_bg.png" alt="" style="position:fixed;left:0;top:0;width:100vw;height:100vh;object-fit:cover;z-index:99;display:none;"/>
+<img id="shop-bg" src="assets/backgrounds/shop_bg.png" alt="" style="position:fixed;left:0;top:0;width:100vw;height:100vh;object-fit:cover;z-index:99;display:none;"/>
+<img id="profile-bg" src="assets/backgrounds/profile_bg.png" alt="" style="position:fixed;left:0;top:0;width:100vw;height:100vh;object-fit:cover;z-index:99;display:none;"/>
+
+<!-- Currency Icon -->
+<img id="currency-icon" src="assets/icons/icon_currency.png" alt="Currency" title="Currency" style="width:28px;height:28px;vertical-align:middle;display:none;"/>
+
+<!-- Question and Choice Frames for Gameplay -->
+<div id="question-frame" style="position:fixed;left:50%;top:200px;transform:translateX(-50%);width:700px;min-height:120px;background:url('assets/frames/frame_question.png') center/100% 100% no-repeat;padding:30px 40px;display:none;z-index:50;">
+  <div id="question-text" style="color:#F5DEB3;font-family:Georgia,serif;font-size:28px;text-align:center;text-shadow:2px 2px 4px #000;line-height:1.4;"></div>
+</div>
+<div id="choices-container" style="position:fixed;left:50%;top:420px;transform:translateX(-50%);display:none;z-index:50;width:800px;">
+  <div id="choice-a" style="width:380px;min-height:80px;background:url('assets/frames/frame_choice.png') center/100% 100% no-repeat;padding:20px 25px;margin:10px;display:inline-block;cursor:pointer;vertical-align:top;">
+    <div id="choice-a-text" style="color:#F5DEB3;font-family:Georgia,serif;font-size:18px;text-align:center;text-shadow:1px 1px 3px #000;"></div>
+  </div>
+  <div id="choice-b" style="width:380px;min-height:80px;background:url('assets/frames/frame_choice.png') center/100% 100% no-repeat;padding:20px 25px;margin:10px;display:inline-block;cursor:pointer;vertical-align:top;">
+    <div id="choice-b-text" style="color:#F5DEB3;font-family:Georgia,serif;font-size:18px;text-align:center;text-shadow:1px 1px 3px #000;"></div>
+  </div>
+</div>
+
+<!-- Login Scene Elements -->
+<div id="login-container" style="position:fixed;left:0;top:0;width:100vw;height:100vh;background:transparent;display:none;z-index:100;">
+  <div style="position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);text-align:center;">
+    <h1 style="color:#e94560;font-family:Arial;font-size:48px;margin-bottom:10px;text-shadow:2px 2px 4px #000;">TROLLEY PROBLEM</h1>
+    <p style="color:#fff;font-family:Arial;font-size:18px;margin-bottom:40px;">Make your choices. Face the consequences.</p>
+    <div style="background:rgba(255,255,255,0.1);padding:30px;border-radius:10px;margin-bottom:20px;">
+      <input id="login-username" type="text" placeholder="Enter your username" maxlength="16"
+             style="width:250px;padding:12px;font-size:18px;border:none;border-radius:5px;margin-bottom:15px;text-align:center;"/>
+      <br/>
+      <button id="btn-login" style="width:200px;padding:12px;font-size:18px;background:#e94560;color:#fff;border:none;border-radius:5px;cursor:pointer;margin:5px;">
+        Login / Create
+      </button>
+      <br/>
+      <button id="btn-guest" style="width:200px;padding:12px;font-size:16px;background:#444;color:#fff;border:none;border-radius:5px;cursor:pointer;margin:5px;">
+        Continue as Guest
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- World Map Scene Elements -->
+<div id="worldmap-container" style="position:fixed;left:0;top:0;width:100vw;height:100vh;background:transparent;display:none;z-index:100;">
+  <h1 id="worldmap-title" style="position:absolute;left:30px;top:30px;color:#F5DEB3;font-family:Georgia,serif;font-size:32px;text-shadow:2px 2px 4px #000;">SELECT ZONE</h1>
+
+  <!-- Zone Markers (left side of map) -->
+  <div id="zone-markers" style="position:absolute;left:50px;top:150px;width:400px;">
+    <div class="zone-marker" data-zone="1" style="position:absolute;left:100px;top:200px;width:80px;height:80px;background:rgba(0,0,0,0.6);border:3px solid #B8860B;border-radius:50%;display:flex;align-items:center;justify-content:center;cursor:pointer;transition:all 0.2s;">
+      <span style="font-size:36px;">🚂</span>
+    </div>
+    <div class="zone-marker" data-zone="2" style="position:absolute;left:220px;top:100px;width:80px;height:80px;background:rgba(0,0,0,0.6);border:3px solid #B8860B;border-radius:50%;display:flex;align-items:center;justify-content:center;cursor:pointer;transition:all 0.2s;">
+      <span style="font-size:36px;">🏭</span>
+    </div>
+    <div class="zone-marker" data-zone="3" style="position:absolute;left:340px;top:30px;width:80px;height:80px;background:rgba(0,0,0,0.6);border:3px solid #B8860B;border-radius:50%;display:flex;align-items:center;justify-content:center;cursor:pointer;transition:all 0.2s;">
+      <span style="font-size:36px;">🌆</span>
+    </div>
+  </div>
+
+  <!-- Zone Detail Panel (right side) -->
+  <div id="zone-detail-panel" style="position:absolute;right:50px;top:100px;width:350px;background:rgba(0,0,0,0.85);border:3px solid #B8860B;border-radius:15px;padding:25px;display:none;">
+    <h2 id="zone-detail-name" style="color:#FFD700;font-family:Georgia,serif;font-size:28px;margin:0 0 10px 0;text-shadow:1px 1px 2px #000;"></h2>
+    <p id="zone-detail-desc" style="color:#F5DEB3;font-family:Arial;font-size:14px;margin:0 0 15px 0;line-height:1.4;"></p>
+
+    <div style="margin-bottom:15px;">
+      <span style="color:#aaa;font-family:Arial;font-size:12px;">DIFFICULTY</span>
+      <div id="zone-detail-difficulty" style="color:#fff;font-family:Arial;font-size:16px;margin-top:5px;"></div>
+    </div>
+
+    <div style="margin-bottom:15px;">
+      <span style="color:#aaa;font-family:Arial;font-size:12px;">CHOICES PER LEVEL</span>
+      <div id="zone-detail-choices" style="color:#fff;font-family:Arial;font-size:16px;margin-top:5px;"></div>
+    </div>
+
+    <div style="margin-bottom:20px;">
+      <span style="color:#aaa;font-family:Arial;font-size:12px;">PROGRESS</span>
+      <div style="background:rgba(255,255,255,0.2);border-radius:5px;height:20px;overflow:hidden;margin-top:5px;">
+        <div id="zone-detail-progress-bar" style="height:100%;background:#4CAF50;transition:width 0.3s;"></div>
+      </div>
+      <div id="zone-detail-progress-text" style="color:#fff;font-family:Arial;font-size:12px;margin-top:5px;"></div>
+    </div>
+
+    <div id="zone-detail-locked" style="color:#e94560;font-family:Arial;font-size:14px;margin-bottom:15px;display:none;">
+      🔒 Complete previous zone to unlock
+    </div>
+
+    <img id="btn-zone-start" src="assets/buttons/button_startGame.png" alt="Start" style="width:200px;height:auto;cursor:pointer;display:block;margin:0 auto;"/>
+  </div>
+
+  <!-- Back Button -->
+  <button id="btn-worldmap-back" style="position:absolute;left:20px;bottom:20px;padding:12px 24px;font-size:16px;background:#e94560;color:#fff;border:none;border-radius:5px;cursor:pointer;">
+    ← Back to Menu
+  </button>
+</div>
+
+<!-- Shop Scene Elements -->
+<div id="shop-container" style="position:fixed;left:0;top:0;width:100vw;height:100vh;background:transparent;display:none;z-index:100;">
+  <h1 style="position:absolute;left:50%;top:20px;transform:translateX(-50%);color:#ffd700;font-family:Arial;font-size:36px;text-shadow:2px 2px 4px #000;">SHOP</h1>
+  <div id="shop-currency" style="position:absolute;right:30px;top:25px;color:#ffd700;font-family:Arial;font-size:24px;">💰 0</div>
+  <div id="shop-tabs" style="position:absolute;left:50%;top:100px;transform:translateX(-50%);display:flex;gap:0;">
+    <button id="tab-cosmetics" style="padding:12px 35px;font-size:16px;background:#ffd700;color:#000;border:none;border-radius:8px 8px 0 0;cursor:pointer;margin-bottom:-1px;">Cosmetics</button>
+    <button id="tab-consumables" style="padding:12px 35px;font-size:16px;background:#555;color:#fff;border:none;border-radius:8px 8px 0 0;cursor:pointer;margin-bottom:-1px;">Consumables</button>
+  </div>
+  <div id="shop-items" style="position:absolute;left:50%;top:148px;transform:translateX(-50%);width:80%;max-width:700px;height:400px;background:rgba(0,0,0,0.7);border-radius:0 10px 10px 10px;padding:20px;overflow-y:auto;border-top:3px solid #ffd700;"></div>
+  <button id="btn-shop-back" style="position:absolute;left:20px;bottom:20px;padding:12px 24px;font-size:16px;background:#ffd700;color:#000;border:none;border-radius:5px;cursor:pointer;">
+    ← Back to Menu
+  </button>
+</div>
+
+<!-- Profile Scene Elements -->
+<div id="profile-container" style="position:fixed;left:0;top:0;width:100vw;height:100vh;background:transparent;display:none;z-index:100;">
+  <h1 style="position:absolute;left:50%;top:20px;transform:translateX(-50%);color:#fff;font-family:Arial;font-size:36px;text-shadow:2px 2px 4px #000;">PROFILE</h1>
+  <div id="profile-content" style="position:absolute;left:50%;top:80px;transform:translateX(-50%);width:80%;max-width:600px;background:rgba(0,0,0,0.7);border-radius:10px;padding:30px;"></div>
+  <div id="achievements-content" style="position:absolute;left:50%;top:480px;transform:translateX(-50%);width:80%;max-width:600px;background:rgba(0,0,0,0.7);border-radius:10px;padding:20px;"></div>
+  <button id="btn-profile-back" style="position:absolute;left:20px;bottom:20px;padding:12px 24px;font-size:16px;background:#fff;color:#0d7377;border:none;border-radius:5px;cursor:pointer;">
+    ← Back to Menu
+  </button>
+</div>
+
+<!-- Item Bar for Level Scene -->
+<div id="item-bar" style="position:fixed;left:50%;bottom:80px;transform:translateX(-50%);display:none;z-index:50;background:rgba(0,0,0,0.7);padding:10px 20px;border-radius:10px;">
+  <span style="color:#fff;font-family:Arial;margin-right:15px;">Items:</span>
+  <button id="item-hp-small" style="padding:8px 12px;margin:0 5px;background:#4CAF50;color:#fff;border:none;border-radius:5px;cursor:pointer;display:none;">+3 HP (0)</button>
+  <button id="item-hp-large" style="padding:8px 12px;margin:0 5px;background:#2196F3;color:#fff;border:none;border-radius:5px;cursor:pointer;display:none;">+7 HP (0)</button>
+  <button id="item-point-boost" style="padding:8px 12px;margin:0 5px;background:#FF9800;color:#fff;border:none;border-radius:5px;cursor:pointer;display:none;">2x Points (0)</button>
+  <span id="items-used" style="color:#aaa;font-family:Arial;margin-left:15px;font-size:14px;">(0/3 used)</span>
+</div>
+
 <script>
 // Leaderboard storage helpers
 function getLeaderboard() {
@@ -51,9 +192,324 @@ function saveLeaderboard(list) {
   localStorage.setItem('trolley_leaderboard', JSON.stringify(list));
 }
 
+// =====================================================
+// USER ACCOUNT SYSTEM
+// =====================================================
+function generateUserId() {
+  return 'user_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9);
+}
+
+function createUser(username, isGuest = false) {
+  const user = {
+    userId: generateUserId(),
+    username: username,
+    isGuest: isGuest,
+    createdAt: Date.now(),
+    lastLogin: Date.now(),
+    dataVersion: 1,
+    progress: {
+      currentZone: 1,
+      completedLevels: [], // [{zone: 1, level: 1, score: 100, perfect: false}]
+      highScores: {} // {"1-1": 100, "1-2": 150}
+    },
+    stats: {
+      totalGames: 0,
+      totalPoints: 0,
+      totalDeaths: 0,
+      choicesMade: 0,
+      perfectLevels: 0,
+      zonesCompleted: 0
+    },
+    inventory: {
+      currency: 0,
+      cosmetics: ['trolley_default'],
+      consumables: {
+        hp_small: 0,
+        hp_large: 0,
+        point_boost: 0
+      }
+    },
+    equipped: {
+      trolleyAppearance: 'trolley_default'
+    },
+    achievements: []
+  };
+  saveUser(user);
+  return user;
+}
+
+function getUser() {
+  const data = localStorage.getItem('trolley_user');
+  if (!data) return null;
+  try {
+    return JSON.parse(data);
+  } catch(e) {
+    return null;
+  }
+}
+
+function saveUser(user) {
+  user.lastLogin = Date.now();
+  localStorage.setItem('trolley_user', JSON.stringify(user));
+}
+
+function clearUser() {
+  localStorage.removeItem('trolley_user');
+}
+
+// =====================================================
+// ZONE CONFIGURATION
+// =====================================================
+const ZoneConfig = [
+  {
+    id: 1,
+    name: 'Starter Rails',
+    description: 'Begin your journey on quiet suburban tracks.',
+    choicesPerLevel: 3,
+    levelsRequired: 5,
+    difficultyMod: 1.0,
+    unlockRequirement: 0, // always unlocked
+    currencyBonus: 1.0,
+    color: '#4CAF50',
+    bgSuffix: 'level_01_background.png'
+  },
+  {
+    id: 2,
+    name: 'Industrial District',
+    description: 'Navigate through the factory zone.',
+    choicesPerLevel: 4,
+    levelsRequired: 5,
+    difficultyMod: 1.3,
+    unlockRequirement: 4, // need 4 levels from zone 1
+    currencyBonus: 1.05,
+    color: '#FF9800',
+    bgSuffix: 'level_01_background.png' // reuse until new assets
+  },
+  {
+    id: 3,
+    name: 'City Center',
+    description: 'High stakes in the urban core.',
+    choicesPerLevel: 5,
+    levelsRequired: 5,
+    difficultyMod: 1.6,
+    unlockRequirement: 4, // need 4 levels from zone 2
+    currencyBonus: 1.1,
+    color: '#E91E63',
+    bgSuffix: 'level_01_background.png' // reuse until new assets
+  }
+];
+
+// Zone-themed prompts for variety
+const ZonePrompts = {
+  1: [ // Starter Rails
+    {prompt:'Help child cross or save luggage?',opts:[{text:'Help child',pts:8,hp:0},{text:'Save luggage',pts:4,hp:0}]},
+    {prompt:'Find water or conserve energy?',opts:[{text:'Find water',pts:3,hp:3},{text:'Conserve energy',pts:5,hp:0}]},
+    {prompt:'Use first aid or press on?',opts:[{text:'Use first aid',pts:2,hp:4},{text:'Press on',pts:8,hp:-1}]},
+    {prompt:'Steer on grass or hit barrier?',opts:[{text:'Grass',pts:6,hp:-2},{text:'Barrier',pts:12,hp:-5}]},
+    {prompt:'Warn engineer or do nothing?',opts:[{text:'Warn',pts:10,hp:-1},{text:'Nothing',pts:0,hp:0}]},
+    {prompt:'Take shortcut or stay on track?',opts:[{text:'Shortcut',pts:7,hp:-2},{text:'Stay safe',pts:3,hp:1}]},
+    {prompt:'Help stranded motorist?',opts:[{text:'Help them',pts:6,hp:-1},{text:'Keep moving',pts:2,hp:0}]}
+  ],
+  2: [ // Industrial District
+    {prompt:'Divert through factory or main line?',opts:[{text:'Factory',pts:12,hp:-3},{text:'Main line',pts:5,hp:-1}]},
+    {prompt:'Warn workers or maintain speed?',opts:[{text:'Warn workers',pts:8,hp:0},{text:'Maintain speed',pts:15,hp:-4}]},
+    {prompt:'Use emergency brake?',opts:[{text:'Pull brake',pts:4,hp:2},{text:'Coast through',pts:10,hp:-2}]},
+    {prompt:'Take cargo shortcut?',opts:[{text:'Risk it',pts:14,hp:-4},{text:'Standard route',pts:6,hp:0}]},
+    {prompt:'Help trapped worker?',opts:[{text:'Rescue',pts:10,hp:-2},{text:'Call for backup',pts:5,hp:0}]},
+    {prompt:'Navigate steam vents?',opts:[{text:'Push through',pts:9,hp:-3},{text:'Wait',pts:3,hp:1}]},
+    {prompt:'Cross unstable bridge?',opts:[{text:'Cross fast',pts:13,hp:-4},{text:'Find alternate',pts:5,hp:-1}]}
+  ],
+  3: [ // City Center
+    {prompt:'Rush hour crossing?',opts:[{text:'Force through',pts:18,hp:-5},{text:'Wait for clear',pts:6,hp:0}]},
+    {prompt:'Detour through park?',opts:[{text:'Park route',pts:12,hp:-2},{text:'Street route',pts:8,hp:-3}]},
+    {prompt:'Emergency vehicle approaching!',opts:[{text:'Yield',pts:5,hp:0},{text:'Race ahead',pts:16,hp:-4}]},
+    {prompt:'Construction zone ahead!',opts:[{text:'Plow through',pts:20,hp:-6},{text:'Detour',pts:8,hp:-1}]},
+    {prompt:'School zone - children present!',opts:[{text:'Slow down',pts:4,hp:2},{text:'Maintain speed',pts:12,hp:-3}]},
+    {prompt:'Traffic signal malfunction!',opts:[{text:'Go anyway',pts:15,hp:-4},{text:'Wait',pts:3,hp:1}]},
+    {prompt:'Pedestrian on tracks!',opts:[{text:'Emergency stop',pts:6,hp:3},{text:'Swerve',pts:14,hp:-5}]}
+  ]
+};
+
+// =====================================================
+// SHOP ITEMS CONFIGURATION
+// =====================================================
+const ShopItems = {
+  cosmetics: [
+    { id: 'trolley_default', name: 'Standard Trolley', price: 0, owned: true, color: '#888' },
+    { id: 'trolley_gold', name: 'Golden Trolley', price: 500, owned: false, color: '#FFD700' },
+    { id: 'trolley_fire', name: 'Flame Trolley', price: 750, owned: false, color: '#FF4500' },
+    { id: 'trolley_ice', name: 'Frost Trolley', price: 750, owned: false, color: '#00CED1' },
+    { id: 'trolley_neon', name: 'Neon Trolley', price: 1000, owned: false, color: '#FF00FF' },
+    { id: 'trolley_shadow', name: 'Shadow Trolley', price: 1500, owned: false, color: '#2F2F2F' }
+  ],
+  consumables: [
+    { id: 'hp_small', name: 'Small Health Pack', price: 100, effect: '+3 HP', value: 3 },
+    { id: 'hp_large', name: 'Large Health Pack', price: 250, effect: '+7 HP', value: 7 },
+    { id: 'point_boost', name: 'Point Booster', price: 200, effect: '2x Points (1 level)', value: 2 }
+  ]
+};
+
+// =====================================================
+// ACHIEVEMENT DEFINITIONS
+// =====================================================
+const AchievementDefs = [
+  { id: 'first_game', name: 'First Steps', desc: 'Complete your first game', icon: '🎮' },
+  { id: 'zone1_complete', name: 'Starter Champion', desc: 'Complete Zone 1', icon: '🏆' },
+  { id: 'zone2_complete', name: 'Industrial Expert', desc: 'Complete Zone 2', icon: '🏭' },
+  { id: 'zone3_complete', name: 'City Master', desc: 'Complete Zone 3', icon: '🌆' },
+  { id: 'perfect_level', name: 'Perfectionist', desc: 'Complete a level without taking damage', icon: '⭐' },
+  { id: 'high_roller', name: 'High Roller', desc: 'Earn 1000+ currency', icon: '💰' },
+  { id: 'collector', name: 'Collector', desc: 'Own 3 trolley cosmetics', icon: '🎨' },
+  { id: 'survivor', name: 'Survivor', desc: 'Survive with 1 HP', icon: '❤️' }
+];
+
+function checkAchievements(user) {
+  const earned = [];
+  // First game
+  if (user.stats.totalGames >= 1 && !user.achievements.includes('first_game')) {
+    earned.push('first_game');
+  }
+  // Zone completions
+  const zone1Complete = user.progress.completedLevels.filter(l => l.zone === 1).length >= 5;
+  const zone2Complete = user.progress.completedLevels.filter(l => l.zone === 2).length >= 5;
+  const zone3Complete = user.progress.completedLevels.filter(l => l.zone === 3).length >= 5;
+  if (zone1Complete && !user.achievements.includes('zone1_complete')) earned.push('zone1_complete');
+  if (zone2Complete && !user.achievements.includes('zone2_complete')) earned.push('zone2_complete');
+  if (zone3Complete && !user.achievements.includes('zone3_complete')) earned.push('zone3_complete');
+  // Perfect level
+  if (user.stats.perfectLevels >= 1 && !user.achievements.includes('perfect_level')) {
+    earned.push('perfect_level');
+  }
+  // High roller
+  if (user.inventory.currency >= 1000 && !user.achievements.includes('high_roller')) {
+    earned.push('high_roller');
+  }
+  // Collector
+  if (user.inventory.cosmetics.length >= 3 && !user.achievements.includes('collector')) {
+    earned.push('collector');
+  }
+  return earned;
+}
+
+// Helper to calculate currency earned
+function calculateCurrencyEarned(score, zoneId, isPerfect) {
+  const zone = ZoneConfig.find(z => z.id === zoneId) || ZoneConfig[0];
+  let base = Math.floor(score * 0.1); // 10% of score
+  base = Math.floor(base * zone.currencyBonus); // Zone bonus
+  if (isPerfect) base = Math.floor(base * 1.5); // Perfect bonus
+  return Math.max(base, 1); // Minimum 1 currency
+}
+
+// Helper to hide all scene containers and backgrounds
+function hideAllContainers() {
+  const containers = ['login-container', 'worldmap-container', 'shop-container', 'profile-container'];
+  containers.forEach(id => {
+    const el = document.getElementById(id);
+    if (el) el.style.display = 'none';
+  });
+  // Hide new scene backgrounds
+  const backgrounds = ['login-bg', 'worldmap-bg', 'shop-bg', 'profile-bg'];
+  backgrounds.forEach(id => {
+    const el = document.getElementById(id);
+    if (el) el.style.display = 'none';
+  });
+  const itemBar = document.getElementById('item-bar');
+  if (itemBar) itemBar.style.display = 'none';
+  // Hide menu currency and welcome displays
+  const menuCurrency = document.getElementById('menu-currency-display');
+  if (menuCurrency) menuCurrency.style.display = 'none';
+  const menuWelcome = document.getElementById('menu-welcome-display');
+  if (menuWelcome) menuWelcome.style.display = 'none';
+  // Hide question and choice frames
+  const questionFrame = document.getElementById('question-frame');
+  if (questionFrame) questionFrame.style.display = 'none';
+  const choicesContainer = document.getElementById('choices-container');
+  if (choicesContainer) choicesContainer.style.display = 'none';
+}
+
+// =====================================================
+// LOGIN SCENE
+// =====================================================
+class LoginScene extends Phaser.Scene {
+  constructor() { super('LoginScene'); }
+
+  create() {
+    // Hide all other DOM elements
+    hideAllContainers();
+    const domBg = document.getElementById('menu-bg'); if (domBg) domBg.style.display = 'none';
+    const domLogo = document.getElementById('menu-logo'); if (domLogo) domLogo.style.display = 'none';
+    const levelBg = document.getElementById('level-bg'); if (levelBg) levelBg.style.display = 'none';
+    const leaderboardBg = document.getElementById('leaderboard-bg'); if (leaderboardBg) leaderboardBg.style.display = 'none';
+    const gameOverBg = document.getElementById('gameover-bg'); if (gameOverBg) gameOverBg.style.display = 'none';
+    const consBg = document.getElementById('consequence-bg'); if (consBg) consBg.style.display = 'none';
+    const goTitle = document.getElementById('go-title'); if (goTitle) goTitle.style.display = 'none';
+
+    // Hide all buttons
+    const buttons = ['btn-worldmap', 'btn-leaderboard', 'btn-shop', 'btn-profile', 'btn-logout', 'btn-continue', 'btn-next', 'btn-menu', 'btn-submit', 'btn-try', 'btn-worldmap-go', 'btn-quit'];
+    buttons.forEach(id => {
+      const btn = document.getElementById(id);
+      if (btn) { btn.style.display = 'none'; btn.onclick = null; }
+    });
+
+    // Show login background and container
+    const loginBg = document.getElementById('login-bg');
+    if (loginBg) loginBg.style.display = 'block';
+    const loginContainer = document.getElementById('login-container');
+    if (loginContainer) loginContainer.style.display = 'block';
+
+    // Setup login button
+    const btnLogin = document.getElementById('btn-login');
+    const usernameInput = document.getElementById('login-username');
+
+    if (btnLogin) {
+      btnLogin.onclick = () => {
+        const username = usernameInput ? usernameInput.value.trim() : '';
+        if (username.length < 1) {
+          alert('Please enter a username (1-16 characters)');
+          return;
+        }
+        // Check if user exists or create new
+        let user = getUser();
+        if (user && user.username === username) {
+          // Existing user logging back in
+          saveUser(user);
+        } else {
+          // Create new account
+          user = createUser(username, false);
+        }
+        loginContainer.style.display = 'none';
+        this.scene.start('MainMenuScene');
+      };
+    }
+
+    // Setup guest button
+    const btnGuest = document.getElementById('btn-guest');
+    if (btnGuest) {
+      btnGuest.onclick = () => {
+        const guestId = 'Guest_' + Math.random().toString(36).substr(2, 6).toUpperCase();
+        const user = createUser(guestId, true);
+        loginContainer.style.display = 'none';
+        this.scene.start('MainMenuScene');
+      };
+    }
+
+    // Allow Enter key to submit
+    if (usernameInput) {
+      usernameInput.onkeydown = (e) => {
+        if (e.key === 'Enter' && btnLogin) btnLogin.click();
+      };
+      usernameInput.value = '';
+      usernameInput.focus();
+    }
+  }
+}
+
 class MainMenuScene extends Phaser.Scene {
   constructor() { super('MainMenuScene'); }
   create() {
+    // Hide all containers first
+    hideAllContainers();
+
     const domBg = document.getElementById('menu-bg'); if (domBg) domBg.style.display = 'block';
     const domLogo = document.getElementById('menu-logo'); if (domLogo) domLogo.style.display = 'block';
     // Hide level background when on main menu
@@ -71,36 +527,84 @@ class MainMenuScene extends Phaser.Scene {
     // Hide Game Over DOM buttons by default on menu
     const btnSubmitImg = document.getElementById('btn-submit'); if (btnSubmitImg) { btnSubmitImg.style.display='none'; btnSubmitImg.onclick=null; }
     const btnTryImg = document.getElementById('btn-try'); if (btnTryImg) { btnTryImg.style.display='none'; btnTryImg.onclick=null; }
+    const btnWorldMapGoMM = document.getElementById('btn-worldmap-go'); if (btnWorldMapGoMM) { btnWorldMapGoMM.style.display='none'; btnWorldMapGoMM.onclick=null; }
     const btnNextMM = document.getElementById('btn-next'); if (btnNextMM) { btnNextMM.style.display='none'; btnNextMM.onclick=null; }
+    const btnContinue = document.getElementById('btn-continue'); if (btnContinue) { btnContinue.style.display='none'; btnContinue.onclick=null; }
 
-    // Show Quit image button on main menu (bottom-center)
-    const btnQuitMM = document.getElementById('btn-quit');
-    if (btnQuitMM) {
-      btnQuitMM.style.display = 'block';
-      btnQuitMM.style.left = 'calc(50% + 22px)';
-      btnQuitMM.style.bottom = '96px';
-      btnQuitMM.style.top = '';
-      btnQuitMM.style.right = '';
-      btnQuitMM.style.transform = 'translateX(-50%)';
-      btnQuitMM.onclick = () => window.close();
+    // Get user data for display
+    const user = getUser();
+
+    // Display welcome message (left side, below title logo with buffer)
+    if (user) {
+      // Create or get DOM-based welcome display (well below logo bottom edge)
+      let welcomeDisplay = document.getElementById('menu-welcome-display');
+      if (!welcomeDisplay) {
+        welcomeDisplay = document.createElement('div');
+        welcomeDisplay.id = 'menu-welcome-display';
+        document.body.appendChild(welcomeDisplay);
+      }
+      welcomeDisplay.style.cssText = 'position:fixed;left:calc(5vw + 80px);top:520px;color:#F5DEB3;font-family:Georgia,serif;font-size:22px;z-index:10;text-shadow:2px 2px 4px #000;';
+      welcomeDisplay.textContent = `Welcome, ${user.username}!`;
+      welcomeDisplay.style.display = 'block';
+
+      // Create or get DOM-based currency display with icon (below welcome)
+      let currencyDisplay = document.getElementById('menu-currency-display');
+      if (!currencyDisplay) {
+        currencyDisplay = document.createElement('div');
+        currencyDisplay.id = 'menu-currency-display';
+        document.body.appendChild(currencyDisplay);
+      }
+      currencyDisplay.style.cssText = 'position:fixed;left:calc(5vw + 80px);top:555px;color:#FFD700;font-family:Arial;font-size:18px;z-index:10;text-shadow:2px 2px 3px #000;';
+      currencyDisplay.innerHTML = `<img src="assets/icons/icon_currency.png" alt="Currency" title="Currency" style="width:22px;height:22px;vertical-align:middle;margin-right:6px;"/>${user.inventory.currency}`;
+      currencyDisplay.style.display = 'block';
     }
 
-    // Show DOM image buttons and wire events
-    const btnStart = document.getElementById('btn-start');
-    if (btnStart) {
-      btnStart.style.display = 'block';
-      btnStart.onclick = () => {
-        this.registry.set('health', 10);
-        this.registry.set('points', 0);
-        this.registry.set('level', 1);
-        this.registry.set('stage', 1);
-        this.scene.start('LevelScene');
-      };
+    // Show World Map button (centered, larger - main action)
+    const btnWorldMap = document.getElementById('btn-worldmap');
+    if (btnWorldMap) {
+      btnWorldMap.style.display = 'block';
+      btnWorldMap.onclick = () => this.scene.start('WorldMapScene');
     }
+
+    // Show Leaderboard, Shop, Profile buttons in a row (smaller, above World Map)
     const btnLeaderboard = document.getElementById('btn-leaderboard');
     if (btnLeaderboard) {
       btnLeaderboard.style.display = 'block';
       btnLeaderboard.onclick = () => this.scene.start('LeaderboardScene');
+    }
+
+    const btnShop = document.getElementById('btn-shop');
+    if (btnShop) {
+      btnShop.style.display = 'block';
+      btnShop.onclick = () => this.scene.start('ShopScene');
+    }
+
+    const btnProfile = document.getElementById('btn-profile');
+    if (btnProfile) {
+      btnProfile.style.display = 'block';
+      btnProfile.onclick = () => this.scene.start('ProfileScene');
+    }
+
+    // Show Logout button at bottom (left of Quit)
+    const btnLogout = document.getElementById('btn-logout');
+    if (btnLogout && user) {
+      btnLogout.style.display = 'block';
+      btnLogout.onclick = () => {
+        clearUser();
+        this.scene.start('LoginScene');
+      };
+    }
+
+    // Show Quit button at bottom (closer to center, right of Logout)
+    const btnQuitMM = document.getElementById('btn-quit');
+    if (btnQuitMM) {
+      btnQuitMM.style.display = 'block';
+      btnQuitMM.style.left = 'calc(50% + 150px)';
+      btnQuitMM.style.bottom = '20px';
+      btnQuitMM.style.top = '';
+      btnQuitMM.style.right = '';
+      btnQuitMM.style.transform = 'translateX(-50%) scale(0.5)';
+      btnQuitMM.onclick = () => window.close();
     }
   }
 }
@@ -112,15 +616,34 @@ class LevelScene extends Phaser.Scene {
     if (this.registry.get('points')===undefined) this.registry.set('points',0);
     if (this.registry.get('level')===undefined) this.registry.set('level',1);
     if (this.registry.get('stage')===undefined) this.registry.set('stage',1);
+    if (this.registry.get('zone')===undefined) this.registry.set('zone',1);
+
+    // Track damage for perfect level detection
+    this.damageTaken = 0;
+    this.startingHealth = this.registry.get('health');
+
+    // Track items used this level (max 3)
+    this.itemsUsedThisLevel = this.registry.get('itemsUsedThisLevel') || 0;
+
+    // Point multiplier (from point boost consumable)
+    this.pointMultiplier = this.registry.get('pointMultiplier') || 1;
+
     this.consequences = [
       'A stray dog trips over the tracks',
       'A sudden rainstorm reduces visibility',
       'You find an abandoned suitcase',
       'A loose plank causes a bump',
-      'You spot an unexpected shortcut'
+      'You spot an unexpected shortcut',
+      'An old signal malfunctions',
+      'You see something strange in the distance',
+      'The track vibrates oddly',
+      'A bird flies across your path'
     ];
   }
   create() {
+    // Hide all containers
+    hideAllContainers();
+
     // Hide menu DOM elements
     const domBg = document.getElementById('menu-bg'); if (domBg) domBg.style.display = 'none';
     const domLogo = document.getElementById('menu-logo'); if (domLogo) domLogo.style.display = 'none';
@@ -128,7 +651,10 @@ class LevelScene extends Phaser.Scene {
     const gameOverBgLV = document.getElementById('gameover-bg'); if (gameOverBgLV) gameOverBgLV.style.display='none';
     document.body.style.backgroundColor = '';
     const levelBgElHide = document.getElementById('level-bg'); if (levelBgElHide) levelBgElHide.style.display = 'block';
-    const btnStart = document.getElementById('btn-start'); if (btnStart) btnStart.style.display = 'none';
+    const btnWorldMapHide = document.getElementById('btn-worldmap'); if (btnWorldMapHide) btnWorldMapHide.style.display = 'none';
+    const btnShopHide = document.getElementById('btn-shop'); if (btnShopHide) btnShopHide.style.display = 'none';
+    const btnProfileHide = document.getElementById('btn-profile'); if (btnProfileHide) btnProfileHide.style.display = 'none';
+    const btnLogoutHide = document.getElementById('btn-logout'); if (btnLogoutHide) btnLogoutHide.style.display = 'none';
     const btnLeaderboard = document.getElementById('btn-leaderboard'); if (btnLeaderboard) btnLeaderboard.style.display = 'none';
     const btnContinue = document.getElementById('btn-continue'); if (btnContinue) { btnContinue.style.display = 'none';
         btnContinue.onclick = null;
@@ -137,22 +663,48 @@ class LevelScene extends Phaser.Scene {
     const btnQuitReset = document.getElementById('btn-quit'); if (btnQuitReset) { btnQuitReset.style.display='none'; btnQuitReset.onclick=null; }
     const btnNextReset = document.getElementById('btn-next'); if (btnNextReset) { btnNextReset.style.display='none'; btnNextReset.onclick=null; }
     const domMenuBtn = document.getElementById('btn-menu'); if (domMenuBtn) { domMenuBtn.style.display='none'; domMenuBtn.onclick=null; }
-    
+
     const btnQuitLBHide = document.getElementById('btn-quit'); if (btnQuitLBHide) { btnQuitLBHide.style.display='none'; btnQuitLBHide.onclick=null; }
     const btnSubmitImg2 = document.getElementById('btn-submit'); if (btnSubmitImg2) { btnSubmitImg2.style.display='none'; btnSubmitImg2.onclick=null; }
     const btnTryImg2 = document.getElementById('btn-try'); if (btnTryImg2) { btnTryImg2.style.display='none'; btnTryImg2.onclick=null; }
+    const btnWorldMapGoLV = document.getElementById('btn-worldmap-go'); if (btnWorldMapGoLV) { btnWorldMapGoLV.style.display='none'; btnWorldMapGoLV.onclick=null; }
     const consBgReset = document.getElementById('consequence-bg'); if (consBgReset) { consBgReset.style.display='none'; }
 
     const goTitleHideLV = document.getElementById('go-title'); if (goTitleHideLV) goTitleHideLV.style.display='none';
 
-    // Background via DOM image
-    const levelBgEl = document.getElementById('level-bg'); if (levelBgEl) levelBgEl.style.display = 'block';
+    // Get zone configuration
+    const zoneId = this.registry.get('zone') || 1;
+    const zoneConfig = ZoneConfig.find(z => z.id === zoneId) || ZoneConfig[0];
+
+    // Background via DOM image - use zone-specific background
+    const levelBgEl = document.getElementById('level-bg');
+    if (levelBgEl) {
+      // Set the appropriate background for this zone
+      const bgMap = {
+        1: 'assets/backgrounds/level_01_background.png',
+        2: 'assets/backgrounds/level_02_background.png',
+        3: 'assets/backgrounds/level_03_background.png'
+      };
+      levelBgEl.src = bgMap[zoneId] || bgMap[1];
+      levelBgEl.style.display = 'block';
+    }
 
     // UI
     this.healthText = this.add.text(20,20, 'Health: ' + this.registry.get('health'), {font:'20px Arial', fill:'#fff'});
     this.pointsText = this.add.text(20,50, 'Points: ' + this.registry.get('points'), {font:'20px Arial', fill:'#fff'});
     this.levelText = this.add.text(780,20,'Level: '+this.registry.get('level'),{font:'18px Arial',fill:'#fff'}).setOrigin(1,0);
     this.stageText = this.add.text(780,40,'Stage: '+this.registry.get('stage'),{font:'18px Arial',fill:'#fff'}).setOrigin(1,0);
+
+    // Zone info display
+    this.zoneText = this.add.text(780,60, zoneConfig.name, {font:'16px Arial', fill: zoneConfig.color}).setOrigin(1,0);
+
+    // Show point multiplier if active
+    if (this.pointMultiplier > 1) {
+      this.add.text(20, 80, '2x POINTS ACTIVE!', {font:'16px Arial', fill:'#FF9800'});
+    }
+
+    // Setup item bar
+    this.setupItemBar();
     // Moved down by 200px (from y=100 to y=300) and doubled font size (24px -> 48px)
     this.promptText = this.add.text(400,300, '', {font:'48px Arial', fill:'#fff', align:'center', wordWrap:{width:1400}}).setOrigin(0.5);
 
@@ -183,16 +735,8 @@ class LevelScene extends Phaser.Scene {
       btnQuitLV.onclick = () => window.close();
     }
 
-    // Options
-    this.optionTexts = [];
-    for (let i=0; i<2; i++) {
-      const x = 200 + 400*i, y = 560;
-      const t = this.add.text(x,y,'',{font:'18px Arial',fill:'#000',backgroundColor:'#fff',padding:{x:8,y:4}})
-        .setOrigin(0.5)
-        .setInteractive({useHandCursor:true})
-        .on('pointerdown',()=>this.handleChoice(i));
-      this.optionTexts.push(t);
-    }
+    // Set up DOM-based choice frames
+    this.setupChoiceFrames();
 
     // Next level uses DOM image button (btn-next). It will be shown on level completion.
 
@@ -201,34 +745,204 @@ class LevelScene extends Phaser.Scene {
     this.junctionIndex = 0;
     this.showJunction();
   }
+
+  setupItemBar() {
+    const user = getUser();
+    if (!user) return;
+
+    const itemBar = document.getElementById('item-bar');
+    if (!itemBar) return;
+
+    const consumables = user.inventory.consumables;
+    let hasAnyItems = false;
+
+    // HP Small button
+    const hpSmallBtn = document.getElementById('item-hp-small');
+    if (hpSmallBtn) {
+      if (consumables.hp_small > 0) {
+        hpSmallBtn.style.display = 'inline-block';
+        hpSmallBtn.textContent = `+3 HP (${consumables.hp_small})`;
+        hpSmallBtn.onclick = () => this.useConsumable('hp_small', 3);
+        hasAnyItems = true;
+      } else {
+        hpSmallBtn.style.display = 'none';
+      }
+    }
+
+    // HP Large button
+    const hpLargeBtn = document.getElementById('item-hp-large');
+    if (hpLargeBtn) {
+      if (consumables.hp_large > 0) {
+        hpLargeBtn.style.display = 'inline-block';
+        hpLargeBtn.textContent = `+7 HP (${consumables.hp_large})`;
+        hpLargeBtn.onclick = () => this.useConsumable('hp_large', 7);
+        hasAnyItems = true;
+      } else {
+        hpLargeBtn.style.display = 'none';
+      }
+    }
+
+    // Point Boost button
+    const pointBoostBtn = document.getElementById('item-point-boost');
+    if (pointBoostBtn) {
+      if (consumables.point_boost > 0 && this.pointMultiplier === 1) {
+        pointBoostBtn.style.display = 'inline-block';
+        pointBoostBtn.textContent = `2x Points (${consumables.point_boost})`;
+        pointBoostBtn.onclick = () => this.useConsumable('point_boost', 2);
+        hasAnyItems = true;
+      } else {
+        pointBoostBtn.style.display = 'none';
+      }
+    }
+
+    // Items used counter
+    const itemsUsedEl = document.getElementById('items-used');
+    if (itemsUsedEl) {
+      itemsUsedEl.textContent = `(${this.itemsUsedThisLevel}/3 used)`;
+    }
+
+    // Show or hide item bar
+    if (hasAnyItems) {
+      itemBar.style.display = 'block';
+    } else {
+      itemBar.style.display = 'none';
+    }
+  }
+
+  useConsumable(itemId, value) {
+    if (this.itemsUsedThisLevel >= 3) {
+      return; // Max 3 items per level
+    }
+
+    const user = getUser();
+    if (!user || user.inventory.consumables[itemId] <= 0) return;
+
+    // Deduct item
+    user.inventory.consumables[itemId]--;
+    saveUser(user);
+
+    // Apply effect
+    if (itemId === 'hp_small' || itemId === 'hp_large') {
+      this.registry.values.health += value;
+      this.updateUI();
+    } else if (itemId === 'point_boost') {
+      this.pointMultiplier = value;
+      this.registry.set('pointMultiplier', value);
+      // Show indicator
+      this.add.text(20, 80, '2x POINTS ACTIVE!', {font:'16px Arial', fill:'#FF9800'});
+    }
+
+    this.itemsUsedThisLevel++;
+    this.registry.set('itemsUsedThisLevel', this.itemsUsedThisLevel);
+
+    // Refresh item bar
+    this.setupItemBar();
+  }
+
+  setupChoiceFrames() {
+    // Set up click handlers for DOM choice frames
+    const choiceA = document.getElementById('choice-a');
+    const choiceB = document.getElementById('choice-b');
+
+    if (choiceA) {
+      choiceA.onclick = () => this.handleChoice(0);
+      choiceA.onmouseover = () => { choiceA.style.filter = 'brightness(1.2)'; };
+      choiceA.onmouseout = () => { choiceA.style.filter = 'none'; };
+    }
+    if (choiceB) {
+      choiceB.onclick = () => this.handleChoice(1);
+      choiceB.onmouseover = () => { choiceB.style.filter = 'brightness(1.2)'; };
+      choiceB.onmouseout = () => { choiceB.style.filter = 'none'; };
+    }
+  }
+
+  showQuestionFrames(show) {
+    const questionFrame = document.getElementById('question-frame');
+    const choicesContainer = document.getElementById('choices-container');
+    if (questionFrame) questionFrame.style.display = show ? 'block' : 'none';
+    if (choicesContainer) choicesContainer.style.display = show ? 'block' : 'none';
+  }
+
+  enableChoiceFrames(enabled) {
+    const choiceA = document.getElementById('choice-a');
+    const choiceB = document.getElementById('choice-b');
+    if (choiceA) {
+      choiceA.style.pointerEvents = enabled ? 'auto' : 'none';
+      choiceA.style.opacity = enabled ? '1' : '0.6';
+    }
+    if (choiceB) {
+      choiceB.style.pointerEvents = enabled ? 'auto' : 'none';
+      choiceB.style.opacity = enabled ? '1' : '0.6';
+    }
+  }
+
   generateJunctions() {
-    const pool = [
-      {prompt:'Help child cross or save luggage?',opts:[{text:'Help child',pts:8,hp:0},{text:'Save luggage',pts:4,hp:0}]},
-      {prompt:'Find water or conserve energy?',opts:[{text:'Find water',pts:3,hp:3},{text:'Conserve energy',pts:5,hp:0}]},
-      {prompt:'Use first aid or press on?',opts:[{text:'Use first aid',pts:2,hp:4},{text:'Press on',pts:8,hp:-1}]},
-      {prompt:'Steer on grass or hit barrier?',opts:[{text:'Grass',pts:6,hp:-2},{text:'Barrier',pts:12,hp:-5}]},
-      {prompt:'Warn engineer or do nothing?',opts:[{text:'Warn',pts:10,hp:-1},{text:'Nothing',pts:0,hp:0}]}
-    ];
-    Phaser.Utils.Array.Shuffle(pool);
-    this.junctions = pool.slice(0,3);
+    const zoneId = this.registry.get('zone') || 1;
+    const zoneConfig = ZoneConfig.find(z => z.id === zoneId) || ZoneConfig[0];
+    const pool = ZonePrompts[zoneId] || ZonePrompts[1];
+
+    // Apply difficulty modifier to HP costs
+    const modifiedPool = pool.map(j => {
+      const modified = JSON.parse(JSON.stringify(j)); // Deep clone
+      modified.opts = modified.opts.map(opt => {
+        // Scale HP loss by difficulty (don't scale gains)
+        if (opt.hp < 0) {
+          opt.hp = Math.floor(opt.hp * zoneConfig.difficultyMod);
+        }
+        return opt;
+      });
+      return modified;
+    });
+
+    Phaser.Utils.Array.Shuffle(modifiedPool);
+    // Number of choices based on zone
+    this.junctions = modifiedPool.slice(0, zoneConfig.choicesPerLevel);
   }
   showJunction() {
     if (this.registry.get('health') <= 0) return this.scene.start('GameOverScene');
     if (this.junctionIndex >= this.junctions.length) return this.onLevelComplete();
     const j = this.junctions[this.junctionIndex];
-    this.promptText.setText(j.prompt);
-    j.opts.forEach((opt,i)=>{
-      const pts = (opt.pts>=0?'+':'')+opt.pts+' pts';
-      const hp = (opt.hp>=0?'+':'')+opt.hp+' HP';
-      this.optionTexts[i].setText(`${opt.text}
-(${pts}, ${hp})`).setVisible(true).setInteractive({useHandCursor:true});
+
+    // Update DOM-based question frame
+    const questionText = document.getElementById('question-text');
+    if (questionText) questionText.textContent = j.prompt;
+
+    // Update DOM-based choice frames
+    j.opts.forEach((opt, i) => {
+      const pts = (opt.pts >= 0 ? '+' : '') + opt.pts + ' pts';
+      const hp = (opt.hp >= 0 ? '+' : '') + opt.hp + ' HP';
+      const choiceText = document.getElementById(i === 0 ? 'choice-a-text' : 'choice-b-text');
+      if (choiceText) {
+        choiceText.innerHTML = `${opt.text}<br><span style="font-size:14px;color:#FFD700;">(${pts}, ${hp})</span>`;
+      }
     });
+
+    // Show the frames and enable interaction
+    this.showQuestionFrames(true);
+    this.enableChoiceFrames(true);
+
+    // Also keep Phaser text as fallback (hidden for now)
+    this.promptText.setText(j.prompt).setVisible(false);
   }
   handleChoice(idx) {
     const j = this.junctions[this.junctionIndex], opt = j.opts[idx];
-    // base apply
-    this.registry.values.points += opt.pts;
+
+    // Apply point multiplier
+    const pointsEarned = Math.floor(opt.pts * this.pointMultiplier);
+    this.registry.values.points += pointsEarned;
     this.registry.values.health += opt.hp;
+
+    // Track damage for perfect level
+    if (opt.hp < 0) {
+      this.damageTaken += Math.abs(opt.hp);
+    }
+
+    // Update user stats
+    const user = getUser();
+    if (user) {
+      user.stats.choicesMade++;
+      saveUser(user);
+    }
     {
       const currentStage = this.registry.get('stage');
       const maxStages = this.junctions.length;
@@ -236,8 +950,8 @@ class LevelScene extends Phaser.Scene {
       this.registry.set('stage', nextStage);
     }
     this.updateUI();
-    // disable options
-    this.optionTexts.forEach(t=>t.disableInteractive());
+    // disable choice frames
+    this.enableChoiceFrames(false);
     // risk-based consequence
     const risk=opt.pts;
     const randH=Phaser.Math.Between(-risk,Math.floor(risk*0.5));
@@ -246,8 +960,8 @@ class LevelScene extends Phaser.Scene {
     this.showConsequencePopup(desc,randH,randP);
   }
   showConsequencePopup(desc, randH, randP) {
-    // Hide options while popup is active
-    this.optionTexts.forEach(t => t.setVisible(false));
+    // Hide question and choice frames while popup is active
+    this.showQuestionFrames(false);
     this.promptText.setVisible(false);
     this.promptText.setAlpha(0);
     const btnNextHide = document.getElementById('btn-next');
@@ -285,9 +999,15 @@ class LevelScene extends Phaser.Scene {
       btnContinue.style.display = 'block';
       btnContinue.style.top = '600px';
       btnContinue.onclick = () => {
-        // Apply effects
-        this.registry.values.points += randP;
+        // Apply effects (with point multiplier)
+        this.registry.values.points += Math.floor(randP * this.pointMultiplier);
         this.registry.values.health += randH;
+
+        // Track consequence damage
+        if (randH < 0) {
+          this.damageTaken += Math.abs(randH);
+        }
+
         this.updateUI();
         // Cleanup and proceed
         if (this.overlay) { this.overlay.destroy(); this.overlay = null; }
@@ -308,10 +1028,81 @@ class LevelScene extends Phaser.Scene {
     this.stageText.setText('Stage: '+this.registry.get('stage'));
   }
   onLevelComplete() {
+    const currentLevel = this.registry.get('level');
+    const zoneId = this.registry.get('zone') || 1;
+    const isPerfect = this.damageTaken === 0;
+    const currentScore = this.registry.get('points');
+
+    // Save user progress
+    const user = getUser();
+    if (user) {
+      // Check if this level was already completed
+      const levelKey = `${zoneId}-${currentLevel}`;
+      const existingHigh = user.progress.highScores[levelKey] || 0;
+
+      if (currentScore > existingHigh) {
+        user.progress.highScores[levelKey] = currentScore;
+      }
+
+      // Record level completion if not already done
+      const alreadyCompleted = user.progress.completedLevels.some(
+        l => l.zone === zoneId && l.level === currentLevel
+      );
+      if (!alreadyCompleted) {
+        user.progress.completedLevels.push({
+          zone: zoneId,
+          level: currentLevel,
+          score: currentScore,
+          perfect: isPerfect
+        });
+      }
+
+      // Update stats
+      if (isPerfect) {
+        user.stats.perfectLevels++;
+      }
+
+      // Award currency
+      const currencyEarned = calculateCurrencyEarned(currentScore, zoneId, isPerfect);
+      user.inventory.currency += currencyEarned;
+
+      // Check zone completion
+      const zoneConfig = ZoneConfig.find(z => z.id === zoneId);
+      const zoneLevelsCompleted = user.progress.completedLevels.filter(l => l.zone === zoneId).length;
+      if (zoneLevelsCompleted >= zoneConfig.levelsRequired) {
+        // Unlock next zone
+        const nextZone = ZoneConfig.find(z => z.id === zoneId + 1);
+        if (nextZone && user.progress.currentZone < nextZone.id) {
+          user.progress.currentZone = nextZone.id;
+          user.stats.zonesCompleted++;
+        }
+      }
+
+      // Check and award achievements
+      const newAchievements = checkAchievements(user);
+      user.achievements = [...user.achievements, ...newAchievements];
+
+      saveUser(user);
+
+      // Show level complete with currency earned
+      this.promptText.setText(`Level Complete!\n+${currencyEarned} Currency${isPerfect ? '\nPERFECT!' : ''}`);
+    } else {
+      this.promptText.setText('Level Complete!');
+    }
+
     this.registry.values.level += 1;
     this.registry.values.stage = 1;
-    this.optionTexts.forEach(t=>t.setVisible(false));
-    this.promptText.setText('Level Complete!');
+
+    // Reset item usage and point multiplier for next level
+    this.registry.set('itemsUsedThisLevel', 0);
+    this.registry.set('pointMultiplier', 1);
+
+    this.showQuestionFrames(false);
+
+    // Hide item bar on level complete
+    const itemBar = document.getElementById('item-bar');
+    if (itemBar) itemBar.style.display = 'none';
+
     const btnNextShow = document.getElementById('btn-next');
     if (btnNextShow) {
       btnNextShow.style.display = 'block';
@@ -325,6 +1116,16 @@ class LevelScene extends Phaser.Scene {
   startNextLevel() {
     const btnNextHide2 = document.getElementById('btn-next');
     if (btnNextHide2) { btnNextHide2.style.display='none'; btnNextHide2.onclick=null; }
+
+    // Reset tracking for new level
+    this.damageTaken = 0;
+    this.startingHealth = this.registry.get('health');
+    this.itemsUsedThisLevel = 0;
+    this.pointMultiplier = this.registry.get('pointMultiplier') || 1;
+
+    // Re-setup item bar for the new level
+    this.setupItemBar();
+
     this.generateJunctions();
     this.junctionIndex=0;
     this.showJunction();
@@ -337,8 +1138,41 @@ class GameOverScene extends Phaser.Scene {
     const score = this.registry.get('points');
     const high = this.registry.get('highScore') || 0;
     if (score > high) this.registry.set('highScore', score);
+
+    // Update user stats
+    const user = getUser();
+    if (user) {
+      user.stats.totalGames++;
+      user.stats.totalDeaths++;
+      user.stats.totalPoints += score;
+
+      // Award partial currency even on death (50% of normal)
+      const zoneId = this.registry.get('zone') || 1;
+      const currencyEarned = Math.floor(calculateCurrencyEarned(score, zoneId, false) * 0.5);
+      user.inventory.currency += currencyEarned;
+
+      // Check survivor achievement
+      if (this.registry.get('health') === 1 && !user.achievements.includes('survivor')) {
+        user.achievements.push('survivor');
+      }
+
+      // Check and award other achievements
+      const newAchievements = checkAchievements(user);
+      user.achievements = [...new Set([...user.achievements, ...newAchievements])];
+
+      saveUser(user);
+
+      this.currencyEarned = currencyEarned;
+    }
+
+    // Reset point multiplier and item tracking
+    this.registry.set('pointMultiplier', 1);
+    this.registry.set('itemsUsedThisLevel', 0);
   }
   create(){
+    // Hide all containers
+    hideAllContainers();
+
     // Hide menu DOM elements that don't belong on this screen
     const domBg = document.getElementById('menu-bg'); if (domBg) domBg.style.display='none';
     const domLogo = document.getElementById('menu-logo'); if (domLogo) domLogo.style.display='none';
@@ -352,6 +1186,14 @@ class GameOverScene extends Phaser.Scene {
     const domMenuBtnX = document.getElementById('btn-menu'); if (domMenuBtnX) { domMenuBtnX.style.display='none'; domMenuBtnX.onclick=null; }
     const btnQuitGOHide = document.getElementById('btn-quit'); if (btnQuitGOHide) { btnQuitGOHide.style.display='none'; btnQuitGOHide.onclick=null; }
     const consBgHideFinal = document.getElementById('consequence-bg'); if (consBgHideFinal) consBgHideFinal.style.display='none';
+
+    // Show currency earned
+    if (this.currencyEarned > 0) {
+      this.add.text(400, 280, `+${this.currencyEarned} Currency`, {
+        font: '20px Arial',
+        fill: '#FFD700'
+      }).setOrigin(0.5).setShadow(2, 2, '#000', 3);
+    }
 
     // Submit Score image button
     const btnSubmit = document.getElementById('btn-submit');
@@ -407,10 +1249,34 @@ class GameOverScene extends Phaser.Scene {
         this.registry.set('points',0);
         this.registry.set('level',1);
         this.registry.set('stage',1);
+        // Keep the same zone for retry
+        this.registry.set('pointMultiplier', 1);
+        this.registry.set('itemsUsedThisLevel', 0);
         const btnSubmitRef = document.getElementById('btn-submit');
         if (btnSubmitRef) { btnSubmitRef.style.display='none'; btnSubmitRef.onclick=null; }
+        const btnWorldMapGo = document.getElementById('btn-worldmap-go');
+        if (btnWorldMapGo) { btnWorldMapGo.style.display='none'; btnWorldMapGo.onclick=null; }
         btnTry.style.display='none'; btnTry.onclick=null;
         this.scene.start('LevelScene');
+      };
+    }
+
+    // World Map button (between Try Again and Menu)
+    const btnWorldMapGo = document.getElementById('btn-worldmap-go');
+    if (btnWorldMapGo) {
+      btnWorldMapGo.style.display = 'block';
+      btnWorldMapGo.style.left = '50%';
+      btnWorldMapGo.style.top = '505px';
+      btnWorldMapGo.style.transform = 'translateX(-50%)';
+      btnWorldMapGo.onclick = () => {
+        const btnSubmitRef = document.getElementById('btn-submit');
+        if (btnSubmitRef) { btnSubmitRef.style.display='none'; btnSubmitRef.onclick=null; }
+        const btnTryRef = document.getElementById('btn-try');
+        if (btnTryRef) { btnTryRef.style.display='none'; btnTryRef.onclick=null; }
+        const domMenuBtn3 = document.getElementById('btn-menu');
+        if (domMenuBtn3) { domMenuBtn3.style.display='none'; domMenuBtn3.onclick=null; }
+        btnWorldMapGo.style.display='none'; btnWorldMapGo.onclick=null;
+        this.scene.start('WorldMapScene');
       };
     }
 
@@ -429,21 +1295,25 @@ class GameOverScene extends Phaser.Scene {
         if (btnSubmitRef) { btnSubmitRef.style.display='none'; btnSubmitRef.onclick=null; }
         const btnTryRef = document.getElementById('btn-try');
         if (btnTryRef) { btnTryRef.style.display='none'; btnTryRef.onclick=null; }
+        const btnWorldMapGoRef = document.getElementById('btn-worldmap-go');
+        if (btnWorldMapGoRef) { btnWorldMapGoRef.style.display='none'; btnWorldMapGoRef.onclick=null; }
         domMenuBtn3.style.display='none'; domMenuBtn3.onclick=null;
         this.scene.start('MainMenuScene');
       };
     }
 
-    // === Equal vertical spacing between buttons (Submit, Try Again, Menu) ===
+    // === Equal vertical spacing between buttons (Submit, Try Again, World Map, Menu) ===
     const layoutEvenGO = () => {
       const s = document.getElementById('btn-submit');
       const t = document.getElementById('btn-try');
+      const w = document.getElementById('btn-worldmap-go');
       const m = document.getElementById('btn-menu');
-      if (!s || !t || !m) return;
+      if (!s || !t || !w || !m) return;
       const sRect = s.getBoundingClientRect();
       const tRect = t.getBoundingClientRect();
+      const wRect = w.getBoundingClientRect();
       const mRect = m.getBoundingClientRect();
-      if (sRect.height === 0 || tRect.height === 0 || mRect.height === 0) {
+      if (sRect.height === 0 || tRect.height === 0 || wRect.height === 0 || mRect.height === 0) {
         setTimeout(layoutEvenGO, 50);
         return;
       }
@@ -451,7 +1321,9 @@ class GameOverScene extends Phaser.Scene {
       const sTop = parseFloat(s.style.top) || 335; // anchor
       t.style.top = (sTop + sRect.height + GAP) + 'px';
       const tTop = parseFloat(t.style.top) || (sTop + sRect.height + GAP);
-      m.style.top = (tTop + tRect.height + GAP) + 'px';
+      w.style.top = (tTop + tRect.height + GAP) + 'px';
+      const wTop = parseFloat(w.style.top) || (tTop + tRect.height + GAP);
+      m.style.top = (wTop + wRect.height + GAP) + 'px';
     };
     // run once DOM paints
     setTimeout(layoutEvenGO, 0);
@@ -462,6 +1334,9 @@ class GameOverScene extends Phaser.Scene {
 class LeaderboardScene extends Phaser.Scene {
   constructor(){ super('LeaderboardScene'); }
   create(){
+    // Hide all containers
+    hideAllContainers();
+
     // Hide menu DOM/logo/buttons and any popup DOM controls
     const domBg = document.getElementById('menu-bg'); if (domBg) domBg.style.display='none';
     const domLogo = document.getElementById('menu-logo'); if (domLogo) domLogo.style.display='none';
@@ -473,6 +1348,7 @@ class LeaderboardScene extends Phaser.Scene {
     const domMenuBtn = document.getElementById('btn-menu'); if (domMenuBtn) { domMenuBtn.style.display='none'; domMenuBtn.onclick=null; }
     const btnSubmitImgLB = document.getElementById('btn-submit'); if (btnSubmitImgLB) { btnSubmitImgLB.style.display='none'; btnSubmitImgLB.onclick=null; }
     const btnTryImgLB = document.getElementById('btn-try'); if (btnTryImgLB) { btnTryImgLB.style.display='none'; btnTryImgLB.onclick=null; }
+    const btnWorldMapGoLB = document.getElementById('btn-worldmap-go'); if (btnWorldMapGoLB) { btnWorldMapGoLB.style.display='none'; btnWorldMapGoLB.onclick=null; }
     const consBgHideLB = document.getElementById('consequence-bg'); if (consBgHideLB) consBgHideLB.style.display='none';
 
     const goTitleHideLB2 = document.getElementById('go-title'); if (goTitleHideLB2) goTitleHideLB2.style.display='none';
@@ -522,8 +1398,558 @@ class LeaderboardScene extends Phaser.Scene {
   }
 }
 
-const config={type:Phaser.AUTO,width:800,height:600,transparent:true,scene:[MainMenuScene,LevelScene,GameOverScene,LeaderboardScene]};
-new Phaser.Game(config);
+// =====================================================
+// WORLD MAP SCENE
+// =====================================================
+class WorldMapScene extends Phaser.Scene {
+  constructor() { super('WorldMapScene'); }
+
+  create() {
+    // Hide all DOM elements
+    hideAllContainers();
+    const domBg = document.getElementById('menu-bg'); if (domBg) domBg.style.display = 'none';
+    const domLogo = document.getElementById('menu-logo'); if (domLogo) domLogo.style.display = 'none';
+    const levelBg = document.getElementById('level-bg'); if (levelBg) levelBg.style.display = 'none';
+    const leaderboardBg = document.getElementById('leaderboard-bg'); if (leaderboardBg) leaderboardBg.style.display = 'none';
+    const gameOverBg = document.getElementById('gameover-bg'); if (gameOverBg) gameOverBg.style.display = 'none';
+    const consBg = document.getElementById('consequence-bg'); if (consBg) consBg.style.display = 'none';
+    const goTitle = document.getElementById('go-title'); if (goTitle) goTitle.style.display = 'none';
+
+    // Hide all buttons
+    const buttons = ['btn-worldmap', 'btn-leaderboard', 'btn-shop', 'btn-profile', 'btn-logout', 'btn-continue', 'btn-next', 'btn-menu', 'btn-submit', 'btn-try', 'btn-worldmap-go', 'btn-quit'];
+    buttons.forEach(id => {
+      const btn = document.getElementById(id);
+      if (btn) { btn.style.display = 'none'; btn.onclick = null; }
+    });
+
+    // Show world map background and container
+    const worldmapBg = document.getElementById('worldmap-bg');
+    if (worldmapBg) worldmapBg.style.display = 'block';
+    const worldmapContainer = document.getElementById('worldmap-container');
+    if (worldmapContainer) worldmapContainer.style.display = 'block';
+
+    // Get user data
+    const user = getUser();
+    const unlockedZone = user ? user.progress.currentZone : 1;
+
+    // Store selected zone for start button
+    this.selectedZone = null;
+
+    // Setup zone markers with click handlers
+    const zoneMarkers = document.querySelectorAll('.zone-marker');
+    zoneMarkers.forEach(marker => {
+      const zoneId = parseInt(marker.getAttribute('data-zone'));
+      const zone = ZoneConfig.find(z => z.id === zoneId);
+      if (!zone) return;
+
+      // Check zone unlock status
+      const prevZone = ZoneConfig.find(z => z.id === zone.id - 1);
+      let isUnlocked = zone.id === 1;
+      if (prevZone && user) {
+        const prevZoneCompleted = user.progress.completedLevels.filter(l => l.zone === prevZone.id).length;
+        isUnlocked = prevZoneCompleted >= prevZone.unlockRequirement || zone.id <= unlockedZone;
+      }
+
+      // Update marker appearance based on lock status
+      const icon = marker.querySelector('span');
+      if (!isUnlocked) {
+        marker.style.opacity = '0.5';
+        marker.style.cursor = 'not-allowed';
+        if (icon) icon.textContent = '🔒';
+      }
+
+      // Hover effects
+      marker.onmouseover = () => {
+        marker.style.transform = 'scale(1.1)';
+        marker.style.borderColor = '#FFD700';
+      };
+      marker.onmouseout = () => {
+        marker.style.transform = 'scale(1)';
+        marker.style.borderColor = this.selectedZone === zoneId ? '#FFD700' : '#B8860B';
+      };
+
+      // Click to show zone details
+      marker.onclick = () => {
+        this.showZoneDetails(zone, user, isUnlocked);
+        // Highlight selected marker
+        zoneMarkers.forEach(m => m.style.borderColor = '#B8860B');
+        marker.style.borderColor = '#FFD700';
+        this.selectedZone = zoneId;
+      };
+    });
+
+    // Setup start button in detail panel
+    const startBtn = document.getElementById('btn-zone-start');
+    if (startBtn) {
+      startBtn.onclick = () => {
+        if (this.selectedZone) {
+          worldmapContainer.style.display = 'none';
+          this.registry.set('zone', this.selectedZone);
+          this.registry.set('health', 10);
+          this.registry.set('points', 0);
+          this.registry.set('level', 1);
+          this.registry.set('stage', 1);
+          this.registry.set('pointMultiplier', 1);
+          this.registry.set('itemsUsedThisLevel', 0);
+          this.scene.start('LevelScene');
+        }
+      };
+    }
+
+    // Setup back button
+    const backBtn = document.getElementById('btn-worldmap-back');
+    if (backBtn) {
+      backBtn.onclick = () => {
+        worldmapContainer.style.display = 'none';
+        const detailPanel = document.getElementById('zone-detail-panel');
+        if (detailPanel) detailPanel.style.display = 'none';
+        this.scene.start('MainMenuScene');
+      };
+    }
+
+    // Auto-select first unlocked zone
+    const firstMarker = document.querySelector('.zone-marker[data-zone="1"]');
+    if (firstMarker) firstMarker.click();
+  }
+
+  showZoneDetails(zone, user, isUnlocked) {
+    const panel = document.getElementById('zone-detail-panel');
+    if (!panel) return;
+
+    // Get completion stats
+    let levelsCompleted = 0;
+    if (user) {
+      levelsCompleted = user.progress.completedLevels.filter(l => l.zone === zone.id).length;
+    }
+
+    // Update panel content
+    document.getElementById('zone-detail-name').textContent = zone.name;
+    document.getElementById('zone-detail-desc').textContent = zone.description;
+
+    // Difficulty stars
+    const diffStars = '⭐'.repeat(Math.ceil(zone.difficultyMod));
+    document.getElementById('zone-detail-difficulty').textContent = diffStars + ` (${zone.difficultyMod}x)`;
+
+    document.getElementById('zone-detail-choices').textContent = `${zone.choicesPerLevel} choices per level`;
+
+    // Progress bar
+    const progressPercent = (levelsCompleted / zone.levelsRequired) * 100;
+    document.getElementById('zone-detail-progress-bar').style.width = `${Math.min(progressPercent, 100)}%`;
+    document.getElementById('zone-detail-progress-text').textContent = `${levelsCompleted}/${zone.levelsRequired} Levels Completed`;
+
+    // Lock status
+    const lockedDiv = document.getElementById('zone-detail-locked');
+    const startBtn = document.getElementById('btn-zone-start');
+    if (isUnlocked) {
+      lockedDiv.style.display = 'none';
+      startBtn.style.display = 'block';
+      startBtn.style.opacity = '1';
+      startBtn.style.cursor = 'pointer';
+    } else {
+      lockedDiv.style.display = 'block';
+      startBtn.style.display = 'block';
+      startBtn.style.opacity = '0.4';
+      startBtn.style.cursor = 'not-allowed';
+    }
+
+    // Show panel
+    panel.style.display = 'block';
+  }
+}
+
+// =====================================================
+// SHOP SCENE
+// =====================================================
+class ShopScene extends Phaser.Scene {
+  constructor() { super('ShopScene'); }
+
+  create() {
+    // Hide all DOM elements
+    hideAllContainers();
+    const domBg = document.getElementById('menu-bg'); if (domBg) domBg.style.display = 'none';
+    const domLogo = document.getElementById('menu-logo'); if (domLogo) domLogo.style.display = 'none';
+    const levelBg = document.getElementById('level-bg'); if (levelBg) levelBg.style.display = 'none';
+    const leaderboardBg = document.getElementById('leaderboard-bg'); if (leaderboardBg) leaderboardBg.style.display = 'none';
+    const gameOverBg = document.getElementById('gameover-bg'); if (gameOverBg) gameOverBg.style.display = 'none';
+
+    // Hide all buttons
+    const buttons = ['btn-worldmap', 'btn-leaderboard', 'btn-shop', 'btn-profile', 'btn-logout', 'btn-continue', 'btn-next', 'btn-menu', 'btn-submit', 'btn-try', 'btn-worldmap-go', 'btn-quit'];
+    buttons.forEach(id => {
+      const btn = document.getElementById(id);
+      if (btn) { btn.style.display = 'none'; btn.onclick = null; }
+    });
+
+    // Show shop background and container
+    const shopBg = document.getElementById('shop-bg');
+    if (shopBg) shopBg.style.display = 'block';
+    const shopContainer = document.getElementById('shop-container');
+    if (shopContainer) shopContainer.style.display = 'block';
+
+    this.currentTab = 'cosmetics';
+    this.renderShop();
+
+    // Setup tabs
+    const tabCosmetics = document.getElementById('tab-cosmetics');
+    const tabConsumables = document.getElementById('tab-consumables');
+
+    if (tabCosmetics) {
+      tabCosmetics.onclick = () => {
+        this.currentTab = 'cosmetics';
+        tabCosmetics.style.background = '#ffd700';
+        tabCosmetics.style.color = '#000';
+        tabConsumables.style.background = '#555';
+        tabConsumables.style.color = '#fff';
+        this.renderShop();
+      };
+    }
+
+    if (tabConsumables) {
+      tabConsumables.onclick = () => {
+        this.currentTab = 'consumables';
+        tabConsumables.style.background = '#ffd700';
+        tabConsumables.style.color = '#000';
+        tabCosmetics.style.background = '#555';
+        tabCosmetics.style.color = '#fff';
+        this.renderShop();
+      };
+    }
+
+    // Setup back button
+    const backBtn = document.getElementById('btn-shop-back');
+    if (backBtn) {
+      backBtn.onclick = () => {
+        shopContainer.style.display = 'none';
+        this.scene.start('MainMenuScene');
+      };
+    }
+  }
+
+  renderShop() {
+    const user = getUser();
+    if (!user) return;
+
+    // Update currency display with icon
+    const currencyEl = document.getElementById('shop-currency');
+    if (currencyEl) {
+      currencyEl.innerHTML = `<img src="assets/icons/icon_currency.png" alt="Currency" title="Currency" style="width:28px;height:28px;vertical-align:middle;margin-right:8px;"/>${user.inventory.currency}`;
+    }
+
+    // Get items container
+    const itemsContainer = document.getElementById('shop-items');
+    if (!itemsContainer) return;
+
+    itemsContainer.innerHTML = '';
+
+    if (this.currentTab === 'cosmetics') {
+      ShopItems.cosmetics.forEach(item => {
+        const isOwned = user.inventory.cosmetics.includes(item.id);
+        const isEquipped = user.equipped.trolleyAppearance === item.id;
+        const canAfford = user.inventory.currency >= item.price;
+
+        const itemCard = document.createElement('div');
+        itemCard.style.cssText = `
+          display: inline-block;
+          width: 150px;
+          margin: 10px;
+          padding: 15px;
+          background: rgba(255,255,255,0.1);
+          border-radius: 10px;
+          text-align: center;
+          vertical-align: top;
+        `;
+
+        // Color preview
+        const preview = document.createElement('div');
+        preview.style.cssText = `
+          width: 60px;
+          height: 40px;
+          margin: 0 auto 10px;
+          background: ${item.color};
+          border-radius: 5px;
+          border: 2px solid ${isEquipped ? '#ffd700' : 'transparent'};
+        `;
+
+        // Name
+        const name = document.createElement('div');
+        name.style.cssText = 'color: #fff; font-family: Arial; font-size: 14px; margin-bottom: 5px;';
+        name.textContent = item.name;
+
+        // Price/Status
+        const status = document.createElement('div');
+        status.style.cssText = 'color: #ffd700; font-family: Arial; font-size: 12px; margin-bottom: 10px;';
+        if (isOwned) {
+          status.textContent = isEquipped ? 'EQUIPPED' : 'OWNED';
+          status.style.color = isEquipped ? '#4CAF50' : '#888';
+        } else {
+          status.textContent = `💰 ${item.price}`;
+        }
+
+        // Button
+        const btn = document.createElement('button');
+        btn.style.cssText = `
+          padding: 8px 16px;
+          border: none;
+          border-radius: 5px;
+          cursor: pointer;
+          font-family: Arial;
+          font-size: 12px;
+        `;
+
+        if (isOwned) {
+          if (isEquipped) {
+            btn.textContent = 'Equipped';
+            btn.style.background = '#666';
+            btn.style.color = '#aaa';
+            btn.style.cursor = 'default';
+          } else {
+            btn.textContent = 'Equip';
+            btn.style.background = '#4CAF50';
+            btn.style.color = '#fff';
+            btn.onclick = () => {
+              user.equipped.trolleyAppearance = item.id;
+              saveUser(user);
+              this.renderShop();
+            };
+          }
+        } else {
+          btn.textContent = 'Buy';
+          btn.style.background = canAfford ? '#ffd700' : '#666';
+          btn.style.color = canAfford ? '#000' : '#aaa';
+          btn.style.cursor = canAfford ? 'pointer' : 'not-allowed';
+          if (canAfford) {
+            btn.onclick = () => {
+              user.inventory.currency -= item.price;
+              user.inventory.cosmetics.push(item.id);
+              // Check collector achievement
+              const newAchievements = checkAchievements(user);
+              user.achievements = [...new Set([...user.achievements, ...newAchievements])];
+              saveUser(user);
+              this.renderShop();
+            };
+          }
+        }
+
+        itemCard.appendChild(preview);
+        itemCard.appendChild(name);
+        itemCard.appendChild(status);
+        itemCard.appendChild(btn);
+
+        itemsContainer.appendChild(itemCard);
+      });
+    } else {
+      // Consumables tab
+      ShopItems.consumables.forEach(item => {
+        const owned = user.inventory.consumables[item.id] || 0;
+        const canAfford = user.inventory.currency >= item.price;
+
+        const itemCard = document.createElement('div');
+        itemCard.style.cssText = `
+          display: inline-block;
+          width: 180px;
+          margin: 10px;
+          padding: 15px;
+          background: rgba(255,255,255,0.1);
+          border-radius: 10px;
+          text-align: center;
+          vertical-align: top;
+        `;
+
+        // Icon
+        const icon = document.createElement('div');
+        icon.style.cssText = 'font-size: 36px; margin-bottom: 10px;';
+        icon.textContent = item.id === 'hp_small' ? '💚' : item.id === 'hp_large' ? '💙' : '⭐';
+
+        // Name
+        const name = document.createElement('div');
+        name.style.cssText = 'color: #fff; font-family: Arial; font-size: 14px; margin-bottom: 5px;';
+        name.textContent = item.name;
+
+        // Effect
+        const effect = document.createElement('div');
+        effect.style.cssText = 'color: #4CAF50; font-family: Arial; font-size: 12px; margin-bottom: 5px;';
+        effect.textContent = item.effect;
+
+        // Owned count
+        const ownedText = document.createElement('div');
+        ownedText.style.cssText = 'color: #888; font-family: Arial; font-size: 11px; margin-bottom: 10px;';
+        ownedText.textContent = `Owned: ${owned}`;
+
+        // Price
+        const price = document.createElement('div');
+        price.style.cssText = 'color: #ffd700; font-family: Arial; font-size: 12px; margin-bottom: 10px;';
+        price.textContent = `💰 ${item.price}`;
+
+        // Buy button
+        const btn = document.createElement('button');
+        btn.style.cssText = `
+          padding: 8px 16px;
+          border: none;
+          border-radius: 5px;
+          cursor: ${canAfford ? 'pointer' : 'not-allowed'};
+          font-family: Arial;
+          font-size: 12px;
+          background: ${canAfford ? '#ffd700' : '#666'};
+          color: ${canAfford ? '#000' : '#aaa'};
+        `;
+        btn.textContent = 'Buy';
+        if (canAfford) {
+          btn.onclick = () => {
+            user.inventory.currency -= item.price;
+            user.inventory.consumables[item.id] = (user.inventory.consumables[item.id] || 0) + 1;
+            saveUser(user);
+            this.renderShop();
+          };
+        }
+
+        itemCard.appendChild(icon);
+        itemCard.appendChild(name);
+        itemCard.appendChild(effect);
+        itemCard.appendChild(ownedText);
+        itemCard.appendChild(price);
+        itemCard.appendChild(btn);
+
+        itemsContainer.appendChild(itemCard);
+      });
+    }
+  }
+}
+
+// =====================================================
+// PROFILE SCENE
+// =====================================================
+class ProfileScene extends Phaser.Scene {
+  constructor() { super('ProfileScene'); }
+
+  create() {
+    // Hide all DOM elements
+    hideAllContainers();
+    const domBg = document.getElementById('menu-bg'); if (domBg) domBg.style.display = 'none';
+    const domLogo = document.getElementById('menu-logo'); if (domLogo) domLogo.style.display = 'none';
+    const levelBg = document.getElementById('level-bg'); if (levelBg) levelBg.style.display = 'none';
+    const leaderboardBg = document.getElementById('leaderboard-bg'); if (leaderboardBg) leaderboardBg.style.display = 'none';
+    const gameOverBg = document.getElementById('gameover-bg'); if (gameOverBg) gameOverBg.style.display = 'none';
+
+    // Hide all buttons
+    const buttons = ['btn-worldmap', 'btn-leaderboard', 'btn-shop', 'btn-profile', 'btn-logout', 'btn-continue', 'btn-next', 'btn-menu', 'btn-submit', 'btn-try', 'btn-worldmap-go', 'btn-quit'];
+    buttons.forEach(id => {
+      const btn = document.getElementById(id);
+      if (btn) { btn.style.display = 'none'; btn.onclick = null; }
+    });
+
+    // Show profile background and container
+    const profileBg = document.getElementById('profile-bg');
+    if (profileBg) profileBg.style.display = 'block';
+    const profileContainer = document.getElementById('profile-container');
+    if (profileContainer) profileContainer.style.display = 'block';
+
+    const user = getUser();
+    if (!user) {
+      this.scene.start('LoginScene');
+      return;
+    }
+
+    // Render profile content
+    const profileContent = document.getElementById('profile-content');
+    if (profileContent) {
+      profileContent.innerHTML = `
+        <div style="text-align: center; margin-bottom: 20px;">
+          <div style="font-size: 64px;">${user.isGuest ? '👤' : '🎮'}</div>
+          <h2 style="color: #fff; font-family: Arial; margin: 10px 0;">${user.username}</h2>
+          <p style="color: rgba(255,255,255,0.7); font-family: Arial; font-size: 12px;">
+            ${user.isGuest ? 'Guest Account' : 'Registered Player'} |
+            Joined: ${new Date(user.createdAt).toLocaleDateString()}
+          </p>
+        </div>
+        <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 15px; text-align: center;">
+          <div style="background: rgba(0,0,0,0.2); padding: 15px; border-radius: 8px;">
+            <div style="color: #ffd700; font-size: 24px; font-family: Arial;">${user.inventory.currency}</div>
+            <div style="color: #fff; font-size: 12px; font-family: Arial;">Currency</div>
+          </div>
+          <div style="background: rgba(0,0,0,0.2); padding: 15px; border-radius: 8px;">
+            <div style="color: #4CAF50; font-size: 24px; font-family: Arial;">${user.stats.totalGames}</div>
+            <div style="color: #fff; font-size: 12px; font-family: Arial;">Games Played</div>
+          </div>
+          <div style="background: rgba(0,0,0,0.2); padding: 15px; border-radius: 8px;">
+            <div style="color: #2196F3; font-size: 24px; font-family: Arial;">${user.stats.totalPoints}</div>
+            <div style="color: #fff; font-size: 12px; font-family: Arial;">Total Points</div>
+          </div>
+          <div style="background: rgba(0,0,0,0.2); padding: 15px; border-radius: 8px;">
+            <div style="color: #FF9800; font-size: 24px; font-family: Arial;">${user.stats.choicesMade}</div>
+            <div style="color: #fff; font-size: 12px; font-family: Arial;">Choices Made</div>
+          </div>
+          <div style="background: rgba(0,0,0,0.2); padding: 15px; border-radius: 8px;">
+            <div style="color: #E91E63; font-size: 24px; font-family: Arial;">${user.stats.perfectLevels}</div>
+            <div style="color: #fff; font-size: 12px; font-family: Arial;">Perfect Levels</div>
+          </div>
+          <div style="background: rgba(0,0,0,0.2); padding: 15px; border-radius: 8px;">
+            <div style="color: #9C27B0; font-size: 24px; font-family: Arial;">${user.progress.completedLevels.length}</div>
+            <div style="color: #fff; font-size: 12px; font-family: Arial;">Levels Completed</div>
+          </div>
+        </div>
+      `;
+    }
+
+    // Render achievements
+    const achievementsContent = document.getElementById('achievements-content');
+    if (achievementsContent) {
+      let achievementsHTML = '<h3 style="color: #fff; font-family: Arial; margin-bottom: 15px; text-align: center;">Achievements</h3>';
+      achievementsHTML += '<div style="display: flex; flex-wrap: wrap; justify-content: center; gap: 10px;">';
+
+      AchievementDefs.forEach(achievement => {
+        const earned = user.achievements.includes(achievement.id);
+        achievementsHTML += `
+          <div style="
+            width: 80px;
+            padding: 10px;
+            background: ${earned ? 'rgba(76, 175, 80, 0.3)' : 'rgba(0,0,0,0.3)'};
+            border-radius: 8px;
+            text-align: center;
+            opacity: ${earned ? '1' : '0.5'};
+          ">
+            <div style="font-size: 24px;">${earned ? achievement.icon : '🔒'}</div>
+            <div style="color: #fff; font-size: 10px; font-family: Arial; margin-top: 5px;">${achievement.name}</div>
+          </div>
+        `;
+      });
+
+      achievementsHTML += '</div>';
+      achievementsContent.innerHTML = achievementsHTML;
+    }
+
+    // Setup back button
+    const backBtn = document.getElementById('btn-profile-back');
+    if (backBtn) {
+      backBtn.onclick = () => {
+        profileContainer.style.display = 'none';
+        this.scene.start('MainMenuScene');
+      };
+    }
+  }
+}
+
+// =====================================================
+// GAME INITIALIZATION
+// =====================================================
+// Check if user exists to determine starting scene
+const existingUser = getUser();
+
+// Build scene array with correct starting scene first
+const allScenes = [LoginScene, MainMenuScene, LevelScene, GameOverScene, LeaderboardScene, WorldMapScene, ShopScene, ProfileScene];
+
+// If user exists, start with MainMenuScene; otherwise start with LoginScene
+const orderedScenes = existingUser
+  ? [MainMenuScene, LoginScene, LevelScene, GameOverScene, LeaderboardScene, WorldMapScene, ShopScene, ProfileScene]
+  : allScenes;
+
+const config = {
+  type: Phaser.AUTO,
+  width: 800,
+  height: 600,
+  transparent: true,
+  scene: orderedScenes
+};
+
+const game = new Phaser.Game(config);
 </script>
 </body>
 </html>

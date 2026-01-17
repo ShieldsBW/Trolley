@@ -1,0 +1,17 @@
+1) the transparent backgrounds for the profile and shop could darker, it is currently hard to read the layout. Ideally these will be replaced with generated imagery. 
+
+2) i'd like to see the 'shop' label have a bit more space under it before the tabs for the cosmetics and consumables. I'd like to have these tabs attached to the frame under it as well ideally. 
+
+3) on the Profile page, the achievments panel should be moved down so it does not overlap the general user information in the first frame. 
+
+4) I'd like to make the 'welcome, <username>!" text and the shop, profile and logout buttons more appealing and in line with the design of the other buttons and text on the main page. I'd like the shop and profile buttons to be about the same size and on the same line as 'leaderboard', but for them to be about 60% the current size of the 'start game' button, which I would like to move so it is below that line, with an even amount of space above and below it before the quit button, which should remain at the very bottom where it is currently. Let's have the Welcome, <username!> text be a little bigger (about twice the current size) and have it sit to the right of the Trolley Problem title text. 
+
+5) the currency icon in the top left of the main page and top right of the shop is nice but a little hard to understand, id like to had a hover-over tooltip that says what it is. 
+
+6) the world map page is a good start but I'd really like to get it feeling more like an actual map, with smaller icons for the zones, that show the more detailed information when you click on them. They should pop up on the right side of the screen, and the user should be able to switch to other zones, replacing the preview of information each time. These preview screens should have a confirmation button at the bottom of the panel that allows the user to actually start the round. Let's move the 'Start Game' button art here, and replace the Start Game button artwork on the main menu with one that says 'World Map' in a similar style. 
+
+7) in the actual round, i'd like to make the question text more appealing, Id like for it to have a generated frame artwork and really be attention grabbing. Id also like to make the choice text and frames more appealing and also have generated artwork for those frames. I'd like to have a little bit of space around the text within the frames as well so they don't feel so compact. 
+
+8) On the Game Over screen, I'd like to add another button like Try Again that goes back to the World Map instead of directly into the last stage that was being played. It should look like the Try Again button but just say 'World Map' instead, and go between Try Again and Menu vertically. 
+
+9) Let's have the Logout button sit at the bottom of the main menu similar to the Quit button, and generate artwork for it to match the style. Let's have the color behind the text be grey for this one. 

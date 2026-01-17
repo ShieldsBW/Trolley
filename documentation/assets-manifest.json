@@ -1,0 +1,286 @@
+{
+  "version": "1.0",
+  "lastUpdated": "2026-01-16",
+  "styleGuide": "./STYLE_GUIDE.md",
+
+  "existingAssets": {
+    "backgrounds": [
+      { "id": "menu_bg", "file": "menu_bg.png", "status": "complete" },
+      { "id": "level_01_background", "file": "level_01_background.png", "status": "complete" },
+      { "id": "gameOver_bg", "file": "gameOver_bg.png", "status": "complete" },
+      { "id": "leaderboard_bg", "file": "leaderboard_bg.png", "status": "complete" },
+      { "id": "consequence_bg", "file": "consequence_bg.png", "status": "complete" }
+    ],
+    "buttons": [
+      { "id": "button_startGame", "file": "button_startGame.png", "status": "complete" },
+      { "id": "button_leaderboard", "file": "button_leaderboard.png", "status": "complete" },
+      { "id": "button_menu", "file": "button_menu.png", "status": "complete" },
+      { "id": "button_continue", "file": "button_continue.png", "status": "complete" },
+      { "id": "button_nextLevel", "file": "button_nextLevel.png", "status": "complete" },
+      { "id": "button_quit", "file": "button_quit.png", "status": "complete" },
+      { "id": "button_submitScore", "file": "button_submitScore.png", "status": "complete" },
+      { "id": "button_tryAgain", "file": "button_tryAgain.png", "status": "complete" }
+    ],
+    "text": [
+      { "id": "textLogo", "file": "textLogo.png", "status": "complete" },
+      { "id": "text_gameOver", "file": "text_gameOver.png", "status": "complete" }
+    ]
+  },
+
+  "requiredAssets": {
+    "backgrounds": [
+      {
+        "id": "login_bg",
+        "file": "login_bg.png",
+        "priority": "high",
+        "size": "1920x1080",
+        "type": "dramatic",
+        "description": "Misty Victorian railway station at dusk, single green trolley waiting at platform",
+        "prompt": "A misty Victorian railway station at dusk, single weathered green trolley waiting at platform, gas lamps glowing warmly with orange light, iron and brass fixtures, cobblestone platform, digital painting in Studio Ghibli style, warm color palette with brass and earth tones, vintage railway aesthetic 1920s-1940s era, soft painterly brushwork, atmospheric fog rolling in, mysterious but inviting mood, game background asset, 16:9 aspect ratio, no text"
+      },
+      {
+        "id": "worldmap_bg",
+        "file": "worldmap_bg.png",
+        "priority": "high",
+        "size": "1920x1080",
+        "type": "overview",
+        "description": "Aerial view of branching railway network across varied terrain",
+        "prompt": "Aerial bird's eye view of a vintage railway network spreading across varied countryside, branching tracks connecting small villages industrial factories and a distant city, patchwork fields in greens and browns, soft clouds casting shadows, golden hour lighting from the side, digital painting in Studio Ghibli style, warm color palette with earth tones, vintage illustrated map aesthetic, sense of journey and choices, game background asset, 16:9 aspect ratio, no text or labels"
+      },
+      {
+        "id": "shop_bg",
+        "file": "shop_bg.png",
+        "priority": "high",
+        "size": "1920x1080",
+        "type": "interior",
+        "description": "Victorian railway station gift shop interior with brass fixtures",
+        "prompt": "Interior of a cozy Victorian railway station shop, wooden display shelves with brass fixtures, warm gas lamp lighting casting golden glow, vintage travel posters on dark wood-paneled walls, glass display cases with brass frames, worn wooden floorboards, potted plants, dust motes in light beams, digital painting in Studio Ghibli style, warm browns brass and amber tones, inviting nostalgic atmosphere, game background asset, 16:9 aspect ratio, no text"
+      },
+      {
+        "id": "profile_bg",
+        "file": "profile_bg.png",
+        "priority": "high",
+        "size": "1920x1080",
+        "type": "interior",
+        "description": "Conductor's cabin interior with gauges and controls",
+        "prompt": "Interior of a vintage trolley conductor's cabin, brass pressure gauges and levers, wooden control panel with copper fittings, small window showing blurred passing scenery, warm amber lighting from a small lamp, leather conductor's seat visible, maps and schedules pinned to wall, digital painting in Studio Ghibli style, warm brass brown and green tones, intimate personal space feeling, game background asset, 16:9 aspect ratio, no text"
+      },
+      {
+        "id": "level_02_background",
+        "file": "level_02_background.png",
+        "priority": "medium",
+        "size": "1920x1080",
+        "type": "gameplay",
+        "description": "Industrial district with factories and steam",
+        "prompt": "Railway tracks forking through an industrial district, Victorian factories with tall brick chimneys billowing white steam, iron bridges and gantries overhead, late afternoon lighting with sun breaking through steam clouds, puddles reflecting orange sky, weathered but active industrial setting, digital painting in Studio Ghibli style, muted earth tones with warm industrial oranges, sense of progress and consequence, game background asset, 16:9 aspect ratio, no text"
+      },
+      {
+        "id": "level_03_background",
+        "file": "level_03_background.png",
+        "priority": "medium",
+        "size": "1920x1080",
+        "type": "gameplay",
+        "description": "City center with buildings and busy environment",
+        "prompt": "Railway tracks branching through a bustling 1920s city center, art deco buildings rising on both sides, vintage cars and pedestrians near crossings, trolley wires overhead, dramatic perspective down the tracks, sunset golden hour lighting reflecting off windows, urban energy with vintage charm, digital painting in Studio Ghibli style, warm amber and brass tones with city grays, game background asset, 16:9 aspect ratio, no text or modern elements"
+      }
+    ],
+    "buttons": [
+      {
+        "id": "button_shop",
+        "file": "button_shop.png",
+        "priority": "high",
+        "type": "secondary",
+        "text": "SHOP",
+        "prompt": "Vintage railway sign button reading SHOP, brass metal frame with decorative corner rivets, warm brown wooden inset panel, cream colored serif text with subtle emboss, isolated on transparent background, game UI asset, Victorian industrial steampunk style, matching existing button style"
+      },
+      {
+        "id": "button_profile",
+        "file": "button_profile.png",
+        "priority": "high",
+        "type": "secondary",
+        "text": "PROFILE",
+        "prompt": "Vintage railway sign button reading PROFILE, brass metal frame with decorative corner rivets, warm brown wooden inset panel, cream colored serif text with subtle emboss, isolated on transparent background, game UI asset, Victorian industrial steampunk style, matching existing button style"
+      },
+      {
+        "id": "button_back",
+        "file": "button_back.png",
+        "priority": "high",
+        "type": "secondary",
+        "text": "BACK",
+        "prompt": "Vintage railway sign button reading BACK with left arrow, brass metal frame with rounded corners, warm brown inset panel, cream colored serif text, isolated on transparent background, game UI asset, Victorian industrial style, compact size"
+      },
+      {
+        "id": "button_buy",
+        "file": "button_buy.png",
+        "priority": "high",
+        "type": "primary",
+        "text": "BUY",
+        "prompt": "Vintage railway sign button reading BUY, brass metal frame with corner rivets, forest green inset panel, gold/cream colored serif text with subtle glow, isolated on transparent background, game UI asset, Victorian industrial steampunk style, indicates positive purchase action"
+      },
+      {
+        "id": "button_equip",
+        "file": "button_equip.png",
+        "priority": "high",
+        "type": "primary",
+        "text": "EQUIP",
+        "prompt": "Vintage railway sign button reading EQUIP, brass metal frame with corner rivets, forest green inset panel, cream colored serif text, isolated on transparent background, game UI asset, Victorian industrial steampunk style"
+      },
+      {
+        "id": "button_worldMap",
+        "file": "button_worldMap.png",
+        "priority": "medium",
+        "type": "primary",
+        "text": "WORLD MAP",
+        "prompt": "Vintage railway sign button reading WORLD MAP, brass metal frame with decorative corner rivets, forest green inset panel, cream colored serif text with subtle emboss, isolated on transparent background, game UI asset, Victorian industrial steampunk style"
+      },
+      {
+        "id": "button_login",
+        "file": "button_login.png",
+        "priority": "medium",
+        "type": "primary",
+        "text": "LOGIN",
+        "prompt": "Vintage railway sign button reading LOGIN, brass metal frame with corner rivets, forest green inset panel, cream colored serif text, isolated on transparent background, game UI asset, Victorian industrial steampunk style"
+      },
+      {
+        "id": "button_createAccount",
+        "file": "button_createAccount.png",
+        "priority": "medium",
+        "type": "secondary",
+        "text": "CREATE ACCOUNT",
+        "prompt": "Vintage railway sign button reading CREATE ACCOUNT, brass metal frame with corner rivets, warm brown inset panel, cream colored serif text, wider format, isolated on transparent background, game UI asset, Victorian industrial steampunk style"
+      },
+      {
+        "id": "button_logout",
+        "file": "button_logout.png",
+        "priority": "high",
+        "type": "secondary",
+        "text": "LOGOUT",
+        "prompt": "Vintage railway sign button reading LOGOUT, ornate brass metal frame with decorative corner rivets, silver-gray inset panel background, cream colored serif text with subtle emboss, isolated on transparent background, game UI asset, Victorian industrial steampunk style, matching existing button proportions"
+      }
+    ],
+    "icons": [
+      {
+        "id": "icon_currency",
+        "file": "icon_currency.png",
+        "priority": "high",
+        "size": "64x64",
+        "description": "Gold coin with railway/trolley motif",
+        "prompt": "Single gold coin icon with embossed trolley or railway wheel design, brass metallic sheen, slight 3D depth, vintage Victorian style, isolated on transparent background, game currency icon, 64x64 pixels, clean edges"
+      },
+      {
+        "id": "icon_health",
+        "file": "icon_health.png",
+        "priority": "high",
+        "size": "64x64",
+        "description": "Heart icon with brass frame",
+        "prompt": "Red heart icon with thin brass metal frame outline, vintage style, slight gradient shading, isolated on transparent background, game health indicator icon, 64x64 pixels, clean edges"
+      },
+      {
+        "id": "icon_locked",
+        "file": "icon_locked.png",
+        "priority": "medium",
+        "size": "64x64",
+        "description": "Brass padlock for locked content",
+        "prompt": "Vintage brass padlock icon, ornate Victorian keyhole design, metallic sheen, locked position, isolated on transparent background, game UI icon for locked content, 64x64 pixels"
+      },
+      {
+        "id": "icon_star",
+        "file": "icon_star.png",
+        "priority": "medium",
+        "size": "64x64",
+        "description": "Gold star for achievements/points",
+        "prompt": "Five-pointed gold star icon with brass metallic finish, slight emboss effect, vintage award style, isolated on transparent background, game achievement icon, 64x64 pixels"
+      }
+    ],
+    "frames": [
+      {
+        "id": "frame_zoneCard",
+        "file": "frame_zoneCard.png",
+        "priority": "medium",
+        "size": "300x400",
+        "description": "Card frame for zone selection on world map",
+        "prompt": "Vertical rectangular brass frame for game card, ornate Victorian corners with rivets, dark brown interior panel, decorative top banner area, isolated on transparent background, game UI frame element, vintage railway aesthetic"
+      },
+      {
+        "id": "frame_itemCard",
+        "file": "frame_itemCard.png",
+        "priority": "medium",
+        "size": "200x250",
+        "description": "Card frame for shop items",
+        "prompt": "Small rectangular brass frame for shop item card, simple Victorian design with corner accents, dark interior, isolated on transparent background, game UI element, vintage style"
+      },
+      {
+        "id": "frame_question",
+        "file": "frame_question.png",
+        "priority": "high",
+        "size": "800x200",
+        "description": "Decorative frame for question/prompt text in gameplay",
+        "prompt": "Wide horizontal ornate Victorian brass frame for displaying important text, decorative scrollwork at corners, aged brass patina with gold highlights, dark semi-transparent interior panel, dramatic weight and gravitas, isolated on transparent background, game UI element for moral dilemma questions, vintage railway aesthetic, hand-painted 2D illustration style"
+      },
+      {
+        "id": "frame_choice",
+        "file": "frame_choice.png",
+        "priority": "high",
+        "size": "600x120",
+        "description": "Decorative frame for each choice option",
+        "prompt": "Horizontal rectangular brass frame for selectable choice option, simpler Victorian design than question frame, warm brass metal border with subtle corner accents, dark semi-transparent interior, clickable button feel, isolated on transparent background, game UI element for player choices, vintage railway aesthetic, hand-painted 2D illustration style"
+      }
+    ],
+    "trolleySkins": [
+      {
+        "id": "trolley_preview_gold",
+        "file": "trolley_preview_gold.png",
+        "priority": "low",
+        "size": "200x150",
+        "description": "Golden trolley skin preview",
+        "prompt": "Side view of vintage 1920s trolley car in polished gold color with bronze trim, gleaming metallic finish, single glowing headlight, isolated on transparent background, game cosmetic preview, painterly style"
+      },
+      {
+        "id": "trolley_preview_fire",
+        "file": "trolley_preview_fire.png",
+        "priority": "low",
+        "size": "200x150",
+        "description": "Flame trolley skin preview",
+        "prompt": "Side view of vintage 1920s trolley car in deep red and orange flame colors, fiery gradient paint job, gold trim, subtle flame wisps, isolated on transparent background, game cosmetic preview, painterly style"
+      },
+      {
+        "id": "trolley_preview_ice",
+        "file": "trolley_preview_ice.png",
+        "priority": "low",
+        "size": "200x150",
+        "description": "Frost trolley skin preview",
+        "prompt": "Side view of vintage 1920s trolley car in ice blue and white frost colors, crystalline frost texture, silver trim, cold mist effect, isolated on transparent background, game cosmetic preview, painterly style"
+      }
+    ]
+  },
+
+  "generationSettings": {
+    "defaultModel": "dall-e-3",
+    "defaultQuality": "hd",
+    "defaultStyle": "vivid",
+    "backgroundSize": "1792x1024",
+    "buttonMaxWidth": 400,
+    "iconSize": 256,
+    "retryOnFailure": 3,
+    "reviewThreshold": 7
+  },
+
+  "reviewCriteria": {
+    "styleConsistency": {
+      "weight": 0.3,
+      "description": "How well does this match the painterly, Studio Ghibli-inspired style?"
+    },
+    "colorPalette": {
+      "weight": 0.25,
+      "description": "Does it use the warm brass, earth tones, and cream colors defined?"
+    },
+    "moodMatch": {
+      "weight": 0.25,
+      "description": "Does the atmosphere match the intended scene type?"
+    },
+    "technicalQuality": {
+      "weight": 0.2,
+      "description": "Resolution, clarity, no artifacts, correct aspect ratio?"
+    }
+  }
+}
