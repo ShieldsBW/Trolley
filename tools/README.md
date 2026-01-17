@@ -93,7 +93,93 @@ npm run status
 node asset-pipeline.js status --verbose
 ```
 
+### Remove Background (Post-Processing)
+
+Two methods available:
+
+#### AI Removal (Recommended - Best Quality)
+
+Uses rembg with U2-Net model for intelligent background removal. Handles shadows and complex edges well.
+
+```bash
+# Single file (auto-trims)
+py -3.11 rembg-remove.py assets/buttons/button_shop.png
+
+# With explicit output path
+py -3.11 rembg-remove.py input.png output.png
+
+# Batch process directory
+py -3.11 rembg-remove.py --batch assets/buttons/
+```
+
+Or use the batch file:
+```bash
+rembg-remove.bat assets/buttons/button_shop.png
+```
+
+**Requirements:** Python 3.11+ with rembg installed (`pip install "rembg[cpu]"`)
+
+#### Color-Based Removal (Fast - Simple Backgrounds)
+
+Uses flood-fill from corners. Good for images with solid white/black backgrounds without shadows.
+
+```bash
+# Remove background from a single file
+node remove-background.mjs assets/buttons/button_shop.png
+
+# Process all transparent assets in manifest
+node remove-background.mjs --all
+
+# Process specific category
+node remove-background.mjs --category=buttons
+
+# Force process even if background detection is uncertain
+node remove-background.mjs --force assets/buttons/button_shop.png
+```
+
+Or use the batch file:
+```bash
+remove-bg.bat --all
+```
+
+#### When to Use Which
+
+| Method | Best For | Handles Shadows | Speed |
+|--------|----------|-----------------|-------|
+| AI (rembg) | Complex images, soft edges, drop shadows | Yes | ~2-3s |
+| Color-based | Simple solid backgrounds, batch processing | Limited | ~0.5s |
+
 ## How It Works
+
+### AI Background Removal (rembg)
+
+The `rembg-remove.py` script uses the U2-Net deep learning model:
+
+1. **Loads image** and sends to U2-Net model
+2. **Model predicts** foreground mask using semantic segmentation
+3. **Applies mask** to create transparency
+4. **Trims** transparent pixels from edges
+5. **Saves** result as PNG with alpha channel
+
+The model is trained on diverse images and handles:
+- Soft shadows and gradients
+- Complex edges and fine details
+- Semi-transparent regions
+
+### Color-Based Background Removal
+
+The `remove-background.mjs` script uses flood-fill from corners:
+
+1. **Detects background color** by sampling corners of the image
+2. **Validates** that corners are consistent (same color = solid background)
+3. **Flood-fills** from all corners and edges to find connected background pixels
+4. **Removes** background pixels by setting alpha to 0
+5. **Smooths edges** with basic anti-aliasing
+6. **Trims** to content bounds
+
+**Supported backgrounds:**
+- White backgrounds (tolerance: 45)
+- Black backgrounds (tolerance: 15)
 
 ### Generation
 1. Reads asset definitions from `documentation/assets-manifest.json`
@@ -158,3 +244,13 @@ Edit `documentation/STYLE_GUIDE.md` to:
 **"Review always fails"**
 - Check that reference images exist in assets/
 - Lower the threshold in manifest if needed
+
+**"Could not reliably detect background color"**
+- The image may have content in the corners
+- Use `--force` to process anyway
+- Or manually check the image - it may not need background removal
+
+**"Background removal ate into the content"**
+- The tolerance may be too high for this image
+- Edit CONFIG.whiteTolerance or CONFIG.blackTolerance in remove-background.mjs
+- Or the original generation had similar colors at edges - regenerate with better prompts

@@ -1,6 +1,6 @@
 {
-  "version": "1.0",
-  "lastUpdated": "2026-01-16",
+  "version": "1.2",
+  "lastUpdated": "2026-01-17",
   "styleGuide": "./STYLE_GUIDE.md",
 
   "existingAssets": {
@@ -91,7 +91,9 @@
         "priority": "high",
         "type": "secondary",
         "text": "SHOP",
-        "prompt": "Vintage railway sign button reading SHOP, brass metal frame with decorative corner rivets, warm brown wooden inset panel, cream colored serif text with subtle emboss, isolated on transparent background, game UI asset, Victorian industrial steampunk style, matching existing button style"
+        "backgroundColor": "white",
+        "prompt": "Vintage railway sign button reading SHOP, horizontal rectangle shape, brass metal frame with decorative corner rivets, warm brown wooden inset panel, cream colored serif text clearly readable, isolated on solid white background, simple contained shape with clean solid edges, simple design, appealing design, game UI button, Victorian industrial style, flat 2D artwork",
+        "negativePrompt": "shadow, drop shadow, cast shadow, 3D effects, checkerboard, transparency pattern, gradient background"
       },
       {
         "id": "button_profile",
@@ -99,7 +101,9 @@
         "priority": "high",
         "type": "secondary",
         "text": "PROFILE",
-        "prompt": "Vintage railway sign button reading PROFILE, brass metal frame with decorative corner rivets, warm brown wooden inset panel, cream colored serif text with subtle emboss, isolated on transparent background, game UI asset, Victorian industrial steampunk style, matching existing button style"
+        "backgroundColor": "white",
+        "prompt": "Vintage railway sign button reading PROFILE, horizontal rectangle shape, brass metal frame with decorative corner rivets, warm brown wooden inset panel, cream colored serif text clearly readable, isolated on solid white background, simple contained shape with clean solid edges, simple design, appealing design, game UI button, Victorian industrial style, flat 2D artwork",
+        "negativePrompt": "shadow, drop shadow, cast shadow, 3D effects, checkerboard, transparency pattern, gradient background"
       },
       {
         "id": "button_back",
@@ -107,7 +111,9 @@
         "priority": "high",
         "type": "secondary",
         "text": "BACK",
-        "prompt": "Vintage railway sign button reading BACK with left arrow, brass metal frame with rounded corners, warm brown inset panel, cream colored serif text, isolated on transparent background, game UI asset, Victorian industrial style, compact size"
+        "backgroundColor": "white",
+        "prompt": "Vintage railway sign button reading BACK with small left arrow, horizontal rectangle, brass metal frame with rounded corners, warm brown inset panel, cream colored serif text, isolated on solid white background, compact simple shape with clean edges, simple design, appealing design, game UI button, Victorian industrial style, flat 2D artwork",
+        "negativePrompt": "shadow, drop shadow, cast shadow, 3D effects, checkerboard, transparency pattern, gradient background"
       },
       {
         "id": "button_buy",
@@ -115,7 +121,9 @@
         "priority": "high",
         "type": "primary",
         "text": "BUY",
-        "prompt": "Vintage railway sign button reading BUY, brass metal frame with corner rivets, forest green inset panel, gold/cream colored serif text with subtle glow, isolated on transparent background, game UI asset, Victorian industrial steampunk style, indicates positive purchase action"
+        "backgroundColor": "white",
+        "prompt": "Vintage railway sign button reading BUY, horizontal rectangle shape, brass metal frame with corner rivets, forest green inset panel, gold cream colored serif text clearly readable, isolated on solid white background, simple contained shape with clean solid edges, simple design, appealing design, game UI button, Victorian industrial style, flat 2D artwork",
+        "negativePrompt": "shadow, drop shadow, cast shadow, 3D effects, checkerboard, transparency pattern, gradient background"
       },
       {
         "id": "button_equip",
@@ -123,7 +131,9 @@
         "priority": "high",
         "type": "primary",
         "text": "EQUIP",
-        "prompt": "Vintage railway sign button reading EQUIP, brass metal frame with corner rivets, forest green inset panel, cream colored serif text, isolated on transparent background, game UI asset, Victorian industrial steampunk style"
+        "backgroundColor": "white",
+        "prompt": "Vintage railway sign button reading EQUIP, horizontal rectangle shape, brass metal frame with corner rivets, forest green inset panel, cream colored serif text clearly readable, isolated on solid white background, simple contained shape with clean solid edges, simple design, appealing design, game UI button, Victorian industrial style, flat 2D artwork",
+        "negativePrompt": "shadow, drop shadow, cast shadow, 3D effects, checkerboard, transparency pattern, gradient background"
       },
       {
         "id": "button_worldMap",
@@ -131,7 +141,9 @@
         "priority": "medium",
         "type": "primary",
         "text": "WORLD MAP",
-        "prompt": "Vintage railway sign button reading WORLD MAP, brass metal frame with decorative corner rivets, forest green inset panel, cream colored serif text with subtle emboss, isolated on transparent background, game UI asset, Victorian industrial steampunk style"
+        "backgroundColor": "white",
+        "prompt": "Vintage railway sign button reading WORLD MAP, horizontal rectangle shape, brass metal frame with decorative corner rivets, forest green inset panel, cream colored serif text clearly readable, isolated on solid white background, simple contained shape with clean solid edges, simple design, appealing design, game UI button, Victorian industrial style, flat 2D artwork",
+        "negativePrompt": "shadow, drop shadow, cast shadow, 3D effects, checkerboard, transparency pattern, gradient background"
       },
       {
         "id": "button_login",
@@ -139,7 +151,9 @@
         "priority": "medium",
         "type": "primary",
         "text": "LOGIN",
-        "prompt": "Vintage railway sign button reading LOGIN, brass metal frame with corner rivets, forest green inset panel, cream colored serif text, isolated on transparent background, game UI asset, Victorian industrial steampunk style"
+        "backgroundColor": "white",
+        "prompt": "Vintage railway sign button reading LOGIN, horizontal rectangle shape, brass metal frame with corner rivets, forest green inset panel, cream colored serif text clearly readable, isolated on solid white background, simple contained shape with clean solid edges, simple design, appealing design, game UI button, Victorian industrial style, flat 2D artwork",
+        "negativePrompt": "shadow, drop shadow, cast shadow, 3D effects, checkerboard, transparency pattern, gradient background"
       },
       {
         "id": "button_createAccount",
@@ -147,7 +161,9 @@
         "priority": "medium",
         "type": "secondary",
         "text": "CREATE ACCOUNT",
-        "prompt": "Vintage railway sign button reading CREATE ACCOUNT, brass metal frame with corner rivets, warm brown inset panel, cream colored serif text, wider format, isolated on transparent background, game UI asset, Victorian industrial steampunk style"
+        "backgroundColor": "white",
+        "prompt": "Vintage railway sign button reading CREATE ACCOUNT, wider horizontal rectangle shape, brass metal frame with corner rivets, warm brown inset panel, cream colored serif text clearly readable, isolated on solid white background, simple contained shape with clean solid edges, simple design, appealing design, game UI button, Victorian industrial style, flat 2D artwork",
+        "negativePrompt": "shadow, drop shadow, cast shadow, 3D effects, checkerboard, transparency pattern, gradient background"
       },
       {
         "id": "button_logout",
@@ -155,7 +171,9 @@
         "priority": "high",
         "type": "secondary",
         "text": "LOGOUT",
-        "prompt": "Vintage railway sign button reading LOGOUT, ornate brass metal frame with decorative corner rivets, silver-gray inset panel background, cream colored serif text with subtle emboss, isolated on transparent background, game UI asset, Victorian industrial steampunk style, matching existing button proportions"
+        "backgroundColor": "white",
+        "prompt": "Vintage railway sign button reading LOGOUT, horizontal rectangle shape, brass metal frame with decorative corner rivets, silver-gray inset panel, cream colored serif text clearly readable, isolated on solid white background, simple contained shape with clean solid edges, simple design, appealing design, game UI button, Victorian industrial style, flat 2D artwork",
+        "negativePrompt": "shadow, drop shadow, cast shadow, 3D effects, checkerboard, transparency pattern, gradient background"
       }
     ],
     "icons": [
@@ -165,7 +183,9 @@
         "priority": "high",
         "size": "64x64",
         "description": "Gold coin with railway/trolley motif",
-        "prompt": "Single gold coin icon with embossed trolley or railway wheel design, brass metallic sheen, slight 3D depth, vintage Victorian style, isolated on transparent background, game currency icon, 64x64 pixels, clean edges"
+        "backgroundColor": "white",
+        "prompt": "Single gold coin icon, simple bold circular shape, embossed railway wheel design in center, brass metallic sheen, centered composition, isolated on solid white background, simple clean silhouette with solid defined edges, simple design, appealing design, game currency icon, high contrast, flat 2D artwork",
+        "negativePrompt": "shadow, drop shadow, cast shadow, 3D effects, checkerboard, transparency pattern, fine details at edges"
       },
       {
         "id": "icon_health",
@@ -173,7 +193,9 @@
         "priority": "high",
         "size": "64x64",
         "description": "Heart icon with brass frame",
-        "prompt": "Red heart icon with thin brass metal frame outline, vintage style, slight gradient shading, isolated on transparent background, game health indicator icon, 64x64 pixels, clean edges"
+        "backgroundColor": "white",
+        "prompt": "Red heart icon, simple bold heart shape, thin brass metal outline, solid fill, centered composition, isolated on solid white background, simple clean silhouette with solid defined edges, simple design, appealing design, game health icon, high contrast, flat 2D artwork",
+        "negativePrompt": "shadow, drop shadow, cast shadow, 3D effects, checkerboard, transparency pattern, fine details at edges"
       },
       {
         "id": "icon_locked",
@@ -181,7 +203,9 @@
         "priority": "medium",
         "size": "64x64",
         "description": "Brass padlock for locked content",
-        "prompt": "Vintage brass padlock icon, ornate Victorian keyhole design, metallic sheen, locked position, isolated on transparent background, game UI icon for locked content, 64x64 pixels"
+        "backgroundColor": "white",
+        "prompt": "Vintage brass padlock icon, simple bold padlock shape, Victorian keyhole detail, metallic brass finish, centered composition, isolated on solid white background, simple clean silhouette with solid defined edges, simple design, appealing design, game UI icon, high contrast, flat 2D artwork",
+        "negativePrompt": "shadow, drop shadow, cast shadow, 3D effects, checkerboard, transparency pattern, fine details at edges"
       },
       {
         "id": "icon_star",
@@ -189,7 +213,9 @@
         "priority": "medium",
         "size": "64x64",
         "description": "Gold star for achievements/points",
-        "prompt": "Five-pointed gold star icon with brass metallic finish, slight emboss effect, vintage award style, isolated on transparent background, game achievement icon, 64x64 pixels"
+        "backgroundColor": "white",
+        "prompt": "Five-pointed gold star icon, simple bold star shape, brass metallic finish with slight emboss, centered composition, isolated on solid white background, simple clean silhouette with solid defined edges, simple design, appealing design, game achievement icon, high contrast, flat 2D artwork",
+        "negativePrompt": "shadow, drop shadow, cast shadow, 3D effects, checkerboard, transparency pattern, fine details at edges"
       }
     ],
     "frames": [
@@ -199,7 +225,9 @@
         "priority": "medium",
         "size": "300x400",
         "description": "Card frame for zone selection on world map",
-        "prompt": "Vertical rectangular brass frame for game card, ornate Victorian corners with rivets, dark brown interior panel, decorative top banner area, isolated on transparent background, game UI frame element, vintage railway aesthetic"
+        "backgroundColor": "white",
+        "prompt": "Vertical rectangular brass frame for game card, Victorian corners with rivets, dark brown interior panel, decorative top banner area, contained shape with clean solid edges, isolated on solid white background, simple design, appealing design, game UI frame element, vintage railway aesthetic, flat 2D artwork",
+        "negativePrompt": "shadow, drop shadow, cast shadow, 3D effects, checkerboard, transparency pattern, gradient background"
       },
       {
         "id": "frame_itemCard",
@@ -207,7 +235,9 @@
         "priority": "medium",
         "size": "200x250",
         "description": "Card frame for shop items",
-        "prompt": "Small rectangular brass frame for shop item card, simple Victorian design with corner accents, dark interior, isolated on transparent background, game UI element, vintage style"
+        "backgroundColor": "white",
+        "prompt": "Small rectangular brass frame for shop item card, simple Victorian design with corner accents, dark interior, contained shape with clean solid edges, isolated on solid white background, simple design, appealing design, game UI element, vintage style, flat 2D artwork",
+        "negativePrompt": "shadow, drop shadow, cast shadow, 3D effects, checkerboard, transparency pattern, gradient background"
       },
       {
         "id": "frame_question",
@@ -215,7 +245,9 @@
         "priority": "high",
         "size": "800x200",
         "description": "Decorative frame for question/prompt text in gameplay",
-        "prompt": "Wide horizontal ornate Victorian brass frame for displaying important text, decorative scrollwork at corners, aged brass patina with gold highlights, dark semi-transparent interior panel, dramatic weight and gravitas, isolated on transparent background, game UI element for moral dilemma questions, vintage railway aesthetic, hand-painted 2D illustration style"
+        "backgroundColor": "white",
+        "prompt": "Wide horizontal Victorian brass frame for displaying text, decorative scrollwork at corners contained within frame bounds, aged brass patina with gold highlights, dark interior panel, contained rectangular shape with clean solid edges, isolated on solid white background, simple design, appealing design, game UI element for questions, vintage railway aesthetic, flat 2D artwork",
+        "negativePrompt": "shadow, drop shadow, cast shadow, 3D effects, checkerboard, transparency pattern, wispy edges, gradient background"
       },
       {
         "id": "frame_choice",
@@ -223,7 +255,9 @@
         "priority": "high",
         "size": "600x120",
         "description": "Decorative frame for each choice option",
-        "prompt": "Horizontal rectangular brass frame for selectable choice option, simpler Victorian design than question frame, warm brass metal border with subtle corner accents, dark semi-transparent interior, clickable button feel, isolated on transparent background, game UI element for player choices, vintage railway aesthetic, hand-painted 2D illustration style"
+        "backgroundColor": "white",
+        "prompt": "Horizontal rectangular brass frame for choice option, simpler Victorian design, warm brass metal border with subtle corner accents, dark interior, contained rectangular shape with clean solid edges, isolated on solid white background, simple design, appealing design, game UI button element, vintage railway aesthetic, flat 2D artwork",
+        "negativePrompt": "shadow, drop shadow, cast shadow, 3D effects, checkerboard, transparency pattern, wispy edges, gradient background"
       }
     ],
     "trolleySkins": [
@@ -233,7 +267,9 @@
         "priority": "low",
         "size": "200x150",
         "description": "Golden trolley skin preview",
-        "prompt": "Side view of vintage 1920s trolley car in polished gold color with bronze trim, gleaming metallic finish, single glowing headlight, isolated on transparent background, game cosmetic preview, painterly style"
+        "backgroundColor": "white",
+        "prompt": "Side view of vintage 1920s trolley car in polished gold color with bronze trim, gleaming metallic finish, single glowing headlight, simple contained shape with clean solid edges, isolated on solid white background, simple design, appealing design, game cosmetic preview, painterly style, flat 2D artwork",
+        "negativePrompt": "shadow, drop shadow, cast shadow, 3D effects, checkerboard, transparency pattern"
       },
       {
         "id": "trolley_preview_fire",
@@ -241,7 +277,9 @@
         "priority": "low",
         "size": "200x150",
         "description": "Flame trolley skin preview",
-        "prompt": "Side view of vintage 1920s trolley car in deep red and orange flame colors, fiery gradient paint job, gold trim, subtle flame wisps, isolated on transparent background, game cosmetic preview, painterly style"
+        "backgroundColor": "white",
+        "prompt": "Side view of vintage 1920s trolley car in deep red and orange flame colors, fiery gradient paint job, gold trim, simple contained shape with clean solid edges, isolated on solid white background, simple design, appealing design, game cosmetic preview, painterly style, flat 2D artwork",
+        "negativePrompt": "shadow, drop shadow, cast shadow, 3D effects, checkerboard, transparency pattern, wispy effects at edges"
       },
       {
         "id": "trolley_preview_ice",
@@ -249,7 +287,9 @@
         "priority": "low",
         "size": "200x150",
         "description": "Frost trolley skin preview",
-        "prompt": "Side view of vintage 1920s trolley car in ice blue and white frost colors, crystalline frost texture, silver trim, cold mist effect, isolated on transparent background, game cosmetic preview, painterly style"
+        "backgroundColor": "white",
+        "prompt": "Side view of vintage 1920s trolley car in ice blue and white frost colors, crystalline frost texture, silver trim, simple contained shape with clean solid edges, isolated on solid white background, simple design, appealing design, game cosmetic preview, painterly style, flat 2D artwork",
+        "negativePrompt": "shadow, drop shadow, cast shadow, 3D effects, checkerboard, transparency pattern, wispy mist effects at edges"
       }
     ]
   },
@@ -262,7 +302,11 @@
     "buttonMaxWidth": 400,
     "iconSize": 256,
     "retryOnFailure": 3,
-    "reviewThreshold": 7
+    "reviewThreshold": 7,
+    "textAssetAttempts": 3,
+    "textlessAttempts": 3,
+    "defaultNegativePrompt": "shadow, drop shadow, cast shadow, 3D effects, checkerboard, transparency pattern",
+    "negativePromptSeparator": " | Avoid: "
   },
 
   "reviewCriteria": {

@@ -127,7 +127,11 @@ async function getOpenAI() {
 
 async function generateAsset(asset, options = {}) {
   const client = await getOpenAI();
-  const spinner = ora(`Generating ${asset.id}...`).start();
+  const versionSuffix = options.version ? `_v${options.version}` : '';
+  const spinnerText = options.version
+    ? `Generating ${asset.id} (version ${options.version})...`
+    : `Generating ${asset.id}...`;
+  const spinner = ora(spinnerText).start();
 
   try {
     // Determine size based on asset type
@@ -147,9 +151,24 @@ async function generateAsset(asset, options = {}) {
       return { success: false, error: 'Budget limit reached' };
     }
 
+    // Build full prompt with negative prompt if provided
+    let fullPrompt = asset.prompt;
+    if (asset.negativePrompt) {
+      // Append negative prompt with separator
+      fullPrompt = `${asset.prompt} | Avoid: ${asset.negativePrompt}`;
+    }
+
+    // For textless variants, modify the prompt
+    if (options.textless && asset.text) {
+      fullPrompt = fullPrompt.replace(/reading [A-Z\s]+,/i, 'with empty text area,');
+      fullPrompt = fullPrompt.replace(/with text "[^"]+"/i, 'with empty text area');
+      fullPrompt = fullPrompt.replace(/displaying the words [A-Z\s]+/i, 'with empty text area');
+      fullPrompt += ', no text, blank label area';
+    }
+
     const response = await client.images.generate({
       model: 'dall-e-3',
-      prompt: asset.prompt,
+      prompt: fullPrompt,
       n: 1,
       size: size,
       quality: quality,
@@ -187,15 +206,25 @@ async function generateAsset(asset, options = {}) {
     }
 
     await fs.ensureDir(outputDir);
-    const outputPath = path.join(outputDir, asset.file);
+
+    // Add version suffix to filename if generating multiple versions
+    let outputFile = asset.file;
+    if (versionSuffix) {
+      const ext = path.extname(asset.file);
+      const base = path.basename(asset.file, ext);
+      outputFile = `${base}${versionSuffix}${ext}`;
+    }
+
+    const outputPath = path.join(outputDir, outputFile);
     await fs.writeFile(outputPath, buffer);
 
-    spinner.succeed(chalk.green(`Generated ${asset.id} -> ${path.relative(PROJECT_ROOT, outputPath)}`));
+    spinner.succeed(chalk.green(`Generated ${asset.id}${versionSuffix} -> ${path.relative(PROJECT_ROOT, outputPath)}`));
 
     return {
       success: true,
       path: outputPath,
-      revisedPrompt
+      revisedPrompt,
+      version: options.version
     };
 
   } catch (error) {
@@ -207,11 +236,47 @@ async function generateAsset(asset, options = {}) {
   }
 }
 
+/**
+ * Generate multiple versions of a text asset for user selection
+ */
+async function generateMultipleVersions(asset, count = 3, options = {}) {
+  console.log(chalk.cyan(`\nGenerating ${count} versions of ${asset.id} for selection...\n`));
+
+  const results = [];
+
+  for (let i = 1; i <= count; i++) {
+    const result = await generateAsset(asset, { ...options, version: i });
+    results.push(result);
+
+    // Add delay between requests
+    if (i < count) {
+      await new Promise(resolve => setTimeout(resolve, 2000));
+    }
+  }
+
+  const successCount = results.filter(r => r.success).length;
+  console.log(chalk.cyan(`\nGenerated ${successCount}/${count} versions successfully.`));
+
+  if (successCount > 0) {
+    console.log(chalk.yellow('\nReview the generated versions:'));
+    results.forEach((r, i) => {
+      if (r.success) {
+        console.log(chalk.white(`  ${i + 1}. ${r.path}`));
+      }
+    });
+    console.log(chalk.yellow('\nSelect the best version, or regenerate if none are acceptable.'));
+  }
+
+  return results;
+}
+
 async function generateCommand(options) {
   const manifest = await loadManifest();
   const category = options.category;
   const assetId = options.id;
   const priority = options.priority;
+  const versions = parseInt(options.versions) || 1;
+  const textless = options.textless || false;
 
   console.log(chalk.cyan('\n=== ASSET GENERATION ===\n'));
 
@@ -256,11 +321,22 @@ async function generateCommand(options) {
   const results = { success: [], failed: [] };
 
   for (const asset of assetsToGenerate) {
-    const result = await generateAsset(asset, options);
-    if (result.success) {
-      results.success.push({ asset, result });
+    // Generate multiple versions if requested
+    if (versions > 1) {
+      const multiResults = await generateMultipleVersions(asset, versions, { ...options, textless });
+      const successes = multiResults.filter(r => r.success);
+      if (successes.length > 0) {
+        results.success.push({ asset, results: multiResults });
+      } else {
+        results.failed.push({ asset, results: multiResults });
+      }
     } else {
-      results.failed.push({ asset, result });
+      const result = await generateAsset(asset, { ...options, textless });
+      if (result.success) {
+        results.success.push({ asset, result });
+      } else {
+        results.failed.push({ asset, result });
+      }
     }
 
     // Add delay between requests to avoid rate limiting
@@ -277,7 +353,7 @@ async function generateCommand(options) {
   if (results.failed.length > 0) {
     console.log(chalk.yellow('\nFailed assets:'));
     results.failed.forEach(({ asset, result }) => {
-      console.log(chalk.red(`  - ${asset.id}: ${result.error}`));
+      console.log(chalk.red(`  - ${asset.id}: ${result?.error || 'All versions failed'}`));
     });
   }
 
@@ -777,6 +853,8 @@ program
   .option('-p, --priority <priority>', 'Filter by priority (high, medium, low)')
   .option('-q, --quality <quality>', 'Image quality (standard, hd)', 'hd')
   .option('-s, --style <style>', 'Image style (vivid, natural)', 'vivid')
+  .option('-v, --versions <n>', 'Generate N versions for selection (useful for text assets)', '1')
+  .option('-t, --textless', 'Generate without text (for code overlay)')
   .action(generateCommand);
 
 program

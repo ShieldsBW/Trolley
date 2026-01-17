@@ -308,13 +308,178 @@ game background asset, 16:9 aspect ratio
 ```
 Vintage railway sign button with text "[TEXT]", brass metal frame
 with corner rivets, [green/brown/red] inset panel, cream colored
-serif text, isolated on transparent background, game UI asset,
-Victorian industrial steampunk style
+serif text, isolated on solid [white/black] background, simple
+clean edges, game UI asset, Victorian industrial steampunk style,
+no checkerboard pattern, no transparency pattern
 ```
 
 ---
 
-## 9. Quality Checklist
+## 9. Asset Generation Technical Guidelines
+
+> **Critical**: This section covers technical requirements for generating assets that can be cleanly processed into game-ready PNGs with proper transparency.
+
+### Background Color Rules
+
+**NEVER use "transparent background" in prompts.** DALL-E interprets this literally and renders a checkerboard pattern as actual pixels, not alpha transparency.
+
+Instead, use solid backgrounds that can be cleanly removed in post-processing:
+
+| Asset Type | Background Color | Reason |
+|------------|------------------|--------|
+| **Buttons** (brass/brown) | Solid white `#FFFFFF` | High contrast with warm metal tones |
+| **Icons** (gold/brass) | Solid white `#FFFFFF` | Gold pops against white |
+| **Icons** (light/silver) | Solid black `#000000` | Light subjects need dark bg |
+| **Frames** (brass/ornate) | Solid white `#FFFFFF` | Better edge definition |
+| **Text/Logos** (cream/gold) | Solid black `#000000` | Light text needs dark bg |
+
+**Prompt phrases to use:**
+- ✅ "isolated on solid white background"
+- ✅ "isolated on pure black background"
+- ✅ "clean white backdrop, no patterns"
+- ❌ "transparent background" (causes checkerboard)
+- ❌ "PNG with transparency" (causes checkerboard)
+- ❌ "cutout on transparent" (causes checkerboard)
+
+### Silhouette Complexity Guidelines
+
+Simpler silhouettes produce cleaner edges after background removal.
+
+| Complexity | Description | Use For |
+|------------|-------------|---------|
+| **Simple** | Solid shapes, minimal protrusions | Icons, small buttons |
+| **Medium** | Some detail, but contained outline | Standard buttons, frames |
+| **Complex** | Fine details, wisps, gradients at edges | Backgrounds only (no transparency needed) |
+
+**Prompt phrases for cleaner edges:**
+- "simple clean silhouette"
+- "solid defined edges"
+- "minimal fine details at edges"
+- "contained shape with clear boundary"
+- "no wispy or feathered edges"
+- "bold graphic shapes"
+
+**Avoid for transparent assets:**
+- "ornate filigree edges"
+- "smoky/misty borders"
+- "glowing aura" (unless fully contained)
+- "particle effects at edges"
+
+### Icon-Specific Guidelines
+
+Icons need to work at small sizes (32-64px display) so they require:
+
+1. **Bold, recognizable shapes** - Must read clearly at thumbnail size
+2. **High contrast** - Strong value difference between icon and background
+3. **Centered composition** - Subject fills frame with small margin
+4. **Flat or simple shading** - Avoid complex gradients that muddy at small sizes
+
+**Icon prompt template:**
+```
+[Subject description], simple bold graphic icon design,
+centered composition, solid defined edges, metallic brass/gold finish,
+isolated on solid white background, 64x64 game icon,
+clean vector-like quality, no fine details, high contrast
+```
+
+### Button-Specific Guidelines
+
+Buttons need consistent proportions and readable text:
+
+1. **Horizontal orientation** - Wider than tall (roughly 3:1 ratio)
+2. **Text clarity** - Large enough text to read, high contrast
+3. **Contained frame** - All decorative elements stay within bounds
+4. **Consistent corner treatment** - Rivets/accents in predictable positions
+5. **Simple, appealing design** - Clean aesthetic that works at various sizes
+
+**Button prompt template:**
+```
+Positive: Vintage railway sign button reading "[TEXT]", horizontal rectangle,
+brass metal frame with corner rivets, [color] inset panel, cream colored
+serif text clearly readable, isolated on solid white background, simple
+contained shape, simple design, appealing design, game UI button,
+Victorian style, flat 2D artwork
+
+Negative: shadow, drop shadow, cast shadow, 3D effects, checkerboard,
+transparency pattern, gradient background
+```
+
+### Prompt Structure: Positive vs Negative
+
+Structure prompts with clear separation between what you want (positive) and what to avoid (negative):
+
+**Positive prompts** describe desired qualities:
+- "simple design, appealing design"
+- "flat 2D artwork"
+- "clean solid edges"
+- "isolated on solid white background"
+
+**Negative prompts** list things to exclude (just the terms, not "no X"):
+- "shadow, drop shadow, cast shadow"
+- "checkerboard, transparency pattern"
+- "3D effects, depth, ambient occlusion"
+- "gradient background"
+
+In the manifest, use separate `prompt` and `negativePrompt` fields. The pipeline combines them appropriately.
+
+### Text in Generated Images
+
+DALL-E frequently misspells text. This is a known limitation.
+
+**To minimize errors:**
+1. **Keep text short** - Single words or 2-word phrases work best
+2. **Use common words** - Avoid unusual spellings
+3. **Spell out in prompt** - Write exact text in quotes
+
+**Common DALL-E text errors:**
+- Doubled letters ("CREATTE" instead of "CREATE")
+- Missing letters ("PROFLE" instead of "PROFILE")
+- Swapped letters ("SAHOP" instead of "SHOP")
+- Random gibberish characters
+
+**Generation protocol for text assets:**
+1. Generate up to 3 variations, saving each as `_v1`, `_v2`, `_v3`
+2. Present all 3 for user review and selection
+3. If all 3 have spelling errors, generate 3 textless versions
+4. Overlay text via CSS/code for guaranteed accuracy
+
+**Post-generation checklist:**
+- [ ] Verify spelling is correct letter-by-letter
+- [ ] Check all letters are present
+- [ ] Ensure text is readable at target display size
+- [ ] Select best version or request textless fallback
+
+### Post-Processing Expectations
+
+Assets generated with these guidelines should be processed as follows:
+
+1. **Flood-fill removal** - Remove background color starting from corners
+2. **Tolerance**: ~15-25 for white backgrounds, ~10-15 for black
+3. **Edge smoothing** - Apply 1px anti-aliasing to edges
+4. **Trim** - Crop to content bounds with small margin
+5. **Final size** - Scale to target dimensions
+
+### Prompt Checklist
+
+Before generating any transparent asset, verify:
+
+**Positive prompt includes:**
+- [ ] Solid background color specified (white or black)
+- [ ] "simple design, appealing design"
+- [ ] "flat 2D artwork" or "flat illustration"
+- [ ] Edge treatment ("clean solid edges", "contained shape")
+- [ ] Composition guidance ("centered", "contained")
+- [ ] Target use case ("game UI", "icon", "button")
+- [ ] For text: exact spelling in quotes
+
+**Negative prompt includes:**
+- [ ] "shadow, drop shadow, cast shadow"
+- [ ] "checkerboard, transparency pattern"
+- [ ] "3D effects" (if flat art desired)
+
+---
+
+## 10. Quality Checklist
 
 ### For GPT-4V Review
 
@@ -352,7 +517,7 @@ Reference the existing assets: [attach reference images]
 
 ---
 
-## 10. File Specifications
+## 11. File Specifications
 
 ### Backgrounds
 - **Format**: PNG (24-bit, no transparency)
@@ -420,6 +585,6 @@ Reference the existing assets: [attach reference images]
 
 ---
 
-*Document Version: 1.0*
-*Last Updated: January 2026*
+*Document Version: 1.1*
+*Last Updated: January 17, 2026*
 *For use with automated asset generation pipeline*
