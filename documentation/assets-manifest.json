@@ -236,8 +236,8 @@
         "size": "200x250",
         "description": "Card frame for shop items",
         "backgroundColor": "white",
-        "prompt": "Small rectangular brass frame for shop item card, simple Victorian design with corner accents, dark interior, contained shape with clean solid edges, isolated on solid white background, simple design, appealing design, game UI element, vintage style, flat 2D artwork",
-        "negativePrompt": "shadow, drop shadow, cast shadow, 3D effects, checkerboard, transparency pattern, gradient background"
+        "prompt": "Simple rectangular brass border frame for game UI, thin flat brass outline with small corner rivets, empty dark interior, minimal decoration, 2D flat vector style, isolated on solid white background, clean simple game UI element, no perspective, front-facing view",
+        "negativePrompt": "shadow, drop shadow, cast shadow, 3D, 3D effects, depth, perspective, ornate, elaborate, decorative, checkerboard, transparency pattern, gradient background, realistic, photorealistic"
       },
       {
         "id": "frame_question",
@@ -246,8 +246,8 @@
         "size": "800x200",
         "description": "Decorative frame for question/prompt text in gameplay",
         "backgroundColor": "white",
-        "prompt": "Wide horizontal Victorian brass frame for displaying text, decorative scrollwork at corners contained within frame bounds, aged brass patina with gold highlights, dark interior panel, contained rectangular shape with clean solid edges, isolated on solid white background, simple design, appealing design, game UI element for questions, vintage railway aesthetic, flat 2D artwork",
-        "negativePrompt": "shadow, drop shadow, cast shadow, 3D effects, checkerboard, transparency pattern, wispy edges, gradient background"
+        "prompt": "Wide horizontal rectangular brass border frame for game UI text box, thin flat brass outline with small corner rivets, empty dark interior, minimal decoration, 2D flat vector style, isolated on solid white background, clean simple game UI element, no perspective, front-facing view, wide aspect ratio",
+        "negativePrompt": "shadow, drop shadow, cast shadow, 3D, 3D effects, depth, perspective, ornate, elaborate, decorative, scrollwork, baroque, checkerboard, transparency pattern, gradient background, realistic, photorealistic"
       },
       {
         "id": "frame_choice",
@@ -256,8 +256,8 @@
         "size": "600x120",
         "description": "Decorative frame for each choice option",
         "backgroundColor": "white",
-        "prompt": "Horizontal rectangular brass frame for choice option, simpler Victorian design, warm brass metal border with subtle corner accents, dark interior, contained rectangular shape with clean solid edges, isolated on solid white background, simple design, appealing design, game UI button element, vintage railway aesthetic, flat 2D artwork",
-        "negativePrompt": "shadow, drop shadow, cast shadow, 3D effects, checkerboard, transparency pattern, wispy edges, gradient background"
+        "prompt": "Wide horizontal rectangular brass border frame for game UI choice button, thin flat brass outline with small corner rivets, empty dark interior, minimal decoration, 2D flat vector style, isolated on solid white background, clean simple game UI element, no perspective, front-facing view, wide aspect ratio",
+        "negativePrompt": "shadow, drop shadow, cast shadow, 3D, 3D effects, depth, perspective, ornate, elaborate, decorative, scrollwork, baroque, checkerboard, transparency pattern, gradient background, realistic, photorealistic"
       }
     ],
     "trolleySkins": [
