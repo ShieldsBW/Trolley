@@ -517,7 +517,91 @@ painterly style, flat 2D artwork"
 
 ---
 
-## 10. Quality Checklist
+## 10. Debug Mode Visual Reference
+
+The game includes a debug mode (hold magnifying glass button in bottom-left) that shows colored outlines around UI elements for layout debugging.
+
+### Debug Outline Colors
+
+| Color | Elements |
+|-------|----------|
+| **Red** | Frame elements (`*frame*`, `*Frame*`) |
+| **Lime Green** | Safe areas, Game Over elements (`*safe-area*`, `go-*`) |
+| **Cyan** | Buttons (`btn-*`, `tab-*`, `<button>`) |
+| **Yellow** | Text elements (`*text*`, `*-desc*`, `*-name*`, `<p>`) |
+| **Magenta** | Containers (`*container*`, `*-content*`, `*items*`) |
+| **Orange** | Logos (`*logo*`) |
+| **White** | Welcome message, currency display |
+| **Coral** | Titles (`*title*`, `<h1>`, `<h2>`) |
+| **Gold** | Zone elements (`zone-detail*`, `zone-marker*`) |
+| **Violet** | Shop and Profile elements (`shop-*`, `profile-*`) |
+| **Spring Green** | Progress elements (`*progress*`) |
+| **Deep Sky Blue** | Item elements (`item-*`) |
+| **Light Salmon** | Leaderboard elements (`leaderboard-*`) |
+| **Tomato** | Consequence elements (`consequence-*`) |
+| **Dodger Blue** | HUD elements (`hud-*`, `game-hud`) |
+
+---
+
+## 11. UI Layout Patterns
+
+### Game Over Screen Layout
+
+The Game Over screen uses a vertically-stacked button container:
+
+```
++---------------------------+
+|     GAME OVER (title)     |  <- 200px height (scales with viewport)
+|         (image)           |
++---------------------------+
+|    Total Points: XXX      |  <- DOM text element
++---------------------------+
+|    [ World Map    ]       |  <- Button container (180px wide)
+|    [ Try Again    ]       |     All buttons same width
+|    [ Submit Score ]       |     8px gap between buttons
+|    [ Menu         ]       |
++---------------------------+
+```
+
+**Button Order (top to bottom):**
+1. World Map - Return to zone selection
+2. Try Again - Restart same zone
+3. Submit Score - Add to leaderboard
+4. Menu - Return to main menu
+
+### Zone Complete Popup
+
+Uses the consequence frame (`frame_consequence.png`) with:
+- Scale-in animation (0.5 → 1.0 scale, 0.4s ease-out)
+- Title: "Zone Complete!"
+- Subtitle: "[Next Zone Name] Unlocked!" or "All Zones Complete!"
+- Continue button
+
+### Difficulty Selector (World Map)
+
+Zone detail panel includes difficulty buttons:
+
+```
++-------------------+
+| Zone Name         |
+| Description       |
+| Progress: 3/5     |
++-------------------+
+| Difficulty:       |
+| [1] [2] [3]       |  <- Difficulty buttons
++-------------------+
+| [ START ]         |
++-------------------+
+```
+
+**Difficulty Button States:**
+- **Available**: Gold background (`#ffd700`), black text
+- **Selected**: Darker gold (`#b8860b`), bold text
+- **Locked**: Gray background (`#666`), lock icon, not clickable
+
+---
+
+## 12. Quality Checklist
 
 ### For GPT-4V Review
 
@@ -555,7 +639,7 @@ Reference the existing assets: [attach reference images]
 
 ---
 
-## 11. File Specifications
+## 13. File Specifications
 
 ### Backgrounds
 - **Format**: PNG (24-bit, no transparency)
@@ -581,48 +665,111 @@ Reference the existing assets: [attach reference images]
 
 ## Appendix A: Existing Asset Reference
 
+### Backgrounds
 | Asset | File | Key Characteristics |
 |-------|------|---------------------|
 | Menu BG | `menu_bg.png` | Sunset, dramatic angle, trolley at junction |
+| Login BG | `login_bg.png` | Misty railway station at dusk |
+| World Map BG | `worldmap_bg.png` | Aerial view of branching railway network |
+| Shop BG | `shop_bg.png` | Victorian railway station interior |
+| Profile BG | `profile_bg.png` | Conductor's cabin interior |
 | Level 01 BG | `level_01_background.png` | Pastoral, peaceful, forked tracks, daytime |
+| Level 02 BG | `level_02_background.png` | Industrial district, factories, steam |
+| Level 03 BG | `level_03_background.png` | City scene, buildings, urban |
 | Game Over BG | `gameOver_bg.png` | Night, burning trolley, dark and dramatic |
-| Leaderboard Frame | `leaderboard_bg.png` | Brass frame, rivets, dark interior |
-| Consequence Frame | `consequence_bg.png` | Brass frame, hazard stripes, warning plate |
+
+### Frames
+| Asset | File | Key Characteristics |
+|-------|------|---------------------|
+| Leaderboard Frame | `frame_leaderboard.png` | Brass frame, rivets, dark interior |
+| Consequence Frame | `frame_consequence.png` | Brass frame, used for popups |
+| Question Frame | `frame_question.png` | Frame for dilemma text |
+| Choice Frame | `frame_choice.png` | Frame for choice buttons |
+| Zone Card Frame | `frame_zoneCard.png` | Frame for zone selection cards |
+| Item Card Frame | `frame_itemCard.png` | Frame for shop item cards |
+
+### Buttons
+| Asset | File | Key Characteristics |
+|-------|------|---------------------|
 | Start Button | `button_startGame.png` | Green, brass frame, cream text |
 | Quit Button | `button_quit.png` | Red/maroon, brass frame |
+| Menu Button | `button_menu.png` | Return to main menu |
+| Back Button | `button_back.png` | Navigation back |
+| Continue Button | `button_continue.png` | Proceed forward |
+| Next Level Button | `button_nextLevel.png` | Level progression |
+| Try Again Button | `button_tryAgain.png` | Restart zone |
+| Submit Score Button | `button_submitScore.png` | Leaderboard submission |
+| World Map Button | `button_worldMap.png` | Navigate to world map |
+| Shop Button | `button_shop.png` | Navigate to shop |
+| Profile Button | `button_profile.png` | Navigate to profile |
+| Leaderboard Button | `button_leaderboard.png` | Navigate to leaderboard |
+| Login Button | `button_login.png` | Account login |
+| Logout Button | `button_logout.png` | Account logout |
+| Create Account Button | `button_createAccount.png` | New account creation |
+| Buy Button | `button_buy.png` | Shop purchase |
+| Equip Button | `button_equip.png` | Equip cosmetic |
+
+### Icons
+| Asset | File | Key Characteristics |
+|-------|------|---------------------|
+| Currency Icon | `icon_currency.png` | Gold coin for points display |
+| Health Icon | `icon_health.png` | Heart for HP display |
+| Star Icon | `icon_star.png` | Achievement/rating star |
+| Locked Icon | `icon_locked.png` | Padlock for locked content |
+
+### Text/Logos
+| Asset | File | Key Characteristics |
+|-------|------|---------------------|
 | Logo | `textLogo.png` | Cream/gold, serif, outlined |
 | Game Over Text | `text_gameOver.png` | Copper/bronze, 3D metallic |
+
+### Trolley Skins
+| Asset | File | Key Characteristics |
+|-------|------|---------------------|
+| Standard | `trolley_preview_standard.png` | Dark red maroon, brass trim |
+| Gold | `trolley_preview_gold.png` | Polished gold, bronze trim |
+| Fire | `trolley_preview_fire.png` | Deep red/orange, fiery gradient |
+| Ice | `trolley_preview_ice.png` | Ice blue/white, crystalline frost |
+| Neon | `trolley_preview_neon.png` | Pink/cyan, glowing neon accents |
+| Shadow | `trolley_preview_shadow.png` | Black/deep purple, shadowy aesthetic |
 
 ---
 
 ## Appendix B: Assets Needed
 
 ### High Priority
-- [ ] `login_bg.png` - Login scene background
-- [ ] `worldmap_bg.png` - World map background
-- [ ] `shop_bg.png` - Shop scene background
-- [ ] `profile_bg.png` - Profile scene background
-- [ ] `button_shop.png` - Shop navigation button
-- [ ] `button_profile.png` - Profile navigation button
-- [ ] `button_back.png` - Back/return button
-- [ ] `button_buy.png` - Purchase button
-- [ ] `button_equip.png` - Equip cosmetic button
+- [ ] `text_zoneComplete.png` - Zone Complete title text
+- [ ] Achievement icons (individual icons for each achievement)
+- [ ] Consumable item icons (Health Pack, Point Boost, Shield)
 
 ### Medium Priority
-- [ ] `level_02_background.png` - Industrial zone background
-- [ ] `level_03_background.png` - City zone background
-- [ ] `icon_currency.png` - Currency/coin icon
-- [ ] `icon_health.png` - Health/heart icon
-- [ ] Zone selection cards/frames
+- [ ] Additional trolley skins (if expanding cosmetics)
+- [ ] Zone-specific consequence backgrounds (optional per-zone variants)
+- [ ] Animated effects/particles (if adding visual polish)
 
 ### Lower Priority
-- [ ] Trolley skin preview images
-- [ ] Achievement icons
-- [ ] Consumable item icons
-- [ ] Additional consequence backgrounds
+- [ ] Sound effect assets (not visual, but noted for completeness)
+- [ ] Additional UI polish elements
+
+### Completed Assets (Previously Needed)
+- [x] `login_bg.png` - Login scene background
+- [x] `worldmap_bg.png` - World map background
+- [x] `shop_bg.png` - Shop scene background
+- [x] `profile_bg.png` - Profile scene background
+- [x] `button_shop.png` - Shop navigation button
+- [x] `button_profile.png` - Profile navigation button
+- [x] `button_back.png` - Back/return button
+- [x] `button_buy.png` - Purchase button
+- [x] `button_equip.png` - Equip cosmetic button
+- [x] `level_02_background.png` - Industrial zone background
+- [x] `level_03_background.png` - City zone background
+- [x] `icon_currency.png` - Currency/coin icon
+- [x] `icon_health.png` - Health/heart icon
+- [x] `frame_zoneCard.png` - Zone selection card frame
+- [x] All 6 trolley skin previews
 
 ---
 
-*Document Version: 1.1*
-*Last Updated: January 17, 2026*
+*Document Version: 1.2*
+*Last Updated: January 18, 2026*
 *For use with automated asset generation pipeline*

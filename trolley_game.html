@@ -5,32 +5,170 @@
   <title>Trolley Problem Prototype</title>
   <script src="https://cdn.jsdelivr.net/npm/phaser@3/dist/phaser.min.js"></script>
   <style>
-    body { margin: 0; padding: 0; }
+    :root {
+      --vh: 1vh; /* Will be set by JS to actual viewport height */
+    }
+    html, body {
+      margin: 0;
+      padding: 0;
+      height: calc(var(--vh, 1vh) * 100);
+      overflow: hidden;
+    }
     canvas { display: block; margin: 0 auto; }
+
+    /* Debug outline styles - only visible when body has debug-active class */
+    /* Frames - red */
+    body.debug-active [id*="frame"],
+    body.debug-active [id*="Frame"] { outline: 1px solid red !important; }
+    /* Safe areas - lime */
+    body.debug-active [id*="safe-area"],
+    body.debug-active [id*="Safe"] { outline: 1px solid lime !important; }
+    /* Buttons - cyan */
+    body.debug-active [id*="btn-"],
+    body.debug-active [id*="tab-"],
+    body.debug-active button { outline: 1px solid cyan !important; }
+    /* Text elements - yellow */
+    body.debug-active [id*="text"],
+    body.debug-active [id*="Text"],
+    body.debug-active [id*="-desc"],
+    body.debug-active [id*="-name"],
+    body.debug-active p { outline: 1px solid yellow !important; }
+    /* Containers - magenta */
+    body.debug-active [id*="container"],
+    body.debug-active [id*="Container"],
+    body.debug-active [id*="-content"],
+    body.debug-active [id*="items"] { outline: 1px solid magenta !important; }
+    /* Logo - orange */
+    body.debug-active [id*="logo"],
+    body.debug-active [id*="Logo"] { outline: 1px solid orange !important; }
+    /* Welcome/currency display - white */
+    body.debug-active [id*="welcome"],
+    body.debug-active [id*="currency"] { outline: 1px solid white !important; }
+    /* Titles/headings - coral */
+    body.debug-active [id*="title"],
+    body.debug-active [id*="Title"],
+    body.debug-active h1,
+    body.debug-active h2 { outline: 1px solid coral !important; }
+    /* Zone elements - gold */
+    body.debug-active [id*="zone-detail"],
+    body.debug-active [id*="zone-marker"],
+    body.debug-active .zone-marker { outline: 1px solid gold !important; }
+    /* Shop elements - violet */
+    body.debug-active [id*="shop-"],
+    body.debug-active [id*="profile-"] { outline: 1px solid violet !important; }
+    /* Progress bars - springgreen */
+    body.debug-active [id*="progress"] { outline: 1px solid springgreen !important; }
+    /* Item bar elements - deepskyblue */
+    body.debug-active [id*="item-"] { outline: 1px solid deepskyblue !important; }
+    /* Leaderboard elements - lightsalmon */
+    body.debug-active [id*="leaderboard-"] { outline: 1px solid lightsalmon !important; }
+    /* Consequence elements - tomato */
+    body.debug-active [id*="consequence-"] { outline: 1px solid tomato !important; }
+    /* HUD elements - dodgerblue */
+    body.debug-active [id*="hud-"],
+    body.debug-active #game-hud { outline: 1px solid dodgerblue !important; }
+    /* Game Over elements - limegreen */
+    body.debug-active [id*="go-"],
+    body.debug-active #go-total-points,
+    body.debug-active #go-btn-container { outline: 1px solid limegreen !important; }
+
+    /* Zone Complete popup animation */
+    @keyframes zoneCompleteScaleIn {
+      from { transform: translate(-50%, -50%) scale(0.5); opacity: 0; }
+      to { transform: translate(-50%, -50%) scale(1); opacity: 1; }
+    }
+    .zone-complete-animate {
+      animation: zoneCompleteScaleIn 0.4s ease-out forwards;
+    }
+
+    /* Difficulty selector styles */
+    .difficulty-btn {
+      width: 36px;
+      height: 36px;
+      border: 2px solid #666;
+      border-radius: 8px;
+      background: rgba(0,0,0,0.5);
+      color: #aaa;
+      font-family: Arial, sans-serif;
+      font-size: 16px;
+      font-weight: bold;
+      cursor: pointer;
+      transition: all 0.2s;
+      margin: 0 4px;
+    }
+    .difficulty-btn:hover:not(.locked) {
+      border-color: #FFD700;
+      color: #FFD700;
+    }
+    .difficulty-btn.selected {
+      border-color: #FFD700;
+      background: rgba(255, 215, 0, 0.3);
+      color: #FFD700;
+    }
+    .difficulty-btn.locked {
+      opacity: 0.4;
+      cursor: not-allowed;
+    }
+
+    #debug-btn {
+      position: fixed;
+      top: 10px;
+      right: 10px;
+      width: 30px;
+      height: 30px;
+      background: rgba(255,255,255,0.3);
+      border: 1px solid rgba(255,255,255,0.5);
+      border-radius: 4px;
+      cursor: pointer;
+      z-index: 9999;
+      font-size: 16px;
+      line-height: 28px;
+      text-align: center;
+      user-select: none;
+    }
+    #debug-btn:hover { background: rgba(255,255,255,0.5); }
+    #debug-btn:active { background: rgba(255,255,255,0.7); }
   </style>
 </head>
 <body>
-<img id="menu-bg" src="assets/backgrounds/menu_bg.png" alt="" style="position:fixed;left:0;top:0;width:100vw;height:100vh;object-fit:cover;z-index:-1;display:none;"/>
-<img id="level-bg" src="assets/backgrounds/level_01_background.png" alt="" style="position:fixed;left:0;top:0;width:100vw;height:100vh;object-fit:cover;z-index:-1;display:none;"/>
-<img id="leaderboard-bg" src="assets/backgrounds/leaderboard_bg.png" alt="" style="position:fixed;left:50%;top:50%;height:100vh;width:auto;transform:translate(-50%,-50%) scaleX(0.9);transform-origin:center;z-index:-1;display:none;"/>
-<img id="gameover-bg" src="assets/backgrounds/gameOver_bg.png" alt="" style="position:fixed;left:0;top:0;width:100vw;height:100vh;object-fit:cover;z-index:-1;display:none;"/>
+<!-- Debug button - hold to show outlines -->
+<div id="debug-btn" title="Hold to show debug outlines">🔍</div>
+
+<img id="menu-bg" src="assets/backgrounds/menu_bg.png" alt="" style="position:fixed;left:0;top:0;width:100vw;height:calc(var(--vh, 1vh) * 100);object-fit:cover;z-index:-1;display:none;"/>
+<img id="level-bg" src="assets/backgrounds/level_01_background.png" alt="" style="position:fixed;left:0;top:0;width:100vw;height:calc(var(--vh, 1vh) * 100);object-fit:cover;z-index:-1;display:none;"/>
+<!-- Leaderboard Scene Elements -->
+<div id="leaderboard-container" style="position:fixed;left:0;top:0;width:100vw;height:calc(var(--vh, 1vh) * 100);display:none;z-index:100;">
+  <!-- Leaderboard frame - centered -->
+  <div id="leaderboard-frame" style="position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);width:calc(var(--vh, 1vh) * 90 * 0.64);height:calc(var(--vh, 1vh) * 90);">
+    <!-- Frame image layer (aspect ratio 944:1472 = 0.64:1) -->
+    <img src="assets/frames/frame_leaderboard.png" style="position:absolute;inset:0;width:100%;height:100%;object-fit:fill;pointer-events:none;"/>
+    <!-- Safe area for content (insets: top 15%, right 15%, bottom 15%, left 15%) -->
+    <div id="leaderboard-safe-area" style="position:absolute;top:15%;left:15%;right:15%;bottom:15%;display:flex;flex-direction:column;align-items:center;overflow:hidden;">
+      <h1 id="leaderboard-title" style="color:#fff;font-family:Arial,sans-serif;font-size:clamp(24px, 5vh, 48px);margin:0 0 2vh 0;">Leaderboard</h1>
+      <div id="leaderboard-entries" style="width:100%;flex:1;display:flex;flex-direction:column;justify-content:flex-start;gap:1vh;overflow:hidden;"></div>
+      <div id="leaderboard-btn-container" style="margin-top:2vh;"></div>
+    </div>
+  </div>
+</div>
+
+<img id="gameover-bg" src="assets/backgrounds/gameOver_bg.png" alt="" style="position:fixed;left:0;top:0;width:100vw;height:calc(var(--vh, 1vh) * 100);object-fit:cover;z-index:-1;display:none;"/>
 <img id="go-title" src="assets/text/text_gameOver.png" alt="Game Over Title" style="position:fixed;left:50%;top:75px;transform:translateX(-50%);height:auto;width:auto;z-index:9;display:none;"/>
 <img id="menu-logo" src="assets/text/textLogo.png" alt="" style="position:fixed;left:calc(5vw - 125px);top:5px;width:45vw;height:auto;z-index:2;display:none;pointer-events:none;"/>
 <img id="btn-worldmap" src="assets/buttons/button_worldMap.png" alt="World Map"
-     style="position:fixed;left:50%;top:420px;transform:translateX(-50%) scale(0.5);
-            width:260px;height:auto;z-index:3;display:none;cursor:pointer;"/>
-<img id="btn-leaderboard" src="assets/buttons/button_leaderboard.png" alt="Leaderboard"
-     style="position:fixed;left:50%;top:510px;transform:translateX(-50%) scale(0.4);
-            width:220px;height:auto;z-index:3;display:none;cursor:pointer;"/>
+     style="position:fixed;left:50%;top:400px;transform:translateX(-50%);
+            height:105px;width:auto;z-index:3;display:none;cursor:pointer;"/>
 <img id="btn-shop" src="assets/buttons/button_shop.png" alt="Shop"
-     style="position:fixed;left:calc(50% - 100px);top:590px;transform:translateX(-50%) scale(0.35);
-            width:180px;height:auto;z-index:3;display:none;cursor:pointer;"/>
+     style="position:fixed;left:calc(50% - 120px);top:525px;transform:translateX(-50%);
+            height:55px;width:auto;z-index:3;display:none;cursor:pointer;"/>
+<img id="btn-leaderboard" src="assets/buttons/button_leaderboard.png" alt="Leaderboard"
+     style="position:fixed;left:50%;top:525px;transform:translateX(-50%);
+            height:55px;width:auto;z-index:3;display:none;cursor:pointer;"/>
 <img id="btn-profile" src="assets/buttons/button_profile.png" alt="Profile"
-     style="position:fixed;left:calc(50% + 100px);top:590px;transform:translateX(-50%) scale(0.35);
-            width:180px;height:auto;z-index:3;display:none;cursor:pointer;"/>
+     style="position:fixed;left:calc(50% + 120px);top:525px;transform:translateX(-50%);
+            height:55px;width:auto;z-index:3;display:none;cursor:pointer;"/>
 <img id="btn-logout" src="assets/buttons/button_logout.png" alt="Logout"
-     style="position:fixed;left:50%;bottom:25px;transform:translateX(-50%) scale(0.35);
-            width:160px;height:auto;z-index:3;display:none;cursor:pointer;"/>
+     style="position:fixed;left:calc(50% - 70px);bottom:30px;transform:translateX(-50%);
+            height:45px;width:auto;z-index:10;display:none;cursor:pointer;"/>
 <img id="btn-continue" src="assets/buttons/button_continue.png" alt="Continue"
      style="position:fixed;left:50%;top:430px;transform:translateX(-50%);
             width:220px;height:auto;z-index:10;display:none;cursor:pointer;"/>
@@ -50,36 +188,98 @@
      style="position:fixed;left:50%;top:505px;transform:translateX(-50%);
             width:260px;height:auto;z-index:10;display:none;cursor:pointer;"/>
 <img id="btn-quit" src="assets/buttons/button_quit.png" alt="Quit"
-     style="position:fixed;left:50%;bottom:16px;transform:translateX(-50%);
-            width:auto;height:auto;z-index:3;display:none;cursor:pointer;"/>
-<img id="consequence-bg" src="assets/backgrounds/consequence_bg.png" alt="" style="position:fixed;left:50%;top:50%;height:70vh;width:auto;transform:translate(-50%,-50%);object-fit:contain;z-index:-1;display:none;"/>
+     style="position:fixed;left:calc(50% + 70px);bottom:30px;transform:translateX(-50%);
+            height:45px;width:auto;z-index:10;display:none;cursor:pointer;"/>
+<!-- Game Over Total Points (DOM element for debug outline support) -->
+<div id="go-total-points" style="position:fixed;left:50%;transform:translateX(-50%);
+     color:#FFD700;font-family:Arial,sans-serif;font-size:20px;text-align:center;
+     text-shadow:2px 2px 4px #000;z-index:10;display:none;"></div>
+<!-- Game Over Button Container -->
+<div id="go-btn-container" style="position:fixed;left:50%;transform:translateX(-50%);
+     width:180px;display:none;flex-direction:column;align-items:center;gap:8px;z-index:10;">
+</div>
+<!-- Consequence Frame -->
+<div id="consequence-container" style="position:fixed;left:0;top:0;width:100vw;height:calc(var(--vh, 1vh) * 100);display:none;z-index:100;">
+  <div id="consequence-frame" style="position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);height:calc(var(--vh, 1vh) * 60);width:calc(var(--vh, 1vh) * 60 * 1.5);">
+    <!-- Frame image layer (aspect ratio 1536:1024 = 1.5:1) -->
+    <img src="assets/frames/frame_consequence.png" style="position:absolute;inset:0;width:100%;height:100%;object-fit:fill;pointer-events:none;"/>
+    <!-- Safe area for content (insets: top 18%, right 8%, bottom 10%, left 8%) -->
+    <div id="consequence-safe-area" style="position:absolute;top:18%;left:8%;right:8%;bottom:10%;display:flex;flex-direction:column;align-items:center;justify-content:center;overflow:hidden;">
+      <div id="consequence-text" style="color:#fff;font-family:Arial,sans-serif;font-size:clamp(16px, 3vh, 24px);text-align:center;text-shadow:2px 2px 4px #000;line-height:1.4;margin-bottom:2vh;"></div>
+      <div id="consequence-stats" style="color:#fff;font-family:Arial,sans-serif;font-size:clamp(14px, 2.5vh, 20px);text-shadow:2px 2px 4px #000;margin-bottom:2vh;"></div>
+      <div id="consequence-btn-container" style="display:flex;justify-content:center;width:100%;"></div>
+    </div>
+  </div>
+</div>
+
+<!-- Zone Complete Popup -->
+<div id="zone-complete-container" style="position:fixed;left:0;top:0;width:100vw;height:calc(var(--vh, 1vh) * 100);display:none;z-index:100;background:rgba(0,0,0,0.7);">
+  <div id="zone-complete-frame" style="position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);height:calc(var(--vh, 1vh) * 60);width:calc(var(--vh, 1vh) * 60 * 1.5);opacity:0;">
+    <!-- Frame image layer (aspect ratio 1536:1024 = 1.5:1) -->
+    <img src="assets/frames/frame_consequence.png" style="position:absolute;inset:0;width:100%;height:100%;object-fit:fill;pointer-events:none;"/>
+    <!-- Safe area for content -->
+    <div id="zone-complete-safe-area" style="position:absolute;top:18%;left:8%;right:8%;bottom:10%;display:flex;flex-direction:column;align-items:center;justify-content:center;overflow:hidden;">
+      <div id="zone-complete-title" style="color:#FFD700;font-family:Georgia,serif;font-size:clamp(28px, 5vh, 48px);text-align:center;text-shadow:2px 2px 4px #000;margin-bottom:1vh;">Zone Complete!</div>
+      <div id="zone-complete-subtitle" style="color:#F5DEB3;font-family:Arial,sans-serif;font-size:clamp(16px, 3vh, 24px);text-align:center;text-shadow:2px 2px 4px #000;margin-bottom:3vh;"></div>
+      <div id="zone-complete-btn-container" style="display:flex;justify-content:center;width:100%;"></div>
+    </div>
+  </div>
+</div>
 
 <!-- New Scene Backgrounds -->
-<img id="login-bg" src="assets/backgrounds/login_bg.png" alt="" style="position:fixed;left:0;top:0;width:100vw;height:100vh;object-fit:cover;z-index:99;display:none;"/>
-<img id="worldmap-bg" src="assets/backgrounds/worldmap_bg.png" alt="" style="position:fixed;left:0;top:0;width:100vw;height:100vh;object-fit:cover;z-index:99;display:none;"/>
-<img id="shop-bg" src="assets/backgrounds/shop_bg.png" alt="" style="position:fixed;left:0;top:0;width:100vw;height:100vh;object-fit:cover;z-index:99;display:none;"/>
-<img id="profile-bg" src="assets/backgrounds/profile_bg.png" alt="" style="position:fixed;left:0;top:0;width:100vw;height:100vh;object-fit:cover;z-index:99;display:none;"/>
+<img id="login-bg" src="assets/backgrounds/login_bg.png" alt="" style="position:fixed;left:0;top:0;width:100vw;height:calc(var(--vh, 1vh) * 100);object-fit:cover;z-index:99;display:none;"/>
+<img id="worldmap-bg" src="assets/backgrounds/worldmap_bg.png" alt="" style="position:fixed;left:0;top:0;width:100vw;height:calc(var(--vh, 1vh) * 100);object-fit:cover;z-index:99;display:none;"/>
+<img id="shop-bg" src="assets/backgrounds/shop_bg.png" alt="" style="position:fixed;left:0;top:0;width:100vw;height:calc(var(--vh, 1vh) * 100);object-fit:cover;z-index:99;display:none;"/>
+<img id="profile-bg" src="assets/backgrounds/profile_bg.png" alt="" style="position:fixed;left:0;top:0;width:100vw;height:calc(var(--vh, 1vh) * 100);object-fit:cover;z-index:99;display:none;"/>
 
-<!-- Currency Icon -->
-<img id="currency-icon" src="assets/icons/icon_currency.png" alt="Currency" title="Currency" style="width:28px;height:28px;vertical-align:middle;display:none;"/>
+<!-- Points Icon -->
+<img id="points-icon" src="assets/icons/icon_currency.png" alt="Points" title="Points" style="width:28px;height:28px;vertical-align:middle;display:none;"/>
+
+<!-- Game HUD Elements -->
+<div id="game-hud" style="position:fixed;top:0;left:0;right:0;display:none;z-index:50;padding:20px;">
+  <div id="hud-left" style="position:absolute;left:20px;top:20px;">
+    <div id="hud-health" style="color:#fff;font-family:Arial,sans-serif;font-size:20px;text-shadow:2px 2px 4px #000;margin-bottom:5px;">Health: 10</div>
+    <div id="hud-points" style="color:#fff;font-family:Arial,sans-serif;font-size:20px;text-shadow:2px 2px 4px #000;">Points: 0</div>
+  </div>
+  <div id="hud-right" style="position:absolute;right:20px;top:20px;text-align:right;">
+    <div id="hud-level" style="color:#fff;font-family:Arial,sans-serif;font-size:18px;text-shadow:2px 2px 4px #000;margin-bottom:3px;">Level: 1</div>
+    <div id="hud-stage" style="color:#fff;font-family:Arial,sans-serif;font-size:18px;text-shadow:2px 2px 4px #000;margin-bottom:3px;">Stage: 1</div>
+    <div id="hud-zone" style="color:#fff;font-family:Arial,sans-serif;font-size:16px;text-shadow:2px 2px 4px #000;">Zone Name</div>
+  </div>
+</div>
 
 <!-- Question and Choice Frames for Gameplay -->
-<div id="question-frame" style="position:fixed;left:50%;top:180px;transform:translateX(-50%);width:600px;height:180px;background:url('assets/frames/frame_question.png') center/contain no-repeat;padding:40px 50px;display:none;z-index:50;box-sizing:border-box;">
-  <div id="question-text" style="color:#F5DEB3;font-family:Georgia,serif;font-size:24px;text-align:center;text-shadow:2px 2px 4px #000;line-height:1.4;display:flex;align-items:center;justify-content:center;height:100%;"></div>
+<div id="question-frame" style="position:fixed;left:50%;top:180px;transform:translateX(-50%);width:750px;height:225px;display:none;z-index:50;">
+  <!-- Frame background layer -->
+  <div style="position:absolute;inset:0;background:url('assets/frames/frame_question.png') center/100% 100% no-repeat;"></div>
+  <!-- Safe area for text content (insets: top 18%, right 8%, bottom 18%, left 8%) -->
+  <div id="question-safe-area" style="position:absolute;top:18%;left:8%;right:8%;bottom:18%;display:flex;align-items:center;justify-content:center;">
+    <div id="question-text" style="color:#F5DEB3;font-family:Georgia,serif;font-size:24px;text-align:center;text-shadow:2px 2px 4px #000;line-height:1.4;"></div>
+  </div>
 </div>
-<div id="choices-container" style="position:fixed;left:50%;top:400px;transform:translateX(-50%);display:none;z-index:50;width:900px;">
+<div id="choices-container" style="position:fixed;left:50%;top:430px;transform:translateX(-50%);display:none;z-index:50;width:900px;">
   <div style="display:flex;justify-content:center;gap:30px;">
-    <div id="choice-a" style="width:400px;height:160px;background:url('assets/frames/frame_choice.png') center/contain no-repeat;padding:30px 35px;cursor:pointer;box-sizing:border-box;display:flex;align-items:center;justify-content:center;">
-      <div id="choice-a-text" style="color:#F5DEB3;font-family:Georgia,serif;font-size:16px;text-align:center;text-shadow:1px 1px 3px #000;line-height:1.3;"></div>
+    <div id="choice-a-frame" style="position:relative;width:400px;height:160px;cursor:pointer;">
+      <!-- Frame background layer -->
+      <div style="position:absolute;inset:0;background:url('assets/frames/frame_choice.png') center/100% 100% no-repeat;"></div>
+      <!-- Safe area for text content (insets: top 18%, right 9%, bottom 18%, left 9%) -->
+      <div id="choice-a-safe-area" style="position:absolute;top:18%;left:9%;right:9%;bottom:18%;display:flex;align-items:center;justify-content:center;">
+        <div id="choice-a-text" style="color:#F5DEB3;font-family:Georgia,serif;font-size:16px;text-align:center;text-shadow:1px 1px 3px #000;line-height:1.3;"></div>
+      </div>
     </div>
-    <div id="choice-b" style="width:400px;height:160px;background:url('assets/frames/frame_choice.png') center/contain no-repeat;padding:30px 35px;cursor:pointer;box-sizing:border-box;display:flex;align-items:center;justify-content:center;">
-      <div id="choice-b-text" style="color:#F5DEB3;font-family:Georgia,serif;font-size:16px;text-align:center;text-shadow:1px 1px 3px #000;line-height:1.3;"></div>
+    <div id="choice-b-frame" style="position:relative;width:400px;height:160px;cursor:pointer;">
+      <!-- Frame background layer -->
+      <div style="position:absolute;inset:0;background:url('assets/frames/frame_choice.png') center/100% 100% no-repeat;"></div>
+      <!-- Safe area for text content (insets: top 18%, right 9%, bottom 18%, left 9%) -->
+      <div id="choice-b-safe-area" style="position:absolute;top:18%;left:9%;right:9%;bottom:18%;display:flex;align-items:center;justify-content:center;">
+        <div id="choice-b-text" style="color:#F5DEB3;font-family:Georgia,serif;font-size:16px;text-align:center;text-shadow:1px 1px 3px #000;line-height:1.3;"></div>
+      </div>
     </div>
   </div>
 </div>
 
 <!-- Login Scene Elements -->
-<div id="login-container" style="position:fixed;left:0;top:0;width:100vw;height:100vh;background:transparent;display:none;z-index:100;">
+<div id="login-container" style="position:fixed;left:0;top:0;width:100vw;height:calc(var(--vh, 1vh) * 100);background:transparent;display:none;z-index:100;">
   <div style="position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);text-align:center;">
     <h1 style="color:#e94560;font-family:Arial;font-size:48px;margin-bottom:10px;text-shadow:2px 2px 4px #000;">TROLLEY PROBLEM</h1>
     <p style="color:#fff;font-family:Arial;font-size:18px;margin-bottom:40px;">Make your choices. Face the consequences.</p>
@@ -99,7 +299,7 @@
 </div>
 
 <!-- World Map Scene Elements -->
-<div id="worldmap-container" style="position:fixed;left:0;top:0;width:100vw;height:100vh;background:transparent;display:none;z-index:100;">
+<div id="worldmap-container" style="position:fixed;left:0;top:0;width:100vw;height:calc(var(--vh, 1vh) * 100);background:transparent;display:none;z-index:100;">
   <h1 id="worldmap-title" style="position:absolute;left:30px;top:30px;color:#F5DEB3;font-family:Georgia,serif;font-size:32px;text-shadow:2px 2px 4px #000;">SELECT ZONE</h1>
 
   <!-- Zone Markers (left side of map) -->
@@ -116,13 +316,13 @@
   </div>
 
   <!-- Zone Detail Panel (right side) -->
-  <div id="zone-detail-panel" style="position:absolute;right:30px;top:50%;transform:translateY(-50%);width:min(1000px, 50vw);height:min(1400px, 92vh);display:none;">
+  <div id="zone-detail-frame" style="position:absolute;right:30px;top:50%;transform:translateY(-50%);width:min(1000px, 50vw);height:min(1400px, calc(var(--vh, 1vh) * 92));display:none;">
     <!-- Dark background layer (75% of frame size) -->
     <div style="position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);width:75%;height:75%;background:rgba(15,15,25,0.95);border-radius:12px;"></div>
     <!-- Frame image layer (102% horizontal stretch) -->
     <img src="assets/frames/frame_zoneCard.png" style="position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);width:102%;height:100%;object-fit:fill;pointer-events:none;"/>
-    <!-- Content layer - centered in frame -->
-    <div style="position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);width:320px;text-align:center;">
+    <!-- Safe area for content (insets: top 8%, right 34%, bottom 8%, left 34%) -->
+    <div id="zone-detail-safe-area" style="position:absolute;top:8%;left:34%;right:34%;bottom:8%;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;">
       <h2 id="zone-detail-name" style="color:#FFD700;font-family:Georgia,serif;font-size:24px;margin:0 0 8px 0;text-shadow:1px 1px 2px #000;text-align:center;"></h2>
       <p id="zone-detail-desc" style="color:#F5DEB3;font-family:Arial;font-size:13px;margin:0 0 12px 0;line-height:1.3;text-align:center;"></p>
 
@@ -144,6 +344,16 @@
         <div id="zone-detail-progress-text" style="color:#fff;font-family:Arial;font-size:11px;margin-top:3px;"></div>
       </div>
 
+      <div id="zone-difficulty-selector" style="margin-bottom:15px;text-align:center;display:none;">
+        <span style="color:#aaa;font-family:Arial;font-size:11px;display:block;margin-bottom:6px;">SELECT DIFFICULTY</span>
+        <div style="display:flex;justify-content:center;align-items:center;">
+          <button class="difficulty-btn" data-difficulty="1">1</button>
+          <button class="difficulty-btn" data-difficulty="2">2</button>
+          <button class="difficulty-btn" data-difficulty="3">3</button>
+        </div>
+        <div id="zone-difficulty-multiplier" style="color:#FFD700;font-family:Arial;font-size:12px;margin-top:6px;">1.0x Multiplier</div>
+      </div>
+
       <div id="zone-detail-locked" style="color:#e94560;font-family:Arial;font-size:13px;margin-bottom:12px;display:none;text-align:center;">
         🔒 Complete previous zone to unlock
       </div>
@@ -159,21 +369,28 @@
 </div>
 
 <!-- Shop Scene Elements -->
-<div id="shop-container" style="position:fixed;left:0;top:0;width:100vw;height:100vh;background:transparent;display:none;z-index:100;">
+<div id="shop-container" style="position:fixed;left:0;top:0;width:100vw;height:calc(var(--vh, 1vh) * 100);background:transparent;display:none;z-index:100;">
   <h1 style="position:absolute;left:50%;top:20px;transform:translateX(-50%);color:#ffd700;font-family:Arial;font-size:36px;text-shadow:2px 2px 4px #000;">SHOP</h1>
-  <div id="shop-currency" style="position:absolute;right:30px;top:25px;color:#ffd700;font-family:Arial;font-size:24px;">💰 0</div>
+  <div id="shop-points" style="position:absolute;right:30px;top:25px;color:#ffd700;font-family:Arial;font-size:24px;">💰 0 Points</div>
   <div id="shop-tabs" style="position:absolute;left:50%;top:100px;transform:translateX(-50%);display:flex;gap:0;">
     <button id="tab-cosmetics" style="padding:12px 35px;font-size:16px;background:#ffd700;color:#000;border:none;border-radius:8px 8px 0 0;cursor:pointer;margin-bottom:-1px;">Cosmetics</button>
     <button id="tab-consumables" style="padding:12px 35px;font-size:16px;background:#555;color:#fff;border:none;border-radius:8px 8px 0 0;cursor:pointer;margin-bottom:-1px;">Consumables</button>
   </div>
-  <div id="shop-items" style="position:absolute;left:50%;top:148px;transform:translateX(-50%);width:80%;max-width:700px;height:400px;background:rgba(0,0,0,0.7);border-radius:0 10px 10px 10px;padding:20px;overflow-y:auto;border-top:3px solid #ffd700;"></div>
+  <div id="shop-items" style="position:absolute;left:50%;top:148px;transform:translateX(-50%);width:90%;max-width:720px;height:auto;max-height:calc(100% - 220px);background:rgba(0,0,0,0.7);border-radius:0 10px 10px 10px;padding:15px;overflow:hidden;border-top:3px solid #ffd700;display:flex;flex-direction:column;">
+    <div id="shop-items-grid" style="flex:1;display:flex;flex-wrap:wrap;justify-content:center;align-content:flex-start;"></div>
+    <div id="shop-pagination" style="display:flex;justify-content:center;align-items:center;gap:20px;padding-top:12px;border-top:1px solid rgba(255,255,255,0.2);margin-top:8px;flex-shrink:0;">
+      <button id="shop-prev" style="padding:6px 14px;font-size:16px;background:#ffd700;color:#000;border:none;border-radius:5px;cursor:pointer;">←</button>
+      <span id="shop-page-info" style="color:#fff;font-family:Arial;font-size:13px;">Page 1 / 1</span>
+      <button id="shop-next" style="padding:6px 14px;font-size:16px;background:#ffd700;color:#000;border:none;border-radius:5px;cursor:pointer;">→</button>
+    </div>
+  </div>
   <button id="btn-shop-back" style="position:absolute;left:20px;bottom:20px;padding:12px 24px;font-size:16px;background:#ffd700;color:#000;border:none;border-radius:5px;cursor:pointer;">
     ← Back to Menu
   </button>
 </div>
 
 <!-- Profile Scene Elements -->
-<div id="profile-container" style="position:fixed;left:0;top:0;width:100vw;height:100vh;background:transparent;display:none;z-index:100;">
+<div id="profile-container" style="position:fixed;left:0;top:0;width:100vw;height:calc(var(--vh, 1vh) * 100);background:transparent;display:none;z-index:100;">
   <h1 style="position:absolute;left:50%;top:20px;transform:translateX(-50%);color:#fff;font-family:Arial;font-size:36px;text-shadow:2px 2px 4px #000;">PROFILE</h1>
   <div id="profile-content" style="position:absolute;left:50%;top:80px;transform:translateX(-50%);width:80%;max-width:600px;background:rgba(0,0,0,0.7);border-radius:10px;padding:30px;"></div>
   <div id="achievements-content" style="position:absolute;left:50%;top:480px;transform:translateX(-50%);width:80%;max-width:600px;background:rgba(0,0,0,0.7);border-radius:10px;padding:20px;"></div>
@@ -192,6 +409,33 @@
 </div>
 
 <script>
+// Set actual viewport height (accounts for taskbar/browser UI)
+function setViewportHeight() {
+  const vh = window.innerHeight * 0.01;
+  document.documentElement.style.setProperty('--vh', `${vh}px`);
+}
+setViewportHeight();
+window.addEventListener('resize', setViewportHeight);
+
+// Debug button - hold to show outlines
+(function() {
+  const debugBtn = document.getElementById('debug-btn');
+  if (debugBtn) {
+    const enableDebug = () => document.body.classList.add('debug-active');
+    const disableDebug = () => document.body.classList.remove('debug-active');
+
+    // Mouse events
+    debugBtn.addEventListener('mousedown', enableDebug);
+    debugBtn.addEventListener('mouseup', disableDebug);
+    debugBtn.addEventListener('mouseleave', disableDebug);
+
+    // Touch events for mobile
+    debugBtn.addEventListener('touchstart', (e) => { e.preventDefault(); enableDebug(); });
+    debugBtn.addEventListener('touchend', disableDebug);
+    debugBtn.addEventListener('touchcancel', disableDebug);
+  }
+})();
+
 // Leaderboard storage helpers
 function getLeaderboard() {
   const data = localStorage.getItem('trolley_leaderboard');
@@ -219,7 +463,8 @@ function createUser(username, isGuest = false) {
     progress: {
       currentZone: 1,
       completedLevels: [], // [{zone: 1, level: 1, score: 100, perfect: false}]
-      highScores: {} // {"1-1": 100, "1-2": 150}
+      highScores: {}, // {"1-1": 100, "1-2": 150}
+      zoneCompletions: {} // {1: 1, 2: 0, 3: 0} - highest difficulty completed per zone
     },
     stats: {
       totalGames: 0,
@@ -289,7 +534,7 @@ const ZoneConfig = [
     choicesPerLevel: 4,
     levelsRequired: 5,
     difficultyMod: 1.3,
-    unlockRequirement: 4, // need 4 levels from zone 1
+    unlockRequirement: 5, // need 5 levels from zone 1
     currencyBonus: 1.05,
     color: '#FF9800',
     bgSuffix: 'level_01_background.png' // reuse until new assets
@@ -301,7 +546,7 @@ const ZoneConfig = [
     choicesPerLevel: 5,
     levelsRequired: 5,
     difficultyMod: 1.6,
-    unlockRequirement: 4, // need 4 levels from zone 2
+    unlockRequirement: 5, // need 5 levels from zone 2
     currencyBonus: 1.1,
     color: '#E91E63',
     bgSuffix: 'level_01_background.png' // reuse until new assets
@@ -367,7 +612,7 @@ const AchievementDefs = [
   { id: 'zone2_complete', name: 'Industrial Expert', desc: 'Complete Zone 2', icon: '🏭' },
   { id: 'zone3_complete', name: 'City Master', desc: 'Complete Zone 3', icon: '🌆' },
   { id: 'perfect_level', name: 'Perfectionist', desc: 'Complete a level without taking damage', icon: '⭐' },
-  { id: 'high_roller', name: 'High Roller', desc: 'Earn 1000+ currency', icon: '💰' },
+  { id: 'high_roller', name: 'High Roller', desc: 'Earn 1000+ points', icon: '💰' },
   { id: 'collector', name: 'Collector', desc: 'Own 3 trolley cosmetics', icon: '🎨' },
   { id: 'survivor', name: 'Survivor', desc: 'Survive with 1 HP', icon: '❤️' }
 ];
@@ -400,18 +645,18 @@ function checkAchievements(user) {
   return earned;
 }
 
-// Helper to calculate currency earned
-function calculateCurrencyEarned(score, zoneId, isPerfect) {
+// Helper to calculate points earned
+function calculatePointsEarned(score, zoneId, isPerfect) {
   const zone = ZoneConfig.find(z => z.id === zoneId) || ZoneConfig[0];
-  let base = Math.floor(score * 0.1); // 10% of score
+  let base = score; // 1:1 score to points
   base = Math.floor(base * zone.currencyBonus); // Zone bonus
   if (isPerfect) base = Math.floor(base * 1.5); // Perfect bonus
-  return Math.max(base, 1); // Minimum 1 currency
+  return Math.max(base, 1); // Minimum 1 point
 }
 
 // Helper to hide all scene containers and backgrounds
 function hideAllContainers() {
-  const containers = ['login-container', 'worldmap-container', 'shop-container', 'profile-container'];
+  const containers = ['login-container', 'worldmap-container', 'shop-container', 'profile-container', 'zone-complete-container'];
   containers.forEach(id => {
     const el = document.getElementById(id);
     if (el) el.style.display = 'none';
@@ -424,9 +669,9 @@ function hideAllContainers() {
   });
   const itemBar = document.getElementById('item-bar');
   if (itemBar) itemBar.style.display = 'none';
-  // Hide menu currency and welcome displays
-  const menuCurrency = document.getElementById('menu-currency-display');
-  if (menuCurrency) menuCurrency.style.display = 'none';
+  // Hide menu points and welcome displays
+  const menuPoints = document.getElementById('menu-points-display');
+  if (menuPoints) menuPoints.style.display = 'none';
   const menuWelcome = document.getElementById('menu-welcome-display');
   if (menuWelcome) menuWelcome.style.display = 'none';
   // Hide question and choice frames
@@ -434,6 +679,30 @@ function hideAllContainers() {
   if (questionFrame) questionFrame.style.display = 'none';
   const choicesContainer = document.getElementById('choices-container');
   if (choicesContainer) choicesContainer.style.display = 'none';
+  // Hide game HUD
+  const gameHud = document.getElementById('game-hud');
+  if (gameHud) gameHud.style.display = 'none';
+  // Hide consequence container
+  const consContainer = document.getElementById('consequence-container');
+  if (consContainer) consContainer.style.display = 'none';
+  // Hide game over elements - move buttons back to body before clearing container
+  const goBtnContainer = document.getElementById('go-btn-container');
+  if (goBtnContainer) {
+    // Move buttons back to body to preserve them
+    const buttonsToRestore = ['btn-worldmap-go', 'btn-try', 'btn-submit', 'btn-menu'];
+    buttonsToRestore.forEach(id => {
+      const btn = document.getElementById(id);
+      if (btn && btn.parentElement === goBtnContainer) {
+        btn.style.display = 'none';
+        btn.style.position = 'fixed';
+        btn.onclick = null;
+        document.body.appendChild(btn);
+      }
+    });
+    goBtnContainer.style.display = 'none';
+  }
+  const goTotalPoints = document.getElementById('go-total-points');
+  if (goTotalPoints) goTotalPoints.style.display = 'none';
 }
 
 // =====================================================
@@ -448,9 +717,9 @@ class LoginScene extends Phaser.Scene {
     const domBg = document.getElementById('menu-bg'); if (domBg) domBg.style.display = 'none';
     const domLogo = document.getElementById('menu-logo'); if (domLogo) domLogo.style.display = 'none';
     const levelBg = document.getElementById('level-bg'); if (levelBg) levelBg.style.display = 'none';
-    const leaderboardBg = document.getElementById('leaderboard-bg'); if (leaderboardBg) leaderboardBg.style.display = 'none';
+    const leaderboardBg = document.getElementById('leaderboard-container'); if (leaderboardBg) leaderboardBg.style.display = 'none';
     const gameOverBg = document.getElementById('gameover-bg'); if (gameOverBg) gameOverBg.style.display = 'none';
-    const consBg = document.getElementById('consequence-bg'); if (consBg) consBg.style.display = 'none';
+    const consBg = document.getElementById('consequence-container'); if (consBg) consBg.style.display = 'none';
     const goTitle = document.getElementById('go-title'); if (goTitle) goTitle.style.display = 'none';
 
     // Hide all buttons
@@ -523,10 +792,10 @@ class MainMenuScene extends Phaser.Scene {
     const domLogo = document.getElementById('menu-logo'); if (domLogo) domLogo.style.display = 'block';
     // Hide level background when on main menu
     const levelBg = document.getElementById('level-bg'); if (levelBg) levelBg.style.display = 'none';
-    const leaderboardBg = document.getElementById('leaderboard-bg'); if (leaderboardBg) leaderboardBg.style.display = 'none';
+    const leaderboardBg = document.getElementById('leaderboard-container'); if (leaderboardBg) leaderboardBg.style.display = 'none';
     const gameOverBg = document.getElementById('gameover-bg'); if (gameOverBg) gameOverBg.style.display='none';
     document.body.style.backgroundColor = '';
-    const consBgHideGO = document.getElementById('consequence-bg'); if (consBgHideGO) consBgHideGO.style.display='none';
+    const consBgHideGO = document.getElementById('consequence-container'); if (consBgHideGO) consBgHideGO.style.display='none';
     const goTitleHideMM = document.getElementById('go-title'); if (goTitleHideMM) goTitleHideMM.style.display='none';
 
     // Ensure menu button is hidden on main menu (we only show it in Level/GameOver)
@@ -556,16 +825,16 @@ class MainMenuScene extends Phaser.Scene {
       welcomeDisplay.textContent = `Welcome, ${user.username}!`;
       welcomeDisplay.style.display = 'block';
 
-      // Create or get DOM-based currency display with icon (below welcome)
-      let currencyDisplay = document.getElementById('menu-currency-display');
-      if (!currencyDisplay) {
-        currencyDisplay = document.createElement('div');
-        currencyDisplay.id = 'menu-currency-display';
-        document.body.appendChild(currencyDisplay);
+      // Create or get DOM-based points display with icon (below welcome)
+      let pointsDisplay = document.getElementById('menu-points-display');
+      if (!pointsDisplay) {
+        pointsDisplay = document.createElement('div');
+        pointsDisplay.id = 'menu-points-display';
+        document.body.appendChild(pointsDisplay);
       }
-      currencyDisplay.style.cssText = 'position:fixed;left:calc(5vw + 80px);top:555px;color:#FFD700;font-family:Arial;font-size:18px;z-index:10;text-shadow:2px 2px 3px #000;';
-      currencyDisplay.innerHTML = `<img src="assets/icons/icon_currency.png" alt="Currency" title="Currency" style="width:22px;height:22px;vertical-align:middle;margin-right:6px;"/>${user.inventory.currency}`;
-      currencyDisplay.style.display = 'block';
+      pointsDisplay.style.cssText = 'position:fixed;left:calc(5vw + 80px);top:555px;color:#FFD700;font-family:Arial;font-size:18px;z-index:10;text-shadow:2px 2px 3px #000;';
+      pointsDisplay.innerHTML = `<img src="assets/icons/icon_currency.png" alt="Points" title="Points" style="width:22px;height:22px;vertical-align:middle;margin-right:6px;"/>${user.inventory.currency} Points`;
+      pointsDisplay.style.display = 'block';
     }
 
     // Show World Map button (centered, larger - main action)
@@ -604,15 +873,16 @@ class MainMenuScene extends Phaser.Scene {
       };
     }
 
-    // Show Quit button at bottom (closer to center, right of Logout)
+    // Show Quit button at bottom (right of Logout)
     const btnQuitMM = document.getElementById('btn-quit');
     if (btnQuitMM) {
       btnQuitMM.style.display = 'block';
-      btnQuitMM.style.left = 'calc(50% + 150px)';
-      btnQuitMM.style.bottom = '20px';
+      btnQuitMM.style.position = 'fixed';
+      btnQuitMM.style.left = 'calc(50% + 70px)';
+      btnQuitMM.style.bottom = '30px';
       btnQuitMM.style.top = '';
-      btnQuitMM.style.right = '';
-      btnQuitMM.style.transform = 'translateX(-50%) scale(0.5)';
+      btnQuitMM.style.transform = 'translateX(-50%)';
+      btnQuitMM.style.zIndex = '10';
       btnQuitMM.onclick = () => window.close();
     }
   }
@@ -622,7 +892,10 @@ class LevelScene extends Phaser.Scene {
   constructor() { super('LevelScene'); }
   init() {
     if (this.registry.get('health')===undefined) this.registry.set('health',10);
-    if (this.registry.get('points')===undefined) this.registry.set('points',0);
+    // Load points from user's persistent balance (don't reset)
+    const user = getUser();
+    const persistentPoints = user ? user.inventory.currency : 0;
+    if (this.registry.get('points')===undefined) this.registry.set('points', persistentPoints);
     if (this.registry.get('level')===undefined) this.registry.set('level',1);
     if (this.registry.get('stage')===undefined) this.registry.set('stage',1);
     if (this.registry.get('zone')===undefined) this.registry.set('zone',1);
@@ -630,6 +903,9 @@ class LevelScene extends Phaser.Scene {
     // Track damage for perfect level detection
     this.damageTaken = 0;
     this.startingHealth = this.registry.get('health');
+
+    // Track points earned this level for bonus calculation
+    this.levelPointsEarned = 0;
 
     // Track items used this level (max 3)
     this.itemsUsedThisLevel = this.registry.get('itemsUsedThisLevel') || 0;
@@ -656,7 +932,7 @@ class LevelScene extends Phaser.Scene {
     // Hide menu DOM elements
     const domBg = document.getElementById('menu-bg'); if (domBg) domBg.style.display = 'none';
     const domLogo = document.getElementById('menu-logo'); if (domLogo) domLogo.style.display = 'none';
-    const leaderboardBgLV = document.getElementById('leaderboard-bg'); if (leaderboardBgLV) leaderboardBgLV.style.display='none';
+    const leaderboardBgLV = document.getElementById('leaderboard-container'); if (leaderboardBgLV) leaderboardBgLV.style.display='none';
     const gameOverBgLV = document.getElementById('gameover-bg'); if (gameOverBgLV) gameOverBgLV.style.display='none';
     document.body.style.backgroundColor = '';
     const levelBgElHide = document.getElementById('level-bg'); if (levelBgElHide) levelBgElHide.style.display = 'block';
@@ -667,8 +943,8 @@ class LevelScene extends Phaser.Scene {
     const btnLeaderboard = document.getElementById('btn-leaderboard'); if (btnLeaderboard) btnLeaderboard.style.display = 'none';
     const btnContinue = document.getElementById('btn-continue'); if (btnContinue) { btnContinue.style.display = 'none';
         btnContinue.onclick = null;
-        const consBgHide = document.getElementById('consequence-bg'); if (consBgHide) consBgHide.style.display='none';
-        const consBg2 = document.getElementById('consequence-bg'); if (consBg2) consBg2.style.display='none'; }
+        const consBgHide = document.getElementById('consequence-container'); if (consBgHide) consBgHide.style.display='none';
+        const consBg2 = document.getElementById('consequence-container'); if (consBg2) consBg2.style.display='none'; }
     const btnQuitReset = document.getElementById('btn-quit'); if (btnQuitReset) { btnQuitReset.style.display='none'; btnQuitReset.onclick=null; }
     const btnNextReset = document.getElementById('btn-next'); if (btnNextReset) { btnNextReset.style.display='none'; btnNextReset.onclick=null; }
     const domMenuBtn = document.getElementById('btn-menu'); if (domMenuBtn) { domMenuBtn.style.display='none'; domMenuBtn.onclick=null; }
@@ -677,7 +953,7 @@ class LevelScene extends Phaser.Scene {
     const btnSubmitImg2 = document.getElementById('btn-submit'); if (btnSubmitImg2) { btnSubmitImg2.style.display='none'; btnSubmitImg2.onclick=null; }
     const btnTryImg2 = document.getElementById('btn-try'); if (btnTryImg2) { btnTryImg2.style.display='none'; btnTryImg2.onclick=null; }
     const btnWorldMapGoLV = document.getElementById('btn-worldmap-go'); if (btnWorldMapGoLV) { btnWorldMapGoLV.style.display='none'; btnWorldMapGoLV.onclick=null; }
-    const consBgReset = document.getElementById('consequence-bg'); if (consBgReset) { consBgReset.style.display='none'; }
+    const consBgReset = document.getElementById('consequence-container'); if (consBgReset) { consBgReset.style.display='none'; }
 
     const goTitleHideLV = document.getElementById('go-title'); if (goTitleHideLV) goTitleHideLV.style.display='none';
 
@@ -698,14 +974,24 @@ class LevelScene extends Phaser.Scene {
       levelBgEl.style.display = 'block';
     }
 
-    // UI
-    this.healthText = this.add.text(20,20, 'Health: ' + this.registry.get('health'), {font:'20px Arial', fill:'#fff'});
-    this.pointsText = this.add.text(20,50, 'Points: ' + this.registry.get('points'), {font:'20px Arial', fill:'#fff'});
-    this.levelText = this.add.text(780,20,'Level: '+this.registry.get('level'),{font:'18px Arial',fill:'#fff'}).setOrigin(1,0);
-    this.stageText = this.add.text(780,40,'Stage: '+this.registry.get('stage'),{font:'18px Arial',fill:'#fff'}).setOrigin(1,0);
+    // Show and update DOM-based HUD
+    const gameHud = document.getElementById('game-hud');
+    if (gameHud) gameHud.style.display = 'block';
 
-    // Zone info display
-    this.zoneText = this.add.text(780,60, zoneConfig.name, {font:'16px Arial', fill: zoneConfig.color}).setOrigin(1,0);
+    const hudHealth = document.getElementById('hud-health');
+    const hudPoints = document.getElementById('hud-points');
+    const hudLevel = document.getElementById('hud-level');
+    const hudStage = document.getElementById('hud-stage');
+    const hudZone = document.getElementById('hud-zone');
+
+    if (hudHealth) hudHealth.textContent = 'Health: ' + this.registry.get('health');
+    if (hudPoints) hudPoints.textContent = 'Points: ' + this.registry.get('points');
+    if (hudLevel) hudLevel.textContent = 'Level: ' + this.registry.get('level');
+    if (hudStage) hudStage.textContent = 'Stage: ' + this.registry.get('stage');
+    if (hudZone) {
+      hudZone.textContent = zoneConfig.name;
+      hudZone.style.color = zoneConfig.color;
+    }
 
     // Show point multiplier if active
     if (this.pointMultiplier > 1) {
@@ -850,8 +1136,8 @@ class LevelScene extends Phaser.Scene {
 
   setupChoiceFrames() {
     // Set up click handlers for DOM choice frames
-    const choiceA = document.getElementById('choice-a');
-    const choiceB = document.getElementById('choice-b');
+    const choiceA = document.getElementById('choice-a-frame');
+    const choiceB = document.getElementById('choice-b-frame');
 
     if (choiceA) {
       choiceA.onclick = () => this.handleChoice(0);
@@ -873,8 +1159,8 @@ class LevelScene extends Phaser.Scene {
   }
 
   enableChoiceFrames(enabled) {
-    const choiceA = document.getElementById('choice-a');
-    const choiceB = document.getElementById('choice-b');
+    const choiceA = document.getElementById('choice-a-frame');
+    const choiceB = document.getElementById('choice-b-frame');
     if (choiceA) {
       choiceA.style.pointerEvents = enabled ? 'auto' : 'none';
       choiceA.style.opacity = enabled ? '1' : '0.6';
@@ -887,17 +1173,27 @@ class LevelScene extends Phaser.Scene {
 
   generateJunctions() {
     const zoneId = this.registry.get('zone') || 1;
+    const selectedDifficulty = this.registry.get('selectedDifficulty') || 1;
     const zoneConfig = ZoneConfig.find(z => z.id === zoneId) || ZoneConfig[0];
     const pool = ZonePrompts[zoneId] || ZonePrompts[1];
 
-    // Apply difficulty modifier to HP costs
+    // Calculate combined difficulty multiplier:
+    // Base zone multiplier + (selectedDifficulty - 1) * 0.3
+    // Zone 1 Diff 1: 1.0, Diff 2: 1.3, Diff 3: 1.6
+    // Zone 2 Diff 1: 1.3, Diff 2: 1.6, Diff 3: 1.9
+    // Zone 3 Diff 1: 1.6, Diff 2: 1.9, Diff 3: 2.2
+    const combinedMultiplier = zoneConfig.difficultyMod + (selectedDifficulty - 1) * 0.3;
+
+    // Apply difficulty modifier to HP costs AND points
     const modifiedPool = pool.map(j => {
       const modified = JSON.parse(JSON.stringify(j)); // Deep clone
       modified.opts = modified.opts.map(opt => {
-        // Scale HP loss by difficulty (don't scale gains)
+        // Scale HP loss by combined difficulty (don't scale gains)
         if (opt.hp < 0) {
-          opt.hp = Math.floor(opt.hp * zoneConfig.difficultyMod);
+          opt.hp = Math.floor(opt.hp * combinedMultiplier);
         }
+        // Scale points by combined difficulty (more risk = more reward)
+        opt.pts = Math.floor(opt.pts * combinedMultiplier);
         return opt;
       });
       return modified;
@@ -941,15 +1237,21 @@ class LevelScene extends Phaser.Scene {
     this.registry.values.points += pointsEarned;
     this.registry.values.health += opt.hp;
 
+    // Track points earned this level for bonus calculation
+    this.levelPointsEarned += pointsEarned;
+
     // Track damage for perfect level
     if (opt.hp < 0) {
       this.damageTaken += Math.abs(opt.hp);
     }
 
-    // Update user stats
+    // Update user stats and add points immediately to persistent balance
     const user = getUser();
     if (user) {
       user.stats.choicesMade++;
+      user.inventory.currency += pointsEarned;
+      // Ensure points never go below 0
+      if (user.inventory.currency < 0) user.inventory.currency = 0;
       saveUser(user);
     }
     {
@@ -976,37 +1278,33 @@ class LevelScene extends Phaser.Scene {
     const btnNextHide = document.getElementById('btn-next');
     if (btnNextHide) { btnNextHide.style.display='none'; btnNextHide.onclick=null; }
 
-    // Show consequence background image
-    const consBg = document.getElementById('consequence-bg');
-    if (consBg) consBg.style.display='block';
+    // Show consequence frame
+    const consContainer = document.getElementById('consequence-container');
+    if (consContainer) consContainer.style.display = 'block';
 
-    // Overlay with white text
-    if (this.overlay) { this.overlay.destroy(); }
-    this.overlay = this.add.container();
-    this.overlay.setDepth(1000);
-    const descText = this.add.text(400, 440, desc, {
-      font: '24px Arial',
-      fill: '#fff',
-      align: 'center',
-      wordWrap: { width: 460 }
-    }).setOrigin(0.5, 0);
+    // Hide menu and quit buttons while consequence is showing
+    const btnMenu = document.getElementById('btn-menu');
+    const btnQuit = document.getElementById('btn-quit');
+    if (btnMenu) btnMenu.style.display = 'none';
+    if (btnQuit) btnQuit.style.display = 'none';
 
-    const changeText = this.add.text(400, 520,
-      `Health: ${randH>=0?'+':''}${randH}  Points: ${randP>=0?'+':''}${randP}`,
-      { font: '20px Arial', fill: '#fff' }
-    ).setOrigin(0.5);
+    // Populate consequence text using DOM elements
+    const consText = document.getElementById('consequence-text');
+    const consStats = document.getElementById('consequence-stats');
+    if (consText) consText.textContent = desc;
+    if (consStats) consStats.textContent = `Health: ${randH>=0?'+':''}${randH}  Points: ${randP>=0?'+':''}${randP}`;
 
-    this.overlay.add([descText, changeText]);
-
-    // Improve readability over bright art
-    descText.setShadow(2,2,'#000',4);
-    changeText.setShadow(2,2,'#000',4);
-
-    // Show DOM continue button (works with file://)
+    // Move continue button into consequence frame
+    const btnContainer = document.getElementById('consequence-btn-container');
     const btnContinue = document.getElementById('btn-continue');
-    if (btnContinue) {
+    if (btnContinue && btnContainer) {
+      btnContainer.appendChild(btnContinue);
       btnContinue.style.display = 'block';
-      btnContinue.style.top = '600px';
+      btnContinue.style.position = 'relative';
+      btnContinue.style.left = '';
+      btnContinue.style.top = '';
+      btnContinue.style.transform = 'scale(0.8)';
+      btnContinue.style.transformOrigin = 'center';
       btnContinue.onclick = () => {
         // Apply effects (with point multiplier)
         this.registry.values.points += Math.floor(randP * this.pointMultiplier);
@@ -1019,10 +1317,14 @@ class LevelScene extends Phaser.Scene {
 
         this.updateUI();
         // Cleanup and proceed
-        if (this.overlay) { this.overlay.destroy(); this.overlay = null; }
-        if (consBg) consBg.style.display='none';
+        document.body.appendChild(btnContinue);
+        btnContinue.style.position = 'fixed';
         btnContinue.style.display = 'none';
         btnContinue.onclick = null;
+        if (consContainer) consContainer.style.display = 'none';
+        // Restore menu and quit buttons
+        if (btnMenu) btnMenu.style.display = 'block';
+        if (btnQuit) btnQuit.style.display = 'block';
         this.promptText.setAlpha(1);
         this.promptText.setVisible(true);
         this.junctionIndex++;
@@ -1031,16 +1333,23 @@ class LevelScene extends Phaser.Scene {
     }
   }
   updateUI() {
-    this.healthText.setText('Health: '+this.registry.get('health'));
-    this.pointsText.setText('Points: '+this.registry.get('points'));
-    this.levelText.setText('Level: '+this.registry.get('level'));
-    this.stageText.setText('Stage: '+this.registry.get('stage'));
+    const hudHealth = document.getElementById('hud-health');
+    const hudPoints = document.getElementById('hud-points');
+    const hudLevel = document.getElementById('hud-level');
+    const hudStage = document.getElementById('hud-stage');
+
+    if (hudHealth) hudHealth.textContent = 'Health: ' + this.registry.get('health');
+    if (hudPoints) hudPoints.textContent = 'Points: ' + this.registry.get('points');
+    if (hudLevel) hudLevel.textContent = 'Level: ' + this.registry.get('level');
+    if (hudStage) hudStage.textContent = 'Stage: ' + this.registry.get('stage');
   }
   onLevelComplete() {
     const currentLevel = this.registry.get('level');
     const zoneId = this.registry.get('zone') || 1;
     const isPerfect = this.damageTaken === 0;
     const currentScore = this.registry.get('points');
+
+    console.log('[DEBUG] onLevelComplete called - Zone:', zoneId, 'Level:', currentLevel);
 
     // Save user progress
     const user = getUser();
@@ -1057,6 +1366,7 @@ class LevelScene extends Phaser.Scene {
       const alreadyCompleted = user.progress.completedLevels.some(
         l => l.zone === zoneId && l.level === currentLevel
       );
+      console.log('[DEBUG] Already completed?', alreadyCompleted, '- Current completedLevels:', JSON.stringify(user.progress.completedLevels));
       if (!alreadyCompleted) {
         user.progress.completedLevels.push({
           zone: zoneId,
@@ -1064,6 +1374,7 @@ class LevelScene extends Phaser.Scene {
           score: currentScore,
           perfect: isPerfect
         });
+        console.log('[DEBUG] Added level', currentLevel, '- New completedLevels:', JSON.stringify(user.progress.completedLevels));
       }
 
       // Update stats
@@ -1071,14 +1382,51 @@ class LevelScene extends Phaser.Scene {
         user.stats.perfectLevels++;
       }
 
-      // Award currency
-      const currencyEarned = calculateCurrencyEarned(currentScore, zoneId, isPerfect);
-      user.inventory.currency += currencyEarned;
+      // Calculate bonus points (zone bonus and perfect bonus)
+      // Base points were already added during gameplay in handleChoice
+      const zone = ZoneConfig.find(z => z.id === zoneId) || ZoneConfig[0];
+      let bonusPoints = 0;
+
+      // Zone bonus: extra points based on zone currencyBonus
+      if (zone.currencyBonus > 1.0) {
+        bonusPoints += Math.floor(this.levelPointsEarned * (zone.currencyBonus - 1.0));
+      }
+
+      // Perfect bonus: 50% extra if no damage taken
+      if (isPerfect) {
+        bonusPoints += Math.floor(this.levelPointsEarned * 0.5);
+      }
+
+      // Add bonus points
+      if (bonusPoints > 0) {
+        user.inventory.currency += bonusPoints;
+      }
+
+      // Track total points earned this level (base + bonus)
+      const totalLevelPoints = this.levelPointsEarned + bonusPoints;
 
       // Check zone completion
       const zoneConfig = ZoneConfig.find(z => z.id === zoneId);
       const zoneLevelsCompleted = user.progress.completedLevels.filter(l => l.zone === zoneId).length;
-      if (zoneLevelsCompleted >= zoneConfig.levelsRequired) {
+      const selectedDifficulty = this.registry.get('selectedDifficulty') || 1;
+      let isZoneComplete = false;
+
+      // Zone is complete when player just finished the final level (level 5)
+      // currentLevel is the level that was just completed
+      if (currentLevel >= zoneConfig.levelsRequired) {
+        isZoneComplete = true;
+
+        // Initialize zoneCompletions if needed
+        if (!user.progress.zoneCompletions) {
+          user.progress.zoneCompletions = {};
+        }
+
+        // Update highest difficulty completed for this zone
+        const currentHighest = user.progress.zoneCompletions[zoneId] || 0;
+        if (selectedDifficulty > currentHighest) {
+          user.progress.zoneCompletions[zoneId] = selectedDifficulty;
+        }
+
         // Unlock next zone
         const nextZone = ZoneConfig.find(z => z.id === zoneId + 1);
         if (nextZone && user.progress.currentZone < nextZone.id) {
@@ -1093,14 +1441,29 @@ class LevelScene extends Phaser.Scene {
 
       saveUser(user);
 
-      // Show level complete with currency earned
-      this.promptText.setText(`Level Complete!\n+${currencyEarned} Currency${isPerfect ? '\nPERFECT!' : ''}`);
+      // Show level complete with points earned
+      let completeMsg = `Level Complete!\n+${totalLevelPoints} Points`;
+      if (bonusPoints > 0) {
+        completeMsg += ` (${bonusPoints} bonus)`;
+      }
+      if (isPerfect) {
+        completeMsg += '\nPERFECT!';
+      }
+      this.promptText.setText(completeMsg);
+
+      // Store for use in showing popup
+      this.isZoneComplete = isZoneComplete;
+      this.zoneCompleteZoneId = zoneId;
     } else {
       this.promptText.setText('Level Complete!');
+      this.isZoneComplete = false;
     }
 
     this.registry.values.level += 1;
     this.registry.values.stage = 1;
+
+    // Reset level points tracking for next level
+    this.levelPointsEarned = 0;
 
     // Reset item usage and point multiplier for next level
     this.registry.set('itemsUsedThisLevel', 0);
@@ -1112,13 +1475,18 @@ class LevelScene extends Phaser.Scene {
     const itemBar = document.getElementById('item-bar');
     if (itemBar) itemBar.style.display = 'none';
 
-    const btnNextShow = document.getElementById('btn-next');
-    if (btnNextShow) {
-      btnNextShow.style.display = 'block';
-      btnNextShow.style.left = '50%';
-      btnNextShow.style.top = '500px';
-      btnNextShow.style.transform = 'translateX(-50%)';
-      btnNextShow.onclick = () => this.startNextLevel();
+    // Check if zone is complete - show zone complete popup instead of next level button
+    if (this.isZoneComplete) {
+      this.showZoneCompletePopup(this.zoneCompleteZoneId);
+    } else {
+      const btnNextShow = document.getElementById('btn-next');
+      if (btnNextShow) {
+        btnNextShow.style.display = 'block';
+        btnNextShow.style.left = '50%';
+        btnNextShow.style.top = '500px';
+        btnNextShow.style.transform = 'translateX(-50%)';
+        btnNextShow.onclick = () => this.startNextLevel();
+      }
     }
     this.updateUI();
   }
@@ -1139,6 +1507,69 @@ class LevelScene extends Phaser.Scene {
     this.junctionIndex=0;
     this.showJunction();
   }
+
+  showZoneCompletePopup(zoneId) {
+    const container = document.getElementById('zone-complete-container');
+    const frame = document.getElementById('zone-complete-frame');
+    const subtitle = document.getElementById('zone-complete-subtitle');
+    const btnContainer = document.getElementById('zone-complete-btn-container');
+
+    if (!container || !frame) return;
+
+    // Determine next zone name or if all zones complete
+    const nextZone = ZoneConfig.find(z => z.id === zoneId + 1);
+    const isAllComplete = !nextZone;
+
+    if (isAllComplete) {
+      subtitle.textContent = '🎉 All Zones Complete! 🎉';
+    } else {
+      subtitle.textContent = `${nextZone.name} Unlocked!`;
+    }
+
+    // Create continue button
+    btnContainer.innerHTML = '';
+    const continueBtn = document.createElement('img');
+    continueBtn.src = 'assets/buttons/button_continue.png';
+    continueBtn.alt = 'Continue';
+    continueBtn.style.cssText = 'width:180px;height:auto;cursor:pointer;';
+    continueBtn.onclick = () => {
+      // Hide popup
+      container.style.display = 'none';
+      frame.classList.remove('zone-complete-animate');
+
+      if (isAllComplete) {
+        // Return to main menu
+        this.scene.start('MainMenuScene');
+      } else {
+        // Start next zone
+        this.startNextZone(nextZone.id);
+      }
+    };
+    btnContainer.appendChild(continueBtn);
+
+    // Show container and animate frame
+    container.style.display = 'block';
+    frame.classList.add('zone-complete-animate');
+  }
+
+  startNextZone(nextZoneId) {
+    // Hide zone complete popup if visible
+    const zoneCompleteContainer = document.getElementById('zone-complete-container');
+    if (zoneCompleteContainer) zoneCompleteContainer.style.display = 'none';
+
+    // Set up for new zone (points persist, don't reset)
+    this.registry.set('zone', nextZoneId);
+    this.registry.set('level', 1);
+    this.registry.set('stage', 1);
+    this.registry.set('health', 10);
+    // Points are persistent - don't reset
+    this.registry.set('selectedDifficulty', 1); // Reset to difficulty 1 for new zone
+    this.registry.set('pointMultiplier', 1);
+    this.registry.set('itemsUsedThisLevel', 0);
+
+    // Restart the LevelScene with new zone
+    this.scene.restart();
+  }
 }
 
 class GameOverScene extends Phaser.Scene {
@@ -1155,10 +1586,9 @@ class GameOverScene extends Phaser.Scene {
       user.stats.totalDeaths++;
       user.stats.totalPoints += score;
 
-      // Award partial currency even on death (50% of normal)
-      const zoneId = this.registry.get('zone') || 1;
-      const currencyEarned = Math.floor(calculateCurrencyEarned(score, zoneId, false) * 0.5);
-      user.inventory.currency += currencyEarned;
+      // Points were already added during gameplay in handleChoice
+      // Just show current total points on game over screen
+      this.totalPoints = user.inventory.currency;
 
       // Check survivor achievement
       if (this.registry.get('health') === 1 && !user.achievements.includes('survivor')) {
@@ -1170,8 +1600,6 @@ class GameOverScene extends Phaser.Scene {
       user.achievements = [...new Set([...user.achievements, ...newAchievements])];
 
       saveUser(user);
-
-      this.currencyEarned = currencyEarned;
     }
 
     // Reset point multiplier and item tracking
@@ -1186,7 +1614,7 @@ class GameOverScene extends Phaser.Scene {
     const domBg = document.getElementById('menu-bg'); if (domBg) domBg.style.display='none';
     const domLogo = document.getElementById('menu-logo'); if (domLogo) domLogo.style.display='none';
     const levelBgHide = document.getElementById('level-bg'); if (levelBgHide) levelBgHide.style.display='none';
-    const leaderboardBgHideGO = document.getElementById('leaderboard-bg'); if (leaderboardBgHideGO) leaderboardBgHideGO.style.display='none';
+    const leaderboardBgHideGO = document.getElementById('leaderboard-container'); if (leaderboardBgHideGO) leaderboardBgHideGO.style.display='none';
     document.body.style.backgroundColor = '';
     const gameOverBgShowGO = document.getElementById('gameover-bg'); if (gameOverBgShowGO) gameOverBgShowGO.style.display='block';
     const btnStart = document.getElementById('btn-start'); if (btnStart) btnStart.style.display='none';
@@ -1194,149 +1622,148 @@ class GameOverScene extends Phaser.Scene {
     const btnContinue = document.getElementById('btn-continue'); if (btnContinue) { btnContinue.style.display='none'; btnContinue.onclick=null; }
     const domMenuBtnX = document.getElementById('btn-menu'); if (domMenuBtnX) { domMenuBtnX.style.display='none'; domMenuBtnX.onclick=null; }
     const btnQuitGOHide = document.getElementById('btn-quit'); if (btnQuitGOHide) { btnQuitGOHide.style.display='none'; btnQuitGOHide.onclick=null; }
-    const consBgHideFinal = document.getElementById('consequence-bg'); if (consBgHideFinal) consBgHideFinal.style.display='none';
-
-    // Show currency earned
-    if (this.currencyEarned > 0) {
-      this.add.text(400, 280, `+${this.currencyEarned} Currency`, {
-        font: '20px Arial',
-        fill: '#FFD700'
-      }).setOrigin(0.5).setShadow(2, 2, '#000', 3);
-    }
-
-    // Submit Score image button
-    const btnSubmit = document.getElementById('btn-submit');
-    if (btnSubmit) {
-      btnSubmit.style.display = 'block';
-      btnSubmit.style.left = '50%';
-      btnSubmit.style.top = '335px';
-      btnSubmit.style.transform = 'translateX(-50%)';
-      btnSubmit.onclick = () => {
-        const initials = prompt('Enter initials','AAA') || '---';
-        const board = getLeaderboard();
-        board.push({ initials: initials.slice(0,3).toUpperCase(), score: this.registry.get('points') });
-        board.sort((a,b)=> b.score - a.score);
-        saveLeaderboard(board.slice(0,10));
-        const goBg = document.getElementById('gameover-bg'); if (goBg) goBg.style.display='none';
-        this.scene.start('LeaderboardScene');
-      };
-    }
+    const consBgHideFinal = document.getElementById('consequence-container'); if (consBgHideFinal) consBgHideFinal.style.display='none';
 
     // Game Over title image (DOM)
     const goTitle = document.getElementById('go-title');
     if (goTitle) {
       goTitle.style.display = 'block';
-      const sBtn = document.getElementById('btn-submit');
-      const TOP_MARGIN = 75;
-      const BOTTOM_MARGIN = 75;
-      let submitTop = 335;
-      if (sBtn && sBtn.style && sBtn.style.top) submitTop = parseFloat(sBtn.style.top) || submitTop;
-      const available = Math.max(0, submitTop - (TOP_MARGIN + BOTTOM_MARGIN));
-      const naturalH = goTitle.naturalHeight || available;
-      const desired = Math.min(naturalH, available);
-      goTitle.style.top = TOP_MARGIN + 'px';
-      goTitle.style.height = desired + 'px';
       goTitle.style.width = 'auto';
       goTitle.style.left = '50%';
       goTitle.style.transform = 'translateX(-50%)';
       goTitle.style.zIndex = '9';
-      if (desired < available && sBtn) {
-        const newSubmitTop = TOP_MARGIN + desired + BOTTOM_MARGIN;
-        sBtn.style.top = newSubmitTop + 'px';
-      }
     }
 
-    // Try Again image button
-    const btnTry = document.getElementById('btn-try');
-    if (btnTry) {
-      btnTry.style.display = 'block';
-      btnTry.style.left = '50%';
-      btnTry.style.top = '455px';
-      btnTry.style.transform = 'translateX(-50%)';
-      btnTry.onclick = () => {
-        this.registry.set('health',10);
-        this.registry.set('points',0);
-        this.registry.set('level',1);
-        this.registry.set('stage',1);
-        // Keep the same zone for retry
-        this.registry.set('pointMultiplier', 1);
-        this.registry.set('itemsUsedThisLevel', 0);
-        const btnSubmitRef = document.getElementById('btn-submit');
-        if (btnSubmitRef) { btnSubmitRef.style.display='none'; btnSubmitRef.onclick=null; }
-        const btnWorldMapGo = document.getElementById('btn-worldmap-go');
-        if (btnWorldMapGo) { btnWorldMapGo.style.display='none'; btnWorldMapGo.onclick=null; }
-        btnTry.style.display='none'; btnTry.onclick=null;
-        this.scene.start('LevelScene');
-      };
+    // Show total points (DOM element for debug outline support)
+    const goTotalPoints = document.getElementById('go-total-points');
+    if (goTotalPoints && this.totalPoints !== undefined) {
+      goTotalPoints.textContent = `Total Points: ${this.totalPoints}`;
+      goTotalPoints.style.display = 'block';
+      goTotalPoints.style.top = '200px';
     }
 
-    // World Map button (between Try Again and Menu)
+    // Get button container and buttons
+    const btnContainer = document.getElementById('go-btn-container');
     const btnWorldMapGo = document.getElementById('btn-worldmap-go');
-    if (btnWorldMapGo) {
-      btnWorldMapGo.style.display = 'block';
-      btnWorldMapGo.style.left = '50%';
-      btnWorldMapGo.style.top = '505px';
-      btnWorldMapGo.style.transform = 'translateX(-50%)';
-      btnWorldMapGo.onclick = () => {
-        const btnSubmitRef = document.getElementById('btn-submit');
-        if (btnSubmitRef) { btnSubmitRef.style.display='none'; btnSubmitRef.onclick=null; }
-        const btnTryRef = document.getElementById('btn-try');
-        if (btnTryRef) { btnTryRef.style.display='none'; btnTryRef.onclick=null; }
-        const domMenuBtn3 = document.getElementById('btn-menu');
-        if (domMenuBtn3) { domMenuBtn3.style.display='none'; domMenuBtn3.onclick=null; }
-        btnWorldMapGo.style.display='none'; btnWorldMapGo.onclick=null;
-        this.scene.start('WorldMapScene');
-      };
+    const btnTry = document.getElementById('btn-try');
+    const btnSubmit = document.getElementById('btn-submit');
+    const btnMenu = document.getElementById('btn-menu');
+    const CONTAINER_WIDTH = 180;
+
+    // Helper to hide all game over buttons and container
+    const hideAllGOButtons = () => {
+      // Move buttons back to body to preserve them for next game over
+      [btnWorldMapGo, btnTry, btnSubmit, btnMenu].forEach(btn => {
+        if (btn && btn.parentElement === btnContainer) {
+          btn.style.display = 'none';
+          btn.style.position = 'fixed';
+          btn.onclick = null;
+          document.body.appendChild(btn);
+        }
+      });
+      if (btnContainer) btnContainer.style.display = 'none';
+      if (goTotalPoints) goTotalPoints.style.display = 'none';
+    };
+
+    if (btnContainer) {
+      // Clear container and set up
+      btnContainer.innerHTML = '';
+      btnContainer.style.display = 'flex';
+      btnContainer.style.top = '240px';
+
+      // Button order: World Map, Try Again, Submit Score, Menu
+      const buttons = [
+        { el: btnWorldMapGo, action: () => { hideAllGOButtons(); this.scene.start('WorldMapScene'); } },
+        { el: btnTry, action: () => {
+          this.registry.set('health', 10);
+          this.registry.set('level', 1);
+          this.registry.set('stage', 1);
+          this.registry.set('pointMultiplier', 1);
+          this.registry.set('itemsUsedThisLevel', 0);
+          hideAllGOButtons();
+          this.scene.start('LevelScene');
+        }},
+        { el: btnSubmit, action: () => {
+          const initials = prompt('Enter initials', 'AAA') || '---';
+          const board = getLeaderboard();
+          const user = getUser();
+          const totalPoints = user ? user.inventory.currency : this.registry.get('points');
+          board.push({ initials: initials.slice(0, 3).toUpperCase(), score: totalPoints });
+          board.sort((a, b) => b.score - a.score);
+          saveLeaderboard(board.slice(0, 10));
+          const goBg = document.getElementById('gameover-bg'); if (goBg) goBg.style.display = 'none';
+          hideAllGOButtons();
+          this.scene.start('LeaderboardScene');
+        }},
+        { el: btnMenu, action: () => { hideAllGOButtons(); this.scene.start('MainMenuScene'); } }
+      ];
+
+      // Add each button to container with uniform width
+      buttons.forEach(({ el, action }) => {
+        if (el) {
+          el.style.position = 'relative';
+          el.style.left = '';
+          el.style.top = '';
+          el.style.right = '';
+          el.style.bottom = '';
+          el.style.transform = '';
+          el.style.width = CONTAINER_WIDTH + 'px';
+          el.style.height = 'auto';
+          el.style.display = 'block';
+          el.style.cursor = 'pointer';
+          el.onclick = action;
+          btnContainer.appendChild(el);
+        }
+      });
     }
 
-    // Full-size Menu button centered near bottom
-    const domMenuBtn3 = document.getElementById('btn-menu');
-    if (domMenuBtn3) {
-      domMenuBtn3.style.display = 'block';
-      domMenuBtn3.style.left = '50%';
-      domMenuBtn3.style.top = '550px';
-      domMenuBtn3.style.right = '';
-      domMenuBtn3.style.bottom = '';
-      domMenuBtn3.style.transform = 'translateX(-50%) scale(0.85)';
-      domMenuBtn3.style.transformOrigin = 'center';
-      domMenuBtn3.onclick = () => {
-        const btnSubmitRef = document.getElementById('btn-submit');
-        if (btnSubmitRef) { btnSubmitRef.style.display='none'; btnSubmitRef.onclick=null; }
-        const btnTryRef = document.getElementById('btn-try');
-        if (btnTryRef) { btnTryRef.style.display='none'; btnTryRef.onclick=null; }
-        const btnWorldMapGoRef = document.getElementById('btn-worldmap-go');
-        if (btnWorldMapGoRef) { btnWorldMapGoRef.style.display='none'; btnWorldMapGoRef.onclick=null; }
-        domMenuBtn3.style.display='none'; domMenuBtn3.onclick=null;
-        this.scene.start('MainMenuScene');
-      };
-    }
+    // Layout the game over screen elements
+    // ========== ADJUST THIS VALUE TO CHANGE TITLE SIZE ==========
+    const DESIRED_TITLE_HEIGHT = 200; // Target height for game over title (will scale down if needed)
+    // ============================================================
 
-    // === Equal vertical spacing between buttons (Submit, Try Again, World Map, Menu) ===
-    const layoutEvenGO = () => {
-      const s = document.getElementById('btn-submit');
-      const t = document.getElementById('btn-try');
-      const w = document.getElementById('btn-worldmap-go');
-      const m = document.getElementById('btn-menu');
-      if (!s || !t || !w || !m) return;
-      const sRect = s.getBoundingClientRect();
-      const tRect = t.getBoundingClientRect();
-      const wRect = w.getBoundingClientRect();
-      const mRect = m.getBoundingClientRect();
-      if (sRect.height === 0 || tRect.height === 0 || wRect.height === 0 || mRect.height === 0) {
-        setTimeout(layoutEvenGO, 50);
+    const layoutGameOver = () => {
+      const vh = window.innerHeight;
+      const titleEl = document.getElementById('go-title');
+      const pointsEl = document.getElementById('go-total-points');
+      const containerEl = document.getElementById('go-btn-container');
+      if (!titleEl || !pointsEl || !containerEl) return;
+
+      const containerRect = containerEl.getBoundingClientRect();
+      if (containerRect.height === 0) {
+        setTimeout(layoutGameOver, 50);
         return;
       }
-      const GAP = 25; // pixels between elements
-      const sTop = parseFloat(s.style.top) || 335; // anchor
-      t.style.top = (sTop + sRect.height + GAP) + 'px';
-      const tTop = parseFloat(t.style.top) || (sTop + sRect.height + GAP);
-      w.style.top = (tTop + tRect.height + GAP) + 'px';
-      const wTop = parseFloat(w.style.top) || (tTop + tRect.height + GAP);
-      m.style.top = (wTop + wRect.height + GAP) + 'px';
+
+      // Fixed spacing values
+      const titleTop = 30;
+      const gapAfterTitle = 10;
+      const gapAfterPoints = 20;
+      const pointsHeight = 30;
+      const bottomMargin = 20;
+
+      // Calculate how much space we need for everything except title
+      const fixedSpace = titleTop + gapAfterTitle + pointsHeight + gapAfterPoints + containerRect.height + bottomMargin;
+
+      // Calculate max title height that still fits everything on screen
+      const maxTitleHeight = vh - fixedSpace;
+
+      // Use desired height or scale down to fit
+      const titleHeight = Math.min(DESIRED_TITLE_HEIGHT, Math.max(60, maxTitleHeight));
+
+      // Position all elements
+      titleEl.style.top = titleTop + 'px';
+      titleEl.style.height = titleHeight + 'px';
+
+      const pointsTop = titleTop + titleHeight + gapAfterTitle;
+      pointsEl.style.top = pointsTop + 'px';
+
+      const containerTop = pointsTop + pointsHeight + gapAfterPoints;
+      containerEl.style.top = containerTop + 'px';
     };
-    // run once DOM paints
-    setTimeout(layoutEvenGO, 0);
-    setTimeout(layoutEvenGO, 150);
+
+    setTimeout(layoutGameOver, 0);
+    setTimeout(layoutGameOver, 150);
   }
 }
 
@@ -1358,51 +1785,68 @@ class LeaderboardScene extends Phaser.Scene {
     const btnSubmitImgLB = document.getElementById('btn-submit'); if (btnSubmitImgLB) { btnSubmitImgLB.style.display='none'; btnSubmitImgLB.onclick=null; }
     const btnTryImgLB = document.getElementById('btn-try'); if (btnTryImgLB) { btnTryImgLB.style.display='none'; btnTryImgLB.onclick=null; }
     const btnWorldMapGoLB = document.getElementById('btn-worldmap-go'); if (btnWorldMapGoLB) { btnWorldMapGoLB.style.display='none'; btnWorldMapGoLB.onclick=null; }
-    const consBgHideLB = document.getElementById('consequence-bg'); if (consBgHideLB) consBgHideLB.style.display='none';
-
+    const consBgHideLB = document.getElementById('consequence-container'); if (consBgHideLB) consBgHideLB.style.display='none';
     const goTitleHideLB2 = document.getElementById('go-title'); if (goTitleHideLB2) goTitleHideLB2.style.display='none';
+    // Hide game over container (buttons are handled by hideAllContainers)
+    const goBtnContainerLB = document.getElementById('go-btn-container'); if (goBtnContainerLB) goBtnContainerLB.style.display='none';
+    const goTotalPointsLB = document.getElementById('go-total-points'); if (goTotalPointsLB) goTotalPointsLB.style.display='none';
 
-    // Show leaderboard background image and set dark gray page background
-    const leaderboardBg = document.getElementById('leaderboard-bg'); if (leaderboardBg) leaderboardBg.style.display='block';
+    // Hide all main menu buttons
+    const btnWorldMap = document.getElementById('btn-worldmap'); if (btnWorldMap) btnWorldMap.style.display='none';
+    const btnShop = document.getElementById('btn-shop'); if (btnShop) btnShop.style.display='none';
+    const btnProfile = document.getElementById('btn-profile'); if (btnProfile) btnProfile.style.display='none';
+    const btnLogout = document.getElementById('btn-logout'); if (btnLogout) btnLogout.style.display='none';
+    const btnQuitHide = document.getElementById('btn-quit'); if (btnQuitHide) btnQuitHide.style.display='none';
+
+    // Hide welcome and points displays
+    const welcomeDisplay = document.getElementById('menu-welcome-display'); if (welcomeDisplay) welcomeDisplay.style.display='none';
+    const pointsDisplay = document.getElementById('menu-points-display'); if (pointsDisplay) pointsDisplay.style.display='none';
+
+    // Set dark background and show leaderboard container
     document.body.style.backgroundColor = '#222';
-    // Title (moved down by 100px)
-    this.add.text(400,180,'Leaderboard',{font:'48px Arial',fill:'#fff'}).setOrigin(0.5);
 
-    // Entries (moved down by 100px)
-    const board = getLeaderboard();
-    board.forEach((e,i)=>{
-      this.add.text(300,250+i*40,`${i+1}. ${e.initials}`,{font:'24px Arial',fill:'#fff'});
-      this.add.text(500,250+i*40,`${e.score}`,{font:'24px Arial',fill:'#fff'}).setOrigin(1,0);
-    });
+    // Show leaderboard container (frame is inside)
+    const leaderboardContainer = document.getElementById('leaderboard-container');
+    if (leaderboardContainer) leaderboardContainer.style.display = 'block';
 
-    // Menu image button (full size) centered; scaled down 30% (moved down by 200px)
-    const domMenuBtnLB = document.getElementById('btn-menu');
-    if (domMenuBtnLB) {
-      domMenuBtnLB.style.display = 'block';
-      domMenuBtnLB.style.left = '50%';
-      domMenuBtnLB.style.top = '700px';
-      domMenuBtnLB.style.right = '';
-      domMenuBtnLB.style.bottom = '';
-      domMenuBtnLB.style.transform = 'translateX(-50%) scale(0.7)';
-      domMenuBtnLB.style.transformOrigin = 'center';
-      domMenuBtnLB.onclick = () => { 
-        domMenuBtnLB.style.display='none'; domMenuBtnLB.onclick=null; 
-        const btnQuitLB2 = document.getElementById('btn-quit'); if (btnQuitLB2) { btnQuitLB2.style.display='none'; btnQuitLB2.onclick=null; }
-        this.scene.start('MainMenuScene'); 
-      };
+    // Populate entries using DOM elements (max 10 entries to fit in frame)
+    const entriesContainer = document.getElementById('leaderboard-entries');
+    if (entriesContainer) {
+      entriesContainer.innerHTML = ''; // Clear previous entries
+      const board = getLeaderboard().slice(0, 10); // Limit to top 10
+      board.forEach((e, i) => {
+        const entry = document.createElement('div');
+        entry.id = `leaderboard-entry-${i}`;
+        entry.style.cssText = 'display:flex;justify-content:space-between;font-family:Arial,sans-serif;font-size:clamp(14px, 2.5vh, 24px);color:#fff;flex-shrink:0;';
+        entry.innerHTML = `<span id="leaderboard-entry-${i}-name">${i+1}. ${e.initials}</span><span id="leaderboard-entry-${i}-score">${e.score}</span>`;
+        entriesContainer.appendChild(entry);
+      });
     }
 
-    // Quit image button (same column, scaled 30%) (moved down by 200px)
-    const btnQuitLB = document.getElementById('btn-quit');
-    if (btnQuitLB) {
-      btnQuitLB.style.display = 'block';
-      btnQuitLB.style.left = '50%';
-      btnQuitLB.style.top = '810px';
-      btnQuitLB.style.right = '';
-      btnQuitLB.style.bottom = '';
-      btnQuitLB.style.transform = 'translateX(-50%) scale(0.7)';
-      btnQuitLB.style.transformOrigin = 'center';
-      btnQuitLB.onclick = () => window.close();
+    // Back button (Menu button) - inside the frame's safe area
+    const btnContainer = document.getElementById('leaderboard-btn-container');
+    const domMenuBtnLB = document.getElementById('btn-menu');
+    if (domMenuBtnLB && btnContainer) {
+      // Move button into the leaderboard frame
+      btnContainer.appendChild(domMenuBtnLB);
+      domMenuBtnLB.style.display = 'block';
+      domMenuBtnLB.style.position = 'relative';
+      domMenuBtnLB.style.left = '';
+      domMenuBtnLB.style.top = '';
+      domMenuBtnLB.style.right = '';
+      domMenuBtnLB.style.bottom = '';
+      domMenuBtnLB.style.transform = 'scale(0.5)';
+      domMenuBtnLB.style.transformOrigin = 'center';
+      domMenuBtnLB.onclick = () => {
+        // Move button back to body before hiding
+        document.body.appendChild(domMenuBtnLB);
+        domMenuBtnLB.style.display = 'none';
+        domMenuBtnLB.style.position = 'fixed';
+        domMenuBtnLB.onclick = null;
+        const lbContainer = document.getElementById('leaderboard-container');
+        if (lbContainer) lbContainer.style.display = 'none';
+        this.scene.start('MainMenuScene');
+      };
     }
   }
 }
@@ -1419,9 +1863,9 @@ class WorldMapScene extends Phaser.Scene {
     const domBg = document.getElementById('menu-bg'); if (domBg) domBg.style.display = 'none';
     const domLogo = document.getElementById('menu-logo'); if (domLogo) domLogo.style.display = 'none';
     const levelBg = document.getElementById('level-bg'); if (levelBg) levelBg.style.display = 'none';
-    const leaderboardBg = document.getElementById('leaderboard-bg'); if (leaderboardBg) leaderboardBg.style.display = 'none';
+    const leaderboardBg = document.getElementById('leaderboard-container'); if (leaderboardBg) leaderboardBg.style.display = 'none';
     const gameOverBg = document.getElementById('gameover-bg'); if (gameOverBg) gameOverBg.style.display = 'none';
-    const consBg = document.getElementById('consequence-bg'); if (consBg) consBg.style.display = 'none';
+    const consBg = document.getElementById('consequence-container'); if (consBg) consBg.style.display = 'none';
     const goTitle = document.getElementById('go-title'); if (goTitle) goTitle.style.display = 'none';
 
     // Hide all buttons
@@ -1456,7 +1900,7 @@ class WorldMapScene extends Phaser.Scene {
       let isUnlocked = zone.id === 1;
       if (prevZone && user) {
         const prevZoneCompleted = user.progress.completedLevels.filter(l => l.zone === prevZone.id).length;
-        isUnlocked = prevZoneCompleted >= prevZone.unlockRequirement || zone.id <= unlockedZone;
+        isUnlocked = prevZoneCompleted >= zone.unlockRequirement || zone.id <= unlockedZone;
       }
 
       // Update marker appearance based on lock status
@@ -1495,11 +1939,14 @@ class WorldMapScene extends Phaser.Scene {
           worldmapContainer.style.display = 'none';
           this.registry.set('zone', this.selectedZone);
           this.registry.set('health', 10);
-          this.registry.set('points', 0);
+          // Points are persistent - load from user's balance in LevelScene init
           this.registry.set('level', 1);
           this.registry.set('stage', 1);
           this.registry.set('pointMultiplier', 1);
           this.registry.set('itemsUsedThisLevel', 0);
+          this.registry.set('selectedDifficulty', this.selectedDifficulty || 1);
+          // Clear registry points so it gets reloaded from user in LevelScene
+          this.registry.set('points', undefined);
           this.scene.start('LevelScene');
         }
       };
@@ -1510,7 +1957,7 @@ class WorldMapScene extends Phaser.Scene {
     if (backBtn) {
       backBtn.onclick = () => {
         worldmapContainer.style.display = 'none';
-        const detailPanel = document.getElementById('zone-detail-panel');
+        const detailPanel = document.getElementById('zone-detail-frame');
         if (detailPanel) detailPanel.style.display = 'none';
         this.scene.start('MainMenuScene');
       };
@@ -1522,22 +1969,29 @@ class WorldMapScene extends Phaser.Scene {
   }
 
   showZoneDetails(zone, user, isUnlocked) {
-    const panel = document.getElementById('zone-detail-panel');
+    const panel = document.getElementById('zone-detail-frame');
     if (!panel) return;
 
     // Get completion stats
     let levelsCompleted = 0;
+    let zoneCompletions = 0; // Highest difficulty completed
     if (user) {
       levelsCompleted = user.progress.completedLevels.filter(l => l.zone === zone.id).length;
+      // Initialize zoneCompletions if needed
+      if (!user.progress.zoneCompletions) {
+        user.progress.zoneCompletions = {};
+      }
+      zoneCompletions = user.progress.zoneCompletions[zone.id] || 0;
+      console.log('[DEBUG] showZoneDetails - Zone:', zone.id, 'completedLevels:', JSON.stringify(user.progress.completedLevels), 'Count for this zone:', levelsCompleted, 'Zone completions:', zoneCompletions);
     }
 
     // Update panel content
     document.getElementById('zone-detail-name').textContent = zone.name;
     document.getElementById('zone-detail-desc').textContent = zone.description;
 
-    // Difficulty stars
+    // Difficulty stars (base zone difficulty)
     const diffStars = '⭐'.repeat(Math.ceil(zone.difficultyMod));
-    document.getElementById('zone-detail-difficulty').textContent = diffStars + ` (${zone.difficultyMod}x)`;
+    document.getElementById('zone-detail-difficulty').textContent = diffStars + ` (${zone.difficultyMod}x base)`;
 
     document.getElementById('zone-detail-choices').textContent = `${zone.choicesPerLevel} choices per level`;
 
@@ -1545,6 +1999,61 @@ class WorldMapScene extends Phaser.Scene {
     const progressPercent = (levelsCompleted / zone.levelsRequired) * 100;
     document.getElementById('zone-detail-progress-bar').style.width = `${Math.min(progressPercent, 100)}%`;
     document.getElementById('zone-detail-progress-text').textContent = `${levelsCompleted}/${zone.levelsRequired} Levels Completed`;
+
+    // Setup difficulty selector
+    const difficultySelector = document.getElementById('zone-difficulty-selector');
+    const difficultyMultiplierText = document.getElementById('zone-difficulty-multiplier');
+    const difficultyBtns = document.querySelectorAll('.difficulty-btn');
+
+    if (isUnlocked && difficultySelector) {
+      difficultySelector.style.display = 'block';
+
+      // Default selected difficulty to 1
+      this.selectedDifficulty = 1;
+
+      // Update difficulty buttons
+      difficultyBtns.forEach(btn => {
+        const diff = parseInt(btn.getAttribute('data-difficulty'));
+
+        // Difficulty unlock logic:
+        // Diff 1: Always available once zone unlocked
+        // Diff 2: Unlocked after completing zone once (zoneCompletions >= 1)
+        // Diff 3: Unlocked after completing zone at Diff 2 (zoneCompletions >= 2)
+        const isUnlockedDiff = diff <= zoneCompletions + 1;
+
+        // Reset classes
+        btn.classList.remove('selected', 'locked');
+
+        if (!isUnlockedDiff) {
+          btn.classList.add('locked');
+          btn.innerHTML = '🔒';
+        } else {
+          btn.textContent = diff;
+          if (diff === 1) {
+            btn.classList.add('selected');
+          }
+        }
+
+        btn.onclick = () => {
+          if (!isUnlockedDiff) return;
+
+          // Update selection
+          difficultyBtns.forEach(b => b.classList.remove('selected'));
+          btn.classList.add('selected');
+          this.selectedDifficulty = diff;
+
+          // Update multiplier display
+          const multiplier = zone.difficultyMod + (diff - 1) * 0.3;
+          difficultyMultiplierText.textContent = `${multiplier.toFixed(1)}x Multiplier`;
+        };
+      });
+
+      // Set initial multiplier display
+      const initialMultiplier = zone.difficultyMod + (this.selectedDifficulty - 1) * 0.3;
+      difficultyMultiplierText.textContent = `${initialMultiplier.toFixed(1)}x Multiplier`;
+    } else if (difficultySelector) {
+      difficultySelector.style.display = 'none';
+    }
 
     // Lock status
     const lockedDiv = document.getElementById('zone-detail-locked');
@@ -1578,7 +2087,7 @@ class ShopScene extends Phaser.Scene {
     const domBg = document.getElementById('menu-bg'); if (domBg) domBg.style.display = 'none';
     const domLogo = document.getElementById('menu-logo'); if (domLogo) domLogo.style.display = 'none';
     const levelBg = document.getElementById('level-bg'); if (levelBg) levelBg.style.display = 'none';
-    const leaderboardBg = document.getElementById('leaderboard-bg'); if (leaderboardBg) leaderboardBg.style.display = 'none';
+    const leaderboardBg = document.getElementById('leaderboard-container'); if (leaderboardBg) leaderboardBg.style.display = 'none';
     const gameOverBg = document.getElementById('gameover-bg'); if (gameOverBg) gameOverBg.style.display = 'none';
 
     // Hide all buttons
@@ -1595,6 +2104,8 @@ class ShopScene extends Phaser.Scene {
     if (shopContainer) shopContainer.style.display = 'block';
 
     this.currentTab = 'cosmetics';
+    this.currentPage = 0;
+    this.itemsPerPage = 6; // 2 rows of 3 items
     this.renderShop();
 
     // Setup tabs
@@ -1604,6 +2115,7 @@ class ShopScene extends Phaser.Scene {
     if (tabCosmetics) {
       tabCosmetics.onclick = () => {
         this.currentTab = 'cosmetics';
+        this.currentPage = 0; // Reset to first page when switching tabs
         tabCosmetics.style.background = '#ffd700';
         tabCosmetics.style.color = '#000';
         tabConsumables.style.background = '#555';
@@ -1615,11 +2127,36 @@ class ShopScene extends Phaser.Scene {
     if (tabConsumables) {
       tabConsumables.onclick = () => {
         this.currentTab = 'consumables';
+        this.currentPage = 0; // Reset to first page when switching tabs
         tabConsumables.style.background = '#ffd700';
         tabConsumables.style.color = '#000';
         tabCosmetics.style.background = '#555';
         tabCosmetics.style.color = '#fff';
         this.renderShop();
+      };
+    }
+
+    // Setup pagination buttons
+    const prevBtn = document.getElementById('shop-prev');
+    const nextBtn = document.getElementById('shop-next');
+
+    if (prevBtn) {
+      prevBtn.onclick = () => {
+        if (this.currentPage > 0) {
+          this.currentPage--;
+          this.renderShop();
+        }
+      };
+    }
+
+    if (nextBtn) {
+      nextBtn.onclick = () => {
+        const items = this.currentTab === 'cosmetics' ? ShopItems.cosmetics : ShopItems.consumables;
+        const totalPages = Math.ceil(items.length / this.itemsPerPage);
+        if (this.currentPage < totalPages - 1) {
+          this.currentPage++;
+          this.renderShop();
+        }
       };
     }
 
@@ -1637,20 +2174,48 @@ class ShopScene extends Phaser.Scene {
     const user = getUser();
     if (!user) return;
 
-    // Update currency display with icon
-    const currencyEl = document.getElementById('shop-currency');
-    if (currencyEl) {
-      currencyEl.innerHTML = `<img src="assets/icons/icon_currency.png" alt="Currency" title="Currency" style="width:28px;height:28px;vertical-align:middle;margin-right:8px;"/>${user.inventory.currency}`;
+    // Update points display with icon
+    const pointsEl = document.getElementById('shop-points');
+    if (pointsEl) {
+      pointsEl.innerHTML = `<img src="assets/icons/icon_currency.png" alt="Points" title="Points" style="width:28px;height:28px;vertical-align:middle;margin-right:8px;"/>${user.inventory.currency} Points`;
     }
 
-    // Get items container
-    const itemsContainer = document.getElementById('shop-items');
-    if (!itemsContainer) return;
+    // Get items grid container
+    const itemsGrid = document.getElementById('shop-items-grid');
+    if (!itemsGrid) return;
 
-    itemsContainer.innerHTML = '';
+    itemsGrid.innerHTML = '';
+
+    // Get the items for current tab
+    const allItems = this.currentTab === 'cosmetics' ? ShopItems.cosmetics : ShopItems.consumables;
+    const totalPages = Math.ceil(allItems.length / this.itemsPerPage);
+
+    // Ensure current page is valid
+    if (this.currentPage >= totalPages) this.currentPage = Math.max(0, totalPages - 1);
+
+    // Get items for current page
+    const startIndex = this.currentPage * this.itemsPerPage;
+    const pageItems = allItems.slice(startIndex, startIndex + this.itemsPerPage);
+
+    // Update pagination display
+    const pageInfo = document.getElementById('shop-page-info');
+    const prevBtn = document.getElementById('shop-prev');
+    const nextBtn = document.getElementById('shop-next');
+
+    if (pageInfo) {
+      pageInfo.textContent = `Page ${this.currentPage + 1} / ${Math.max(1, totalPages)}`;
+    }
+    if (prevBtn) {
+      prevBtn.style.opacity = this.currentPage > 0 ? '1' : '0.4';
+      prevBtn.style.cursor = this.currentPage > 0 ? 'pointer' : 'not-allowed';
+    }
+    if (nextBtn) {
+      nextBtn.style.opacity = this.currentPage < totalPages - 1 ? '1' : '0.4';
+      nextBtn.style.cursor = this.currentPage < totalPages - 1 ? 'pointer' : 'not-allowed';
+    }
 
     if (this.currentTab === 'cosmetics') {
-      ShopItems.cosmetics.forEach(item => {
+      pageItems.forEach(item => {
         const isOwned = user.inventory.cosmetics.includes(item.id);
         const isEquipped = user.equipped.trolleyAppearance === item.id;
         const canAfford = user.inventory.currency >= item.price;
@@ -1659,8 +2224,8 @@ class ShopScene extends Phaser.Scene {
         itemCard.style.cssText = `
           display: inline-block;
           width: 180px;
-          margin: 10px;
-          padding: 15px;
+          margin: 6px;
+          padding: 12px;
           background: rgba(255,255,255,0.1);
           border-radius: 10px;
           text-align: center;
@@ -1671,8 +2236,8 @@ class ShopScene extends Phaser.Scene {
         const preview = document.createElement('div');
         preview.style.cssText = `
           width: 140px;
-          height: 80px;
-          margin: 0 auto 10px;
+          height: 75px;
+          margin: 0 auto 8px;
           background: ${item.preview ? `url('${item.preview}') center/contain no-repeat` : item.color};
           border-radius: 5px;
           border: 3px solid ${isEquipped ? '#ffd700' : 'transparent'};
@@ -1680,12 +2245,12 @@ class ShopScene extends Phaser.Scene {
 
         // Name
         const name = document.createElement('div');
-        name.style.cssText = 'color: #fff; font-family: Arial; font-size: 14px; margin-bottom: 5px;';
+        name.style.cssText = 'color: #fff; font-family: Arial; font-size: 13px; margin-bottom: 4px;';
         name.textContent = item.name;
 
         // Price/Status
         const status = document.createElement('div');
-        status.style.cssText = 'color: #ffd700; font-family: Arial; font-size: 12px; margin-bottom: 10px;';
+        status.style.cssText = 'color: #ffd700; font-family: Arial; font-size: 11px; margin-bottom: 8px;';
         if (isOwned) {
           status.textContent = isEquipped ? 'EQUIPPED' : 'OWNED';
           status.style.color = isEquipped ? '#4CAF50' : '#888';
@@ -1696,12 +2261,12 @@ class ShopScene extends Phaser.Scene {
         // Button
         const btn = document.createElement('button');
         btn.style.cssText = `
-          padding: 8px 16px;
+          padding: 6px 14px;
           border: none;
           border-radius: 5px;
           cursor: pointer;
           font-family: Arial;
-          font-size: 12px;
+          font-size: 11px;
         `;
 
         if (isOwned) {
@@ -1727,12 +2292,20 @@ class ShopScene extends Phaser.Scene {
           btn.style.cursor = canAfford ? 'pointer' : 'not-allowed';
           if (canAfford) {
             btn.onclick = () => {
-              user.inventory.currency -= item.price;
-              user.inventory.cosmetics.push(item.id);
+              // Re-check user can still afford (in case of race conditions)
+              const currentUser = getUser();
+              if (!currentUser || currentUser.inventory.currency < item.price) {
+                this.renderShop();
+                return;
+              }
+              currentUser.inventory.currency -= item.price;
+              // Ensure points never go below 0
+              if (currentUser.inventory.currency < 0) currentUser.inventory.currency = 0;
+              currentUser.inventory.cosmetics.push(item.id);
               // Check collector achievement
-              const newAchievements = checkAchievements(user);
-              user.achievements = [...new Set([...user.achievements, ...newAchievements])];
-              saveUser(user);
+              const newAchievements = checkAchievements(currentUser);
+              currentUser.achievements = [...new Set([...currentUser.achievements, ...newAchievements])];
+              saveUser(currentUser);
               this.renderShop();
             };
           }
@@ -1743,11 +2316,11 @@ class ShopScene extends Phaser.Scene {
         itemCard.appendChild(status);
         itemCard.appendChild(btn);
 
-        itemsContainer.appendChild(itemCard);
+        itemsGrid.appendChild(itemCard);
       });
     } else {
       // Consumables tab
-      ShopItems.consumables.forEach(item => {
+      pageItems.forEach(item => {
         const owned = user.inventory.consumables[item.id] || 0;
         const canAfford = user.inventory.currency >= item.price;
 
@@ -1755,8 +2328,8 @@ class ShopScene extends Phaser.Scene {
         itemCard.style.cssText = `
           display: inline-block;
           width: 180px;
-          margin: 10px;
-          padding: 15px;
+          margin: 6px;
+          padding: 12px;
           background: rgba(255,255,255,0.1);
           border-radius: 10px;
           text-align: center;
@@ -1765,47 +2338,55 @@ class ShopScene extends Phaser.Scene {
 
         // Icon
         const icon = document.createElement('div');
-        icon.style.cssText = 'font-size: 36px; margin-bottom: 10px;';
+        icon.style.cssText = 'font-size: 28px; margin-bottom: 6px;';
         icon.textContent = item.id === 'hp_small' ? '💚' : item.id === 'hp_large' ? '💙' : '⭐';
 
         // Name
         const name = document.createElement('div');
-        name.style.cssText = 'color: #fff; font-family: Arial; font-size: 14px; margin-bottom: 5px;';
+        name.style.cssText = 'color: #fff; font-family: Arial; font-size: 13px; margin-bottom: 4px;';
         name.textContent = item.name;
 
         // Effect
         const effect = document.createElement('div');
-        effect.style.cssText = 'color: #4CAF50; font-family: Arial; font-size: 12px; margin-bottom: 5px;';
+        effect.style.cssText = 'color: #4CAF50; font-family: Arial; font-size: 11px; margin-bottom: 4px;';
         effect.textContent = item.effect;
 
         // Owned count
         const ownedText = document.createElement('div');
-        ownedText.style.cssText = 'color: #888; font-family: Arial; font-size: 11px; margin-bottom: 10px;';
+        ownedText.style.cssText = 'color: #888; font-family: Arial; font-size: 10px; margin-bottom: 6px;';
         ownedText.textContent = `Owned: ${owned}`;
 
         // Price
         const price = document.createElement('div');
-        price.style.cssText = 'color: #ffd700; font-family: Arial; font-size: 12px; margin-bottom: 10px;';
+        price.style.cssText = 'color: #ffd700; font-family: Arial; font-size: 11px; margin-bottom: 8px;';
         price.textContent = `💰 ${item.price}`;
 
         // Buy button
         const btn = document.createElement('button');
         btn.style.cssText = `
-          padding: 8px 16px;
+          padding: 6px 14px;
           border: none;
           border-radius: 5px;
           cursor: ${canAfford ? 'pointer' : 'not-allowed'};
           font-family: Arial;
-          font-size: 12px;
+          font-size: 11px;
           background: ${canAfford ? '#ffd700' : '#666'};
           color: ${canAfford ? '#000' : '#aaa'};
         `;
         btn.textContent = 'Buy';
         if (canAfford) {
           btn.onclick = () => {
-            user.inventory.currency -= item.price;
-            user.inventory.consumables[item.id] = (user.inventory.consumables[item.id] || 0) + 1;
-            saveUser(user);
+            // Re-check user can still afford (in case of race conditions)
+            const currentUser = getUser();
+            if (!currentUser || currentUser.inventory.currency < item.price) {
+              this.renderShop();
+              return;
+            }
+            currentUser.inventory.currency -= item.price;
+            // Ensure points never go below 0
+            if (currentUser.inventory.currency < 0) currentUser.inventory.currency = 0;
+            currentUser.inventory.consumables[item.id] = (currentUser.inventory.consumables[item.id] || 0) + 1;
+            saveUser(currentUser);
             this.renderShop();
           };
         }
@@ -1817,7 +2398,7 @@ class ShopScene extends Phaser.Scene {
         itemCard.appendChild(price);
         itemCard.appendChild(btn);
 
-        itemsContainer.appendChild(itemCard);
+        itemsGrid.appendChild(itemCard);
       });
     }
   }
@@ -1835,7 +2416,7 @@ class ProfileScene extends Phaser.Scene {
     const domBg = document.getElementById('menu-bg'); if (domBg) domBg.style.display = 'none';
     const domLogo = document.getElementById('menu-logo'); if (domLogo) domLogo.style.display = 'none';
     const levelBg = document.getElementById('level-bg'); if (levelBg) levelBg.style.display = 'none';
-    const leaderboardBg = document.getElementById('leaderboard-bg'); if (leaderboardBg) leaderboardBg.style.display = 'none';
+    const leaderboardBg = document.getElementById('leaderboard-container'); if (leaderboardBg) leaderboardBg.style.display = 'none';
     const gameOverBg = document.getElementById('gameover-bg'); if (gameOverBg) gameOverBg.style.display = 'none';
 
     // Hide all buttons
@@ -1872,7 +2453,7 @@ class ProfileScene extends Phaser.Scene {
         <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 15px; text-align: center;">
           <div style="background: rgba(0,0,0,0.2); padding: 15px; border-radius: 8px;">
             <div style="color: #ffd700; font-size: 24px; font-family: Arial;">${user.inventory.currency}</div>
-            <div style="color: #fff; font-size: 12px; font-family: Arial;">Currency</div>
+            <div style="color: #fff; font-size: 12px; font-family: Arial;">Points</div>
           </div>
           <div style="background: rgba(0,0,0,0.2); padding: 15px; border-radius: 8px;">
             <div style="color: #4CAF50; font-size: 24px; font-family: Arial;">${user.stats.totalGames}</div>
