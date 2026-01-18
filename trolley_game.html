@@ -7,14 +7,31 @@
   <style>
     :root {
       --vh: 1vh; /* Will be set by JS to actual viewport height */
+      /* Phase 3: Responsive design variables */
+      --question-frame-width: min(750px, 95vw);
+      --question-frame-height: min(225px, 30vh);
+      --choice-frame-width: min(400px, 45vw);
+      --choice-frame-height: min(160px, 22vh);
+      --font-size-base: clamp(14px, 2vw, 18px);
+      --font-size-large: clamp(18px, 3vw, 24px);
+      --font-size-xlarge: clamp(24px, 4vw, 36px);
+      --min-touch-target: 44px;
+      --spacing-unit: clamp(8px, 2vw, 16px);
     }
     html, body {
       margin: 0;
       padding: 0;
       height: calc(var(--vh, 1vh) * 100);
       overflow: hidden;
+      touch-action: manipulation; /* Disable double-tap zoom */
     }
     canvas { display: block; margin: 0 auto; }
+
+    /* Ensure all clickable elements meet minimum touch target size */
+    button, [role="button"], .zone-marker, [onclick] {
+      min-width: var(--min-touch-target);
+      min-height: var(--min-touch-target);
+    }
 
     /* Debug outline styles - only visible when body has debug-active class */
     /* Frames - red */
@@ -128,6 +145,137 @@
     }
     #debug-btn:hover { background: rgba(255,255,255,0.5); }
     #debug-btn:active { background: rgba(255,255,255,0.7); }
+
+    /* =====================================================
+       Phase 3: Responsive Media Queries
+       ===================================================== */
+
+    /* Tablet breakpoint (768px) */
+    @media screen and (max-width: 768px) {
+      :root {
+        --question-frame-width: min(700px, 92vw);
+        --choice-frame-width: min(350px, 44vw);
+        --font-size-base: clamp(13px, 2.5vw, 16px);
+      }
+
+      /* Reduce zone marker sizes */
+      .zone-marker {
+        width: 60px !important;
+        height: 60px !important;
+      }
+      .zone-marker span {
+        font-size: 28px !important;
+      }
+
+      /* Adjust shop grid */
+      #shop-items-grid > div {
+        width: 150px !important;
+        margin: 4px !important;
+      }
+
+      /* Smaller buttons */
+      .difficulty-btn {
+        width: 32px !important;
+        height: 32px !important;
+        font-size: 14px !important;
+      }
+    }
+
+    /* Mobile breakpoint (480px) */
+    @media screen and (max-width: 480px) {
+      :root {
+        --question-frame-width: 95vw;
+        --question-frame-height: min(180px, 28vh);
+        --choice-frame-width: 90vw;
+        --choice-frame-height: min(120px, 18vh);
+        --font-size-base: clamp(12px, 3.5vw, 15px);
+        --font-size-large: clamp(14px, 4vw, 20px);
+      }
+
+      /* Stack choice buttons vertically on mobile */
+      #choices-container > div {
+        flex-direction: column !important;
+        align-items: center !important;
+        gap: 15px !important;
+      }
+
+      #choice-a-frame, #choice-b-frame {
+        width: var(--choice-frame-width) !important;
+        height: var(--choice-frame-height) !important;
+      }
+
+      /* Reduce zone marker sizes further */
+      .zone-marker {
+        width: 50px !important;
+        height: 50px !important;
+      }
+      .zone-marker span {
+        font-size: 24px !important;
+      }
+
+      /* Shop grid single column */
+      #shop-items-grid > div {
+        width: 95% !important;
+        max-width: 280px !important;
+        margin: 6px auto !important;
+      }
+
+      /* Zone detail panel - full width */
+      #zone-detail-frame {
+        width: 95vw !important;
+        right: 2.5vw !important;
+      }
+
+      /* Item bar - compact */
+      #item-bar {
+        padding: 6px 10px !important;
+        flex-wrap: wrap;
+        gap: 4px;
+      }
+      #item-bar button {
+        padding: 6px 8px !important;
+        font-size: 12px !important;
+      }
+
+      /* HUD - smaller text */
+      #game-hud {
+        padding: 10px !important;
+      }
+      #hud-health, #hud-points {
+        font-size: 16px !important;
+      }
+      #hud-level, #hud-stage, #hud-zone {
+        font-size: 14px !important;
+      }
+    }
+
+    /* Very small screens (320px) */
+    @media screen and (max-width: 320px) {
+      :root {
+        --min-touch-target: 40px;
+      }
+
+      .zone-marker {
+        width: 44px !important;
+        height: 44px !important;
+      }
+      .zone-marker span {
+        font-size: 20px !important;
+      }
+    }
+
+    /* Landscape orientation on mobile */
+    @media screen and (max-height: 480px) and (orientation: landscape) {
+      #question-frame {
+        top: 80px !important;
+      }
+      #choices-container {
+        top: 280px !important;
+      }
+      #game-hud {
+        padding: 8px !important;
+      }
+    }
   </style>
 </head>
 <body>
@@ -248,31 +396,31 @@
   </div>
 </div>
 
-<!-- Question and Choice Frames for Gameplay -->
-<div id="question-frame" style="position:fixed;left:50%;top:180px;transform:translateX(-50%);width:750px;height:225px;display:none;z-index:50;">
+<!-- Question and Choice Frames for Gameplay - using CSS variables for responsive sizing -->
+<div id="question-frame" style="position:fixed;left:50%;top:180px;transform:translateX(-50%);width:var(--question-frame-width, 750px);height:var(--question-frame-height, 225px);display:none;z-index:50;">
   <!-- Frame background layer -->
   <div style="position:absolute;inset:0;background:url('assets/frames/frame_question.png') center/100% 100% no-repeat;"></div>
   <!-- Safe area for text content (insets: top 18%, right 8%, bottom 18%, left 8%) -->
   <div id="question-safe-area" style="position:absolute;top:18%;left:8%;right:8%;bottom:18%;display:flex;align-items:center;justify-content:center;">
-    <div id="question-text" style="color:#F5DEB3;font-family:Georgia,serif;font-size:24px;text-align:center;text-shadow:2px 2px 4px #000;line-height:1.4;"></div>
+    <div id="question-text" style="color:#F5DEB3;font-family:Georgia,serif;font-size:var(--font-size-large, 24px);text-align:center;text-shadow:2px 2px 4px #000;line-height:1.4;"></div>
   </div>
 </div>
-<div id="choices-container" style="position:fixed;left:50%;top:430px;transform:translateX(-50%);display:none;z-index:50;width:900px;">
-  <div style="display:flex;justify-content:center;gap:30px;">
-    <div id="choice-a-frame" style="position:relative;width:400px;height:160px;cursor:pointer;">
+<div id="choices-container" style="position:fixed;left:50%;top:430px;transform:translateX(-50%);display:none;z-index:50;width:min(900px, 95vw);">
+  <div style="display:flex;justify-content:center;gap:clamp(15px, 3vw, 30px);flex-wrap:wrap;">
+    <div id="choice-a-frame" style="position:relative;width:var(--choice-frame-width, 400px);height:var(--choice-frame-height, 160px);cursor:pointer;min-height:var(--min-touch-target, 44px);">
       <!-- Frame background layer -->
       <div style="position:absolute;inset:0;background:url('assets/frames/frame_choice.png') center/100% 100% no-repeat;"></div>
       <!-- Safe area for text content (insets: top 18%, right 9%, bottom 18%, left 9%) -->
       <div id="choice-a-safe-area" style="position:absolute;top:18%;left:9%;right:9%;bottom:18%;display:flex;align-items:center;justify-content:center;">
-        <div id="choice-a-text" style="color:#F5DEB3;font-family:Georgia,serif;font-size:16px;text-align:center;text-shadow:1px 1px 3px #000;line-height:1.3;"></div>
+        <div id="choice-a-text" style="color:#F5DEB3;font-family:Georgia,serif;font-size:var(--font-size-base, 16px);text-align:center;text-shadow:1px 1px 3px #000;line-height:1.3;"></div>
       </div>
     </div>
-    <div id="choice-b-frame" style="position:relative;width:400px;height:160px;cursor:pointer;">
+    <div id="choice-b-frame" style="position:relative;width:var(--choice-frame-width, 400px);height:var(--choice-frame-height, 160px);cursor:pointer;min-height:var(--min-touch-target, 44px);">
       <!-- Frame background layer -->
       <div style="position:absolute;inset:0;background:url('assets/frames/frame_choice.png') center/100% 100% no-repeat;"></div>
       <!-- Safe area for text content (insets: top 18%, right 9%, bottom 18%, left 9%) -->
       <div id="choice-b-safe-area" style="position:absolute;top:18%;left:9%;right:9%;bottom:18%;display:flex;align-items:center;justify-content:center;">
-        <div id="choice-b-text" style="color:#F5DEB3;font-family:Georgia,serif;font-size:16px;text-align:center;text-shadow:1px 1px 3px #000;line-height:1.3;"></div>
+        <div id="choice-b-text" style="color:#F5DEB3;font-family:Georgia,serif;font-size:var(--font-size-base, 16px);text-align:center;text-shadow:1px 1px 3px #000;line-height:1.3;"></div>
       </div>
     </div>
   </div>
@@ -302,16 +450,16 @@
 <div id="worldmap-container" style="position:fixed;left:0;top:0;width:100vw;height:calc(var(--vh, 1vh) * 100);background:transparent;display:none;z-index:100;">
   <h1 id="worldmap-title" style="position:absolute;left:30px;top:30px;color:#F5DEB3;font-family:Georgia,serif;font-size:32px;text-shadow:2px 2px 4px #000;">SELECT ZONE</h1>
 
-  <!-- Zone Markers (left side of map) -->
-  <div id="zone-markers" style="position:absolute;left:50px;top:150px;width:400px;">
-    <div class="zone-marker" data-zone="1" style="position:absolute;left:100px;top:200px;width:80px;height:80px;background:rgba(0,0,0,0.6);border:3px solid #B8860B;border-radius:50%;display:flex;align-items:center;justify-content:center;cursor:pointer;transition:all 0.2s;">
-      <span style="font-size:36px;">🚂</span>
+  <!-- Zone Markers (left side of map) - using percentage positions for responsiveness -->
+  <div id="zone-markers" style="position:absolute;left:5%;top:20%;width:45%;height:60%;">
+    <div class="zone-marker" data-zone="1" style="position:absolute;left:15%;top:55%;width:min(80px, 15vw);height:min(80px, 15vw);background:rgba(0,0,0,0.6);border:3px solid #B8860B;border-radius:50%;display:flex;align-items:center;justify-content:center;cursor:pointer;transition:all 0.2s;">
+      <span style="font-size:clamp(24px, 5vw, 36px);">🚂</span>
     </div>
-    <div class="zone-marker" data-zone="2" style="position:absolute;left:220px;top:100px;width:80px;height:80px;background:rgba(0,0,0,0.6);border:3px solid #B8860B;border-radius:50%;display:flex;align-items:center;justify-content:center;cursor:pointer;transition:all 0.2s;">
-      <span style="font-size:36px;">🏭</span>
+    <div class="zone-marker" data-zone="2" style="position:absolute;left:40%;top:30%;width:min(80px, 15vw);height:min(80px, 15vw);background:rgba(0,0,0,0.6);border:3px solid #B8860B;border-radius:50%;display:flex;align-items:center;justify-content:center;cursor:pointer;transition:all 0.2s;">
+      <span style="font-size:clamp(24px, 5vw, 36px);">🏭</span>
     </div>
-    <div class="zone-marker" data-zone="3" style="position:absolute;left:340px;top:30px;width:80px;height:80px;background:rgba(0,0,0,0.6);border:3px solid #B8860B;border-radius:50%;display:flex;align-items:center;justify-content:center;cursor:pointer;transition:all 0.2s;">
-      <span style="font-size:36px;">🌆</span>
+    <div class="zone-marker" data-zone="3" style="position:absolute;left:65%;top:10%;width:min(80px, 15vw);height:min(80px, 15vw);background:rgba(0,0,0,0.6);border:3px solid #B8860B;border-radius:50%;display:flex;align-items:center;justify-content:center;cursor:pointer;transition:all 0.2s;">
+      <span style="font-size:clamp(24px, 5vw, 36px);">🌆</span>
     </div>
   </div>
 
@@ -492,24 +640,57 @@ function createUser(username, isGuest = false) {
   return user;
 }
 
+// Legacy user functions - delegate to StateManager for caching and debouncing
 function getUser() {
-  const data = localStorage.getItem('trolley_user');
-  if (!data) return null;
-  try {
-    return JSON.parse(data);
-  } catch(e) {
-    return null;
-  }
+  return StateManager.getUser();
 }
 
 function saveUser(user) {
-  user.lastLogin = Date.now();
-  localStorage.setItem('trolley_user', JSON.stringify(user));
+  // Update cache with the provided user object
+  StateManager._userCache = user;
+  StateManager._scheduleSave();
 }
 
 function clearUser() {
-  localStorage.removeItem('trolley_user');
+  StateManager.clear();
 }
+
+// =====================================================
+// GAME CONSTANTS (Phase 1: Externalized magic numbers)
+// =====================================================
+const GAME_CONSTANTS = {
+  // Health
+  STARTING_HEALTH: 10,
+  MAX_HEALTH: 20,
+
+  // Difficulty multipliers
+  DIFFICULTY_BASE_INCREMENT: 0.3,  // Each difficulty level adds this to zone modifier
+  DIFFICULTY_MULTIPLIERS: [1.0, 1.3, 1.6],  // Convenience array for display
+
+  // Bonuses
+  PERFECT_LEVEL_BONUS: 0.5,  // 50% extra points for no damage
+  MIN_POINTS_EARNED: 1,
+
+  // Items
+  MAX_ITEMS_PER_LEVEL: 3,
+
+  // Shop
+  ITEMS_PER_PAGE: 6,
+
+  // UI Timing
+  DEBOUNCE_SAVE_MS: 500,
+  LAYOUT_RETRY_MS: 50,
+
+  // Touch/Mobile
+  MIN_TOUCH_TARGET_PX: 44,
+
+  // Responsive breakpoints
+  BREAKPOINTS: {
+    MOBILE: 480,
+    TABLET: 768,
+    DESKTOP: 1024
+  }
+};
 
 // =====================================================
 // ZONE CONFIGURATION
@@ -597,51 +778,128 @@ const ShopItems = {
     { id: 'trolley_shadow', name: 'Shadow Trolley', price: 1500, owned: false, color: '#2F2F2F', preview: 'assets/trolley_skins/trolley_preview_shadow.png' }
   ],
   consumables: [
-    { id: 'hp_small', name: 'Small Health Pack', price: 100, effect: '+3 HP', value: 3 },
-    { id: 'hp_large', name: 'Large Health Pack', price: 250, effect: '+7 HP', value: 7 },
-    { id: 'point_boost', name: 'Point Booster', price: 200, effect: '2x Points (1 level)', value: 2 }
+    {
+      id: 'hp_small',
+      name: 'Small Health Pack',
+      price: 100,
+      effect: '+3 HP',
+      value: 3,
+      type: 'health',
+      buttonId: 'item-hp-small',
+      buttonLabel: '+3 HP',
+      buttonColor: '#4CAF50',
+      icon: '💚'
+    },
+    {
+      id: 'hp_large',
+      name: 'Large Health Pack',
+      price: 250,
+      effect: '+7 HP',
+      value: 7,
+      type: 'health',
+      buttonId: 'item-hp-large',
+      buttonLabel: '+7 HP',
+      buttonColor: '#2196F3',
+      icon: '💙'
+    },
+    {
+      id: 'point_boost',
+      name: 'Point Booster',
+      price: 200,
+      effect: '2x Points (1 level)',
+      value: 2,
+      type: 'multiplier',
+      buttonId: 'item-point-boost',
+      buttonLabel: '2x Points',
+      buttonColor: '#FF9800',
+      icon: '⭐',
+      onePerLevel: true  // Can only use once per level
+    }
   ]
 };
 
 // =====================================================
 // ACHIEVEMENT DEFINITIONS
 // =====================================================
+// Achievement definitions with data-driven conditions
 const AchievementDefs = [
-  { id: 'first_game', name: 'First Steps', desc: 'Complete your first game', icon: '🎮' },
-  { id: 'zone1_complete', name: 'Starter Champion', desc: 'Complete Zone 1', icon: '🏆' },
-  { id: 'zone2_complete', name: 'Industrial Expert', desc: 'Complete Zone 2', icon: '🏭' },
-  { id: 'zone3_complete', name: 'City Master', desc: 'Complete Zone 3', icon: '🌆' },
-  { id: 'perfect_level', name: 'Perfectionist', desc: 'Complete a level without taking damage', icon: '⭐' },
-  { id: 'high_roller', name: 'High Roller', desc: 'Earn 1000+ points', icon: '💰' },
-  { id: 'collector', name: 'Collector', desc: 'Own 3 trolley cosmetics', icon: '🎨' },
-  { id: 'survivor', name: 'Survivor', desc: 'Survive with 1 HP', icon: '❤️' }
+  {
+    id: 'first_game',
+    name: 'First Steps',
+    desc: 'Complete your first game',
+    icon: '🎮',
+    condition: (user) => user.stats.totalGames >= 1
+  },
+  {
+    id: 'zone1_complete',
+    name: 'Starter Champion',
+    desc: 'Complete Zone 1',
+    icon: '🏆',
+    condition: (user) => {
+      const zone = ZoneConfig.find(z => z.id === 1);
+      return zone && user.progress.completedLevels.filter(l => l.zone === 1).length >= zone.levelsRequired;
+    }
+  },
+  {
+    id: 'zone2_complete',
+    name: 'Industrial Expert',
+    desc: 'Complete Zone 2',
+    icon: '🏭',
+    condition: (user) => {
+      const zone = ZoneConfig.find(z => z.id === 2);
+      return zone && user.progress.completedLevels.filter(l => l.zone === 2).length >= zone.levelsRequired;
+    }
+  },
+  {
+    id: 'zone3_complete',
+    name: 'City Master',
+    desc: 'Complete Zone 3',
+    icon: '🌆',
+    condition: (user) => {
+      const zone = ZoneConfig.find(z => z.id === 3);
+      return zone && user.progress.completedLevels.filter(l => l.zone === 3).length >= zone.levelsRequired;
+    }
+  },
+  {
+    id: 'perfect_level',
+    name: 'Perfectionist',
+    desc: 'Complete a level without taking damage',
+    icon: '⭐',
+    condition: (user) => user.stats.perfectLevels >= 1
+  },
+  {
+    id: 'high_roller',
+    name: 'High Roller',
+    desc: 'Earn 1000+ points',
+    icon: '💰',
+    condition: (user) => user.inventory.currency >= 1000
+  },
+  {
+    id: 'collector',
+    name: 'Collector',
+    desc: 'Own 3 trolley cosmetics',
+    icon: '🎨',
+    condition: (user) => user.inventory.cosmetics.length >= 3
+  },
+  {
+    id: 'survivor',
+    name: 'Survivor',
+    desc: 'Survive with 1 HP',
+    icon: '❤️',
+    condition: null  // Manually checked in GameOverScene
+  }
 ];
 
+// Data-driven achievement checking
 function checkAchievements(user) {
   const earned = [];
-  // First game
-  if (user.stats.totalGames >= 1 && !user.achievements.includes('first_game')) {
-    earned.push('first_game');
-  }
-  // Zone completions
-  const zone1Complete = user.progress.completedLevels.filter(l => l.zone === 1).length >= 5;
-  const zone2Complete = user.progress.completedLevels.filter(l => l.zone === 2).length >= 5;
-  const zone3Complete = user.progress.completedLevels.filter(l => l.zone === 3).length >= 5;
-  if (zone1Complete && !user.achievements.includes('zone1_complete')) earned.push('zone1_complete');
-  if (zone2Complete && !user.achievements.includes('zone2_complete')) earned.push('zone2_complete');
-  if (zone3Complete && !user.achievements.includes('zone3_complete')) earned.push('zone3_complete');
-  // Perfect level
-  if (user.stats.perfectLevels >= 1 && !user.achievements.includes('perfect_level')) {
-    earned.push('perfect_level');
-  }
-  // High roller
-  if (user.inventory.currency >= 1000 && !user.achievements.includes('high_roller')) {
-    earned.push('high_roller');
-  }
-  // Collector
-  if (user.inventory.cosmetics.length >= 3 && !user.achievements.includes('collector')) {
-    earned.push('collector');
-  }
+  AchievementDefs.forEach(achievement => {
+    if (achievement.condition &&
+        !user.achievements.includes(achievement.id) &&
+        achievement.condition(user)) {
+      earned.push(achievement.id);
+    }
+  });
   return earned;
 }
 
@@ -650,60 +908,450 @@ function calculatePointsEarned(score, zoneId, isPerfect) {
   const zone = ZoneConfig.find(z => z.id === zoneId) || ZoneConfig[0];
   let base = score; // 1:1 score to points
   base = Math.floor(base * zone.currencyBonus); // Zone bonus
-  if (isPerfect) base = Math.floor(base * 1.5); // Perfect bonus
-  return Math.max(base, 1); // Minimum 1 point
+  if (isPerfect) base = Math.floor(base * (1 + GAME_CONSTANTS.PERFECT_LEVEL_BONUS)); // Perfect bonus
+  return Math.max(base, GAME_CONSTANTS.MIN_POINTS_EARNED); // Minimum points
 }
 
-// Helper to hide all scene containers and backgrounds
-function hideAllContainers() {
-  const containers = ['login-container', 'worldmap-container', 'shop-container', 'profile-container', 'zone-complete-container'];
-  containers.forEach(id => {
-    const el = document.getElementById(id);
-    if (el) el.style.display = 'none';
-  });
-  // Hide new scene backgrounds
-  const backgrounds = ['login-bg', 'worldmap-bg', 'shop-bg', 'profile-bg'];
-  backgrounds.forEach(id => {
-    const el = document.getElementById(id);
-    if (el) el.style.display = 'none';
-  });
-  const itemBar = document.getElementById('item-bar');
-  if (itemBar) itemBar.style.display = 'none';
-  // Hide menu points and welcome displays
-  const menuPoints = document.getElementById('menu-points-display');
-  if (menuPoints) menuPoints.style.display = 'none';
-  const menuWelcome = document.getElementById('menu-welcome-display');
-  if (menuWelcome) menuWelcome.style.display = 'none';
-  // Hide question and choice frames
-  const questionFrame = document.getElementById('question-frame');
-  if (questionFrame) questionFrame.style.display = 'none';
-  const choicesContainer = document.getElementById('choices-container');
-  if (choicesContainer) choicesContainer.style.display = 'none';
-  // Hide game HUD
-  const gameHud = document.getElementById('game-hud');
-  if (gameHud) gameHud.style.display = 'none';
-  // Hide consequence container
-  const consContainer = document.getElementById('consequence-container');
-  if (consContainer) consContainer.style.display = 'none';
-  // Hide game over elements - move buttons back to body before clearing container
-  const goBtnContainer = document.getElementById('go-btn-container');
-  if (goBtnContainer) {
-    // Move buttons back to body to preserve them
-    const buttonsToRestore = ['btn-worldmap-go', 'btn-try', 'btn-submit', 'btn-menu'];
-    buttonsToRestore.forEach(id => {
-      const btn = document.getElementById(id);
-      if (btn && btn.parentElement === goBtnContainer) {
-        btn.style.display = 'none';
-        btn.style.position = 'fixed';
-        btn.onclick = null;
-        document.body.appendChild(btn);
+// =====================================================
+// UI MANAGER (Phase 2: Centralized DOM operations)
+// =====================================================
+const UIManager = {
+  // Cached DOM element references
+  _cache: {},
+
+  // All element IDs that need to be managed
+  _elementIds: [
+    // Backgrounds
+    'menu-bg', 'level-bg', 'login-bg', 'worldmap-bg', 'shop-bg', 'profile-bg', 'gameover-bg',
+    // Containers
+    'login-container', 'worldmap-container', 'shop-container', 'profile-container',
+    'consequence-container', 'zone-complete-container', 'leaderboard-container',
+    // Buttons
+    'btn-worldmap', 'btn-shop', 'btn-leaderboard', 'btn-profile', 'btn-logout', 'btn-quit',
+    'btn-continue', 'btn-next', 'btn-menu', 'btn-submit', 'btn-try', 'btn-worldmap-go',
+    'btn-zone-start', 'btn-worldmap-back', 'btn-shop-back', 'btn-profile-back',
+    // HUD & Gameplay
+    'game-hud', 'hud-health', 'hud-points', 'hud-level', 'hud-stage', 'hud-zone',
+    'question-frame', 'choices-container', 'question-text',
+    'choice-a-frame', 'choice-a-text', 'choice-b-frame', 'choice-b-text',
+    'item-bar', 'items-used',
+    // Game Over
+    'go-title', 'go-total-points', 'go-btn-container',
+    // Menu
+    'menu-logo', 'menu-welcome-display', 'menu-points-display',
+    // Zone Detail
+    'zone-detail-frame', 'zone-detail-name', 'zone-detail-desc',
+    'zone-detail-difficulty', 'zone-detail-choices',
+    'zone-detail-progress-bar', 'zone-detail-progress-text',
+    'zone-difficulty-selector', 'zone-difficulty-multiplier', 'zone-detail-locked',
+    // Consequence & Zone Complete
+    'consequence-text', 'consequence-stats', 'consequence-btn-container',
+    'zone-complete-frame', 'zone-complete-title', 'zone-complete-subtitle', 'zone-complete-btn-container',
+    // Leaderboard
+    'leaderboard-entries', 'leaderboard-btn-container',
+    // Shop
+    'shop-points', 'shop-items-grid', 'shop-page-info', 'shop-prev', 'shop-next',
+    'tab-cosmetics', 'tab-consumables',
+    // Profile
+    'profile-content', 'achievements-content'
+  ],
+
+  // Initialize cache at startup
+  init() {
+    this._elementIds.forEach(id => {
+      this._cache[id] = document.getElementById(id);
+    });
+    // Also cache item buttons
+    ShopItems.consumables.forEach(item => {
+      this._cache[item.buttonId] = document.getElementById(item.buttonId);
+    });
+  },
+
+  // Get element by ID (cached)
+  get(id) {
+    if (!this._cache[id]) {
+      this._cache[id] = document.getElementById(id);
+    }
+    return this._cache[id];
+  },
+
+  // Hide all managed elements
+  hideAll() {
+    // Hide all backgrounds
+    ['menu-bg', 'level-bg', 'login-bg', 'worldmap-bg', 'shop-bg', 'profile-bg', 'gameover-bg'].forEach(id => {
+      const el = this.get(id);
+      if (el) el.style.display = 'none';
+    });
+
+    // Hide all containers
+    ['login-container', 'worldmap-container', 'shop-container', 'profile-container',
+     'consequence-container', 'zone-complete-container', 'leaderboard-container'].forEach(id => {
+      const el = this.get(id);
+      if (el) el.style.display = 'none';
+    });
+
+    // Hide all buttons
+    ['btn-worldmap', 'btn-shop', 'btn-leaderboard', 'btn-profile', 'btn-logout', 'btn-quit',
+     'btn-continue', 'btn-next', 'btn-menu', 'btn-submit', 'btn-try', 'btn-worldmap-go'].forEach(id => {
+      const el = this.get(id);
+      if (el) {
+        el.style.display = 'none';
+        el.onclick = null;
       }
     });
-    goBtnContainer.style.display = 'none';
+
+    // Hide HUD & gameplay elements
+    ['game-hud', 'question-frame', 'choices-container', 'item-bar', 'go-title', 'go-total-points',
+     'menu-logo', 'menu-welcome-display', 'menu-points-display', 'zone-detail-frame'].forEach(id => {
+      const el = this.get(id);
+      if (el) el.style.display = 'none';
+    });
+
+    // Handle go-btn-container specially - restore buttons to body
+    const goBtnContainer = this.get('go-btn-container');
+    if (goBtnContainer) {
+      ['btn-worldmap-go', 'btn-try', 'btn-submit', 'btn-menu'].forEach(id => {
+        const btn = this.get(id);
+        if (btn && btn.parentElement === goBtnContainer) {
+          btn.style.display = 'none';
+          btn.style.position = 'fixed';
+          btn.onclick = null;
+          document.body.appendChild(btn);
+        }
+      });
+      goBtnContainer.style.display = 'none';
+    }
+  },
+
+  // Show only specified elements
+  showOnly(ids) {
+    this.hideAll();
+    ids.forEach(id => {
+      const el = this.get(id);
+      if (el) el.style.display = 'block';
+    });
+  },
+
+  // Update HUD with batched values
+  updateHUD(values) {
+    if (values.health !== undefined) {
+      const el = this.get('hud-health');
+      if (el) el.textContent = 'Health: ' + values.health;
+    }
+    if (values.points !== undefined) {
+      const el = this.get('hud-points');
+      if (el) el.textContent = 'Points: ' + values.points;
+    }
+    if (values.level !== undefined) {
+      const el = this.get('hud-level');
+      if (el) el.textContent = 'Level: ' + values.level;
+    }
+    if (values.stage !== undefined) {
+      const el = this.get('hud-stage');
+      if (el) el.textContent = 'Stage: ' + values.stage;
+    }
+    if (values.zone !== undefined) {
+      const el = this.get('hud-zone');
+      if (el) {
+        const zoneConfig = ZoneConfig.find(z => z.id === values.zone);
+        if (zoneConfig) {
+          el.textContent = zoneConfig.name;
+          el.style.color = zoneConfig.color;
+        }
+      }
+    }
+  },
+
+  // Show/hide question and choice frames
+  showQuestionFrames(show) {
+    const qf = this.get('question-frame');
+    const cc = this.get('choices-container');
+    if (qf) qf.style.display = show ? 'block' : 'none';
+    if (cc) cc.style.display = show ? 'block' : 'none';
+  },
+
+  // Enable/disable choice frame interactions
+  enableChoiceFrames(enabled) {
+    ['choice-a-frame', 'choice-b-frame'].forEach(id => {
+      const el = this.get(id);
+      if (el) {
+        el.style.pointerEvents = enabled ? 'auto' : 'none';
+        el.style.opacity = enabled ? '1' : '0.6';
+      }
+    });
   }
-  const goTotalPoints = document.getElementById('go-total-points');
-  if (goTotalPoints) goTotalPoints.style.display = 'none';
+};
+
+// Scene layout definitions
+const SCENE_LAYOUTS = {
+  LoginScene: ['login-bg', 'login-container'],
+  MainMenuScene: ['menu-bg', 'menu-logo', 'btn-worldmap', 'btn-shop', 'btn-leaderboard', 'btn-profile', 'btn-logout', 'btn-quit'],
+  LevelScene: ['level-bg', 'game-hud', 'btn-menu', 'btn-quit'],
+  GameOverScene: ['gameover-bg', 'go-title', 'go-total-points', 'go-btn-container'],
+  LeaderboardScene: ['leaderboard-container'],
+  WorldMapScene: ['worldmap-bg', 'worldmap-container'],
+  ShopScene: ['shop-bg', 'shop-container'],
+  ProfileScene: ['profile-bg', 'profile-container']
+};
+
+// Legacy function - delegates to UIManager for backwards compatibility
+function hideAllContainers() {
+  UIManager.hideAll();
 }
+
+// =====================================================
+// STATE MANAGER (Phase 4: Debounced saves, cached state)
+// =====================================================
+const StateManager = {
+  _userCache: null,
+  _saveTimeout: null,
+  _pendingSave: false,
+
+  // Get user (from cache if available)
+  getUser() {
+    if (this._userCache) {
+      return this._userCache;
+    }
+    const data = localStorage.getItem('trolley_user');
+    if (!data) return null;
+    try {
+      this._userCache = JSON.parse(data);
+      return this._userCache;
+    } catch(e) {
+      return null;
+    }
+  },
+
+  // Update user in cache (will debounce save)
+  updateUser(updates) {
+    if (!this._userCache) {
+      this._userCache = this.getUser();
+    }
+    if (!this._userCache) return;
+
+    // Apply updates
+    if (typeof updates === 'function') {
+      updates(this._userCache);
+    } else {
+      Object.assign(this._userCache, updates);
+    }
+
+    // Schedule debounced save
+    this._scheduleSave();
+  },
+
+  // Force immediate save (for critical operations)
+  saveNow() {
+    if (this._saveTimeout) {
+      clearTimeout(this._saveTimeout);
+      this._saveTimeout = null;
+    }
+    this._doSave();
+  },
+
+  // Schedule a debounced save
+  _scheduleSave() {
+    this._pendingSave = true;
+    if (this._saveTimeout) return;
+
+    this._saveTimeout = setTimeout(() => {
+      this._saveTimeout = null;
+      this._doSave();
+    }, GAME_CONSTANTS.DEBOUNCE_SAVE_MS);
+  },
+
+  // Perform the actual save
+  _doSave() {
+    if (!this._userCache || !this._pendingSave) return;
+    this._userCache.lastLogin = Date.now();
+    localStorage.setItem('trolley_user', JSON.stringify(this._userCache));
+    this._pendingSave = false;
+  },
+
+  // Clear cache and user data
+  clear() {
+    this._userCache = null;
+    if (this._saveTimeout) {
+      clearTimeout(this._saveTimeout);
+      this._saveTimeout = null;
+    }
+    this._pendingSave = false;
+    localStorage.removeItem('trolley_user');
+  },
+
+  // Flush pending saves (call on page unload)
+  flush() {
+    if (this._pendingSave) {
+      this._doSave();
+    }
+  },
+
+  // Initialize with beforeunload handler
+  init() {
+    window.addEventListener('beforeunload', () => this.flush());
+  }
+};
+
+// Initialize StateManager
+StateManager.init();
+
+// =====================================================
+// BACKGROUND LOADER (Phase 4: Lazy loading)
+// =====================================================
+const BackgroundLoader = {
+  _loaded: new Set(),
+  _bgMap: {
+    'LoginScene': ['login-bg'],
+    'MainMenuScene': ['menu-bg'],
+    'LevelScene': ['level-bg'],
+    'GameOverScene': ['gameover-bg'],
+    'LeaderboardScene': [],  // Uses dark background
+    'WorldMapScene': ['worldmap-bg'],
+    'ShopScene': ['shop-bg'],
+    'ProfileScene': ['profile-bg']
+  },
+
+  // Preload backgrounds for a scene
+  preload(sceneName) {
+    const bgs = this._bgMap[sceneName];
+    if (!bgs) return;
+
+    bgs.forEach(id => {
+      if (this._loaded.has(id)) return;
+
+      const el = UIManager.get(id) || document.getElementById(id);
+      if (el && el.tagName === 'IMG') {
+        // Force load by accessing src
+        const img = new Image();
+        img.src = el.src;
+        this._loaded.add(id);
+      }
+    });
+  },
+
+  // Preload adjacent scene backgrounds (for smooth transitions)
+  preloadAdjacent(currentScene) {
+    const adjacentScenes = {
+      'LoginScene': ['MainMenuScene'],
+      'MainMenuScene': ['WorldMapScene', 'ShopScene', 'ProfileScene', 'LeaderboardScene'],
+      'WorldMapScene': ['MainMenuScene', 'LevelScene'],
+      'LevelScene': ['GameOverScene', 'MainMenuScene'],
+      'GameOverScene': ['MainMenuScene', 'WorldMapScene', 'LeaderboardScene'],
+      'LeaderboardScene': ['MainMenuScene'],
+      'ShopScene': ['MainMenuScene'],
+      'ProfileScene': ['MainMenuScene']
+    };
+
+    const adjacent = adjacentScenes[currentScene];
+    if (adjacent) {
+      adjacent.forEach(scene => this.preload(scene));
+    }
+  }
+};
+
+// =====================================================
+// EVENT TRACKER (Phase 4: Event listener cleanup)
+// =====================================================
+const EventTracker = {
+  _listeners: new Map(), // Map<scene, Array<{element, type, handler}>>
+
+  // Add event listener and track it for later cleanup
+  add(scene, element, type, handler, options) {
+    if (!element) return;
+
+    element.addEventListener(type, handler, options);
+
+    if (!this._listeners.has(scene)) {
+      this._listeners.set(scene, []);
+    }
+    this._listeners.get(scene).push({ element, type, handler, options });
+  },
+
+  // Remove all listeners for a specific scene
+  cleanup(scene) {
+    const listeners = this._listeners.get(scene);
+    if (!listeners) return;
+
+    listeners.forEach(({ element, type, handler, options }) => {
+      if (element) {
+        element.removeEventListener(type, handler, options);
+      }
+    });
+
+    this._listeners.delete(scene);
+  },
+
+  // Clear onclick handlers for elements (simpler approach for existing code)
+  clearClickHandlers(elementIds) {
+    elementIds.forEach(id => {
+      const el = UIManager.get(id) || document.getElementById(id);
+      if (el) el.onclick = null;
+    });
+  }
+};
+
+// =====================================================
+// INPUT HANDLER (Phase 3: Unified touch/mouse support)
+// =====================================================
+const InputHandler = {
+  // Add both click and touch handlers to an element
+  addInteraction(element, callback, options = {}) {
+    if (!element) return;
+
+    const { preventDefault = true, stopPropagation = false } = options;
+
+    // Unified handler for both mouse and touch
+    const handleInteraction = (e) => {
+      if (preventDefault) e.preventDefault();
+      if (stopPropagation) e.stopPropagation();
+      callback(e);
+    };
+
+    // Mouse events
+    element.addEventListener('click', handleInteraction);
+
+    // Touch events (with duplicate prevention)
+    let touchHandled = false;
+    element.addEventListener('touchend', (e) => {
+      if (touchHandled) return;
+      touchHandled = true;
+      setTimeout(() => { touchHandled = false; }, 300);
+      handleInteraction(e);
+    }, { passive: false });
+
+    return { element, handlers: { click: handleInteraction } };
+  },
+
+  // Add hover effects that work on touch (via touch start/end)
+  addHoverEffect(element, onHover, onLeave) {
+    if (!element) return;
+
+    // Mouse hover
+    element.addEventListener('mouseenter', onHover);
+    element.addEventListener('mouseleave', onLeave);
+
+    // Touch "hover" (press and hold)
+    element.addEventListener('touchstart', onHover, { passive: true });
+    element.addEventListener('touchend', onLeave, { passive: true });
+    element.addEventListener('touchcancel', onLeave, { passive: true });
+  },
+
+  // Check if device supports touch
+  hasTouch() {
+    return 'ontouchstart' in window || navigator.maxTouchPoints > 0;
+  },
+
+  // Get pointer position from either mouse or touch event
+  getPointerPosition(e) {
+    if (e.touches && e.touches.length > 0) {
+      return { x: e.touches[0].clientX, y: e.touches[0].clientY };
+    }
+    if (e.changedTouches && e.changedTouches.length > 0) {
+      return { x: e.changedTouches[0].clientX, y: e.changedTouches[0].clientY };
+    }
+    return { x: e.clientX, y: e.clientY };
+  }
+};
 
 // =====================================================
 // LOGIN SCENE
@@ -1048,65 +1696,45 @@ class LevelScene extends Phaser.Scene {
     const itemBar = document.getElementById('item-bar');
     if (!itemBar) return;
 
-    const consumables = user.inventory.consumables;
+    const userConsumables = user.inventory.consumables;
     let hasAnyItems = false;
 
-    // HP Small button
-    const hpSmallBtn = document.getElementById('item-hp-small');
-    if (hpSmallBtn) {
-      if (consumables.hp_small > 0) {
-        hpSmallBtn.style.display = 'inline-block';
-        hpSmallBtn.textContent = `+3 HP (${consumables.hp_small})`;
-        hpSmallBtn.onclick = () => this.useConsumable('hp_small', 3);
-        hasAnyItems = true;
-      } else {
-        hpSmallBtn.style.display = 'none';
-      }
-    }
+    // Data-driven item bar setup using ShopItems.consumables config
+    ShopItems.consumables.forEach(itemConfig => {
+      const btn = document.getElementById(itemConfig.buttonId);
+      if (!btn) return;
 
-    // HP Large button
-    const hpLargeBtn = document.getElementById('item-hp-large');
-    if (hpLargeBtn) {
-      if (consumables.hp_large > 0) {
-        hpLargeBtn.style.display = 'inline-block';
-        hpLargeBtn.textContent = `+7 HP (${consumables.hp_large})`;
-        hpLargeBtn.onclick = () => this.useConsumable('hp_large', 7);
-        hasAnyItems = true;
-      } else {
-        hpLargeBtn.style.display = 'none';
-      }
-    }
+      const owned = userConsumables[itemConfig.id] || 0;
 
-    // Point Boost button
-    const pointBoostBtn = document.getElementById('item-point-boost');
-    if (pointBoostBtn) {
-      if (consumables.point_boost > 0 && this.pointMultiplier === 1) {
-        pointBoostBtn.style.display = 'inline-block';
-        pointBoostBtn.textContent = `2x Points (${consumables.point_boost})`;
-        pointBoostBtn.onclick = () => this.useConsumable('point_boost', 2);
+      // Check if item should be shown
+      // - Must own at least one
+      // - If onePerLevel, check that multiplier isn't already active
+      const canUse = owned > 0 && (!itemConfig.onePerLevel || this.pointMultiplier === 1);
+
+      if (canUse) {
+        btn.style.display = 'inline-block';
+        btn.textContent = `${itemConfig.buttonLabel} (${owned})`;
+        btn.style.background = itemConfig.buttonColor;
+        btn.onclick = () => this.useConsumable(itemConfig.id, itemConfig.value);
         hasAnyItems = true;
       } else {
-        pointBoostBtn.style.display = 'none';
+        btn.style.display = 'none';
       }
-    }
+    });
 
     // Items used counter
     const itemsUsedEl = document.getElementById('items-used');
     if (itemsUsedEl) {
-      itemsUsedEl.textContent = `(${this.itemsUsedThisLevel}/3 used)`;
+      itemsUsedEl.textContent = `(${this.itemsUsedThisLevel}/${GAME_CONSTANTS.MAX_ITEMS_PER_LEVEL} used)`;
     }
 
     // Show or hide item bar
-    if (hasAnyItems) {
-      itemBar.style.display = 'block';
-    } else {
-      itemBar.style.display = 'none';
-    }
+    itemBar.style.display = hasAnyItems ? 'block' : 'none';
   }
 
   useConsumable(itemId, value) {
-    if (this.itemsUsedThisLevel >= 3) {
-      return; // Max 3 items per level
+    if (this.itemsUsedThisLevel >= GAME_CONSTANTS.MAX_ITEMS_PER_LEVEL) {
+      return; // Max items per level reached
     }
 
     const user = getUser();
@@ -1135,40 +1763,32 @@ class LevelScene extends Phaser.Scene {
   }
 
   setupChoiceFrames() {
-    // Set up click handlers for DOM choice frames
-    const choiceA = document.getElementById('choice-a-frame');
-    const choiceB = document.getElementById('choice-b-frame');
+    // Set up click/touch handlers for DOM choice frames using InputHandler
+    const choiceA = UIManager.get('choice-a-frame');
+    const choiceB = UIManager.get('choice-b-frame');
 
     if (choiceA) {
-      choiceA.onclick = () => this.handleChoice(0);
-      choiceA.onmouseover = () => { choiceA.style.filter = 'brightness(1.2)'; };
-      choiceA.onmouseout = () => { choiceA.style.filter = 'none'; };
+      InputHandler.addInteraction(choiceA, () => this.handleChoice(0));
+      InputHandler.addHoverEffect(choiceA,
+        () => { choiceA.style.filter = 'brightness(1.2)'; },
+        () => { choiceA.style.filter = 'none'; }
+      );
     }
     if (choiceB) {
-      choiceB.onclick = () => this.handleChoice(1);
-      choiceB.onmouseover = () => { choiceB.style.filter = 'brightness(1.2)'; };
-      choiceB.onmouseout = () => { choiceB.style.filter = 'none'; };
+      InputHandler.addInteraction(choiceB, () => this.handleChoice(1));
+      InputHandler.addHoverEffect(choiceB,
+        () => { choiceB.style.filter = 'brightness(1.2)'; },
+        () => { choiceB.style.filter = 'none'; }
+      );
     }
   }
 
   showQuestionFrames(show) {
-    const questionFrame = document.getElementById('question-frame');
-    const choicesContainer = document.getElementById('choices-container');
-    if (questionFrame) questionFrame.style.display = show ? 'block' : 'none';
-    if (choicesContainer) choicesContainer.style.display = show ? 'block' : 'none';
+    UIManager.showQuestionFrames(show);
   }
 
   enableChoiceFrames(enabled) {
-    const choiceA = document.getElementById('choice-a-frame');
-    const choiceB = document.getElementById('choice-b-frame');
-    if (choiceA) {
-      choiceA.style.pointerEvents = enabled ? 'auto' : 'none';
-      choiceA.style.opacity = enabled ? '1' : '0.6';
-    }
-    if (choiceB) {
-      choiceB.style.pointerEvents = enabled ? 'auto' : 'none';
-      choiceB.style.opacity = enabled ? '1' : '0.6';
-    }
+    UIManager.enableChoiceFrames(enabled);
   }
 
   generateJunctions() {
@@ -1178,11 +1798,8 @@ class LevelScene extends Phaser.Scene {
     const pool = ZonePrompts[zoneId] || ZonePrompts[1];
 
     // Calculate combined difficulty multiplier:
-    // Base zone multiplier + (selectedDifficulty - 1) * 0.3
-    // Zone 1 Diff 1: 1.0, Diff 2: 1.3, Diff 3: 1.6
-    // Zone 2 Diff 1: 1.3, Diff 2: 1.6, Diff 3: 1.9
-    // Zone 3 Diff 1: 1.6, Diff 2: 1.9, Diff 3: 2.2
-    const combinedMultiplier = zoneConfig.difficultyMod + (selectedDifficulty - 1) * 0.3;
+    // Base zone multiplier + (selectedDifficulty - 1) * DIFFICULTY_BASE_INCREMENT
+    const combinedMultiplier = zoneConfig.difficultyMod + (selectedDifficulty - 1) * GAME_CONSTANTS.DIFFICULTY_BASE_INCREMENT;
 
     // Apply difficulty modifier to HP costs AND points
     const modifiedPool = pool.map(j => {
@@ -1333,15 +1950,12 @@ class LevelScene extends Phaser.Scene {
     }
   }
   updateUI() {
-    const hudHealth = document.getElementById('hud-health');
-    const hudPoints = document.getElementById('hud-points');
-    const hudLevel = document.getElementById('hud-level');
-    const hudStage = document.getElementById('hud-stage');
-
-    if (hudHealth) hudHealth.textContent = 'Health: ' + this.registry.get('health');
-    if (hudPoints) hudPoints.textContent = 'Points: ' + this.registry.get('points');
-    if (hudLevel) hudLevel.textContent = 'Level: ' + this.registry.get('level');
-    if (hudStage) hudStage.textContent = 'Stage: ' + this.registry.get('stage');
+    UIManager.updateHUD({
+      health: this.registry.get('health'),
+      points: this.registry.get('points'),
+      level: this.registry.get('level'),
+      stage: this.registry.get('stage')
+    });
   }
   onLevelComplete() {
     const currentLevel = this.registry.get('level');
@@ -1392,9 +2006,9 @@ class LevelScene extends Phaser.Scene {
         bonusPoints += Math.floor(this.levelPointsEarned * (zone.currencyBonus - 1.0));
       }
 
-      // Perfect bonus: 50% extra if no damage taken
+      // Perfect bonus: extra if no damage taken
       if (isPerfect) {
-        bonusPoints += Math.floor(this.levelPointsEarned * 0.5);
+        bonusPoints += Math.floor(this.levelPointsEarned * GAME_CONSTANTS.PERFECT_LEVEL_BONUS);
       }
 
       // Add bonus points
@@ -1569,6 +2183,32 @@ class LevelScene extends Phaser.Scene {
 
     // Restart the LevelScene with new zone
     this.scene.restart();
+  }
+
+  // Cleanup event listeners when scene shuts down
+  shutdown() {
+    // Clear choice frame handlers
+    const choiceA = UIManager.get('choice-a-frame');
+    const choiceB = UIManager.get('choice-b-frame');
+    if (choiceA) {
+      choiceA.onclick = null;
+      choiceA.onmouseover = null;
+      choiceA.onmouseout = null;
+    }
+    if (choiceB) {
+      choiceB.onclick = null;
+      choiceB.onmouseover = null;
+      choiceB.onmouseout = null;
+    }
+
+    // Clear button handlers
+    EventTracker.clearClickHandlers(['btn-menu', 'btn-quit', 'btn-next', 'btn-continue']);
+
+    // Clear item bar button handlers
+    ShopItems.consumables.forEach(item => {
+      const btn = document.getElementById(item.buttonId);
+      if (btn) btn.onclick = null;
+    });
   }
 }
 
@@ -2043,13 +2683,13 @@ class WorldMapScene extends Phaser.Scene {
           this.selectedDifficulty = diff;
 
           // Update multiplier display
-          const multiplier = zone.difficultyMod + (diff - 1) * 0.3;
+          const multiplier = zone.difficultyMod + (diff - 1) * GAME_CONSTANTS.DIFFICULTY_BASE_INCREMENT;
           difficultyMultiplierText.textContent = `${multiplier.toFixed(1)}x Multiplier`;
         };
       });
 
       // Set initial multiplier display
-      const initialMultiplier = zone.difficultyMod + (this.selectedDifficulty - 1) * 0.3;
+      const initialMultiplier = zone.difficultyMod + (this.selectedDifficulty - 1) * GAME_CONSTANTS.DIFFICULTY_BASE_INCREMENT;
       difficultyMultiplierText.textContent = `${initialMultiplier.toFixed(1)}x Multiplier`;
     } else if (difficultySelector) {
       difficultySelector.style.display = 'none';
@@ -2174,17 +2814,15 @@ class ShopScene extends Phaser.Scene {
     const user = getUser();
     if (!user) return;
 
-    // Update points display with icon
-    const pointsEl = document.getElementById('shop-points');
+    // Update points display with icon (using cached element)
+    const pointsEl = UIManager.get('shop-points');
     if (pointsEl) {
       pointsEl.innerHTML = `<img src="assets/icons/icon_currency.png" alt="Points" title="Points" style="width:28px;height:28px;vertical-align:middle;margin-right:8px;"/>${user.inventory.currency} Points`;
     }
 
-    // Get items grid container
-    const itemsGrid = document.getElementById('shop-items-grid');
+    // Get items grid container (using cached element)
+    const itemsGrid = UIManager.get('shop-items-grid');
     if (!itemsGrid) return;
-
-    itemsGrid.innerHTML = '';
 
     // Get the items for current tab
     const allItems = this.currentTab === 'cosmetics' ? ShopItems.cosmetics : ShopItems.consumables;
@@ -2197,10 +2835,10 @@ class ShopScene extends Phaser.Scene {
     const startIndex = this.currentPage * this.itemsPerPage;
     const pageItems = allItems.slice(startIndex, startIndex + this.itemsPerPage);
 
-    // Update pagination display
-    const pageInfo = document.getElementById('shop-page-info');
-    const prevBtn = document.getElementById('shop-prev');
-    const nextBtn = document.getElementById('shop-next');
+    // Update pagination display (using cached elements)
+    const pageInfo = UIManager.get('shop-page-info');
+    const prevBtn = UIManager.get('shop-prev');
+    const nextBtn = UIManager.get('shop-next');
 
     if (pageInfo) {
       pageInfo.textContent = `Page ${this.currentPage + 1} / ${Math.max(1, totalPages)}`;
@@ -2213,6 +2851,9 @@ class ShopScene extends Phaser.Scene {
       nextBtn.style.opacity = this.currentPage < totalPages - 1 ? '1' : '0.4';
       nextBtn.style.cursor = this.currentPage < totalPages - 1 ? 'pointer' : 'not-allowed';
     }
+
+    // Use DocumentFragment for batch DOM updates (performance optimization)
+    const fragment = document.createDocumentFragment();
 
     if (this.currentTab === 'cosmetics') {
       pageItems.forEach(item => {
@@ -2316,7 +2957,7 @@ class ShopScene extends Phaser.Scene {
         itemCard.appendChild(status);
         itemCard.appendChild(btn);
 
-        itemsGrid.appendChild(itemCard);
+        fragment.appendChild(itemCard);
       });
     } else {
       // Consumables tab
@@ -2336,10 +2977,10 @@ class ShopScene extends Phaser.Scene {
           vertical-align: top;
         `;
 
-        // Icon
+        // Icon (from item config)
         const icon = document.createElement('div');
         icon.style.cssText = 'font-size: 28px; margin-bottom: 6px;';
-        icon.textContent = item.id === 'hp_small' ? '💚' : item.id === 'hp_large' ? '💙' : '⭐';
+        icon.textContent = item.icon || '📦';
 
         // Name
         const name = document.createElement('div');
@@ -2398,9 +3039,13 @@ class ShopScene extends Phaser.Scene {
         itemCard.appendChild(price);
         itemCard.appendChild(btn);
 
-        itemsGrid.appendChild(itemCard);
+        fragment.appendChild(itemCard);
       });
     }
+
+    // Clear and append fragment in single DOM operation (performance optimization)
+    itemsGrid.innerHTML = '';
+    itemsGrid.appendChild(fragment);
   }
 }
 
@@ -2520,6 +3165,9 @@ class ProfileScene extends Phaser.Scene {
 // =====================================================
 // GAME INITIALIZATION
 // =====================================================
+// Initialize UIManager
+UIManager.init();
+
 // Check if user exists to determine starting scene
 const existingUser = getUser();
 
@@ -2536,7 +3184,19 @@ const config = {
   width: 800,
   height: 600,
   transparent: true,
-  scene: orderedScenes
+  scene: orderedScenes,
+  // Phase 3: Responsive scaling
+  scale: {
+    mode: Phaser.Scale.FIT,
+    autoCenter: Phaser.Scale.CENTER_BOTH,
+    width: 800,
+    height: 600
+  },
+  // Phase 3: Touch support
+  input: {
+    touch: true,
+    activePointers: 3
+  }
 };
 
 const game = new Phaser.Game(config);
