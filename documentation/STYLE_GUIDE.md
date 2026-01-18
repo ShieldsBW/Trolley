@@ -479,6 +479,44 @@ Before generating any transparent asset, verify:
 
 ---
 
+## 9.5 Trolley Skin Guidelines
+
+### Style Requirements
+Trolley skin previews should maintain visual consistency across all variants:
+
+**Core Elements:**
+- Side or 3/4 angled view of vintage 1920s trolley car
+- Single glowing headlight visible
+- Clean contained shape with solid edges
+- Painterly/illustrated style (not photorealistic)
+- Isolated on solid white background
+
+**Prompt Structure:**
+```
+"Side view of vintage 1920s trolley car in [COLOR DESCRIPTION], [UNIQUE FEATURES],
+[TRIM COLOR] trim, single glowing headlight, simple contained shape with clean solid edges,
+isolated on solid white background, simple design, appealing design, game cosmetic preview,
+painterly style, flat 2D artwork"
+```
+
+### Existing Skin Styles (Reference)
+| Skin | Colors | Unique Features |
+|------|--------|-----------------|
+| Standard | Dark red maroon | Brass trim, traditional railway styling |
+| Gold | Polished gold | Bronze trim, gleaming metallic finish |
+| Fire | Deep red/orange | Fiery gradient paint job, gold trim |
+| Ice | Ice blue/white | Crystalline frost texture, silver trim |
+| Neon | Pink/cyan | Glowing neon accents, futuristic retro |
+| Shadow | Black/deep purple | Shadowy mysterious aesthetic, dark chrome |
+
+### Post-Processing
+1. Generate on white background
+2. Apply rembg AI background removal
+3. Auto-trim transparent pixels
+4. Verify clean silhouette without artifacts
+
+---
+
 ## 10. Quality Checklist
 
 ### For GPT-4V Review

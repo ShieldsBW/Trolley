@@ -290,6 +290,36 @@
         "backgroundColor": "white",
         "prompt": "Side view of vintage 1920s trolley car in ice blue and white frost colors, crystalline frost texture, silver trim, simple contained shape with clean solid edges, isolated on solid white background, simple design, appealing design, game cosmetic preview, painterly style, flat 2D artwork",
         "negativePrompt": "shadow, drop shadow, cast shadow, 3D effects, checkerboard, transparency pattern, wispy mist effects at edges"
+      },
+      {
+        "id": "trolley_preview_standard",
+        "file": "trolley_preview_standard.png",
+        "priority": "low",
+        "size": "200x150",
+        "description": "Standard trolley skin preview (default)",
+        "backgroundColor": "white",
+        "prompt": "Side view of vintage 1920s trolley car in classic dark red maroon color with brass trim, traditional railway styling, single glowing headlight, simple contained shape with clean solid edges, isolated on solid white background, simple design, appealing design, game cosmetic preview, painterly style, flat 2D artwork",
+        "negativePrompt": "shadow, drop shadow, cast shadow, 3D effects, checkerboard, transparency pattern"
+      },
+      {
+        "id": "trolley_preview_neon",
+        "file": "trolley_preview_neon.png",
+        "priority": "low",
+        "size": "200x150",
+        "description": "Neon trolley skin preview",
+        "backgroundColor": "white",
+        "prompt": "Side view of vintage 1920s trolley car with neon pink and cyan cyberpunk colors, glowing neon accents and trim, futuristic retro style, single glowing headlight, simple contained shape with clean solid edges, isolated on solid white background, simple design, appealing design, game cosmetic preview, painterly style, flat 2D artwork",
+        "negativePrompt": "shadow, drop shadow, cast shadow, 3D effects, checkerboard, transparency pattern, lens flare"
+      },
+      {
+        "id": "trolley_preview_shadow",
+        "file": "trolley_preview_shadow.png",
+        "priority": "low",
+        "size": "200x150",
+        "description": "Shadow trolley skin preview",
+        "backgroundColor": "white",
+        "prompt": "Side view of vintage 1920s trolley car in dark black and deep purple colors, shadowy mysterious aesthetic, dark chrome trim, single dim glowing headlight, simple contained shape with clean solid edges, isolated on solid white background, simple design, appealing design, game cosmetic preview, painterly style, flat 2D artwork",
+        "negativePrompt": "shadow, drop shadow, cast shadow, 3D effects, checkerboard, transparency pattern, smoke effects"
       }
     ]
   },
