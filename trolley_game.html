@@ -129,8 +129,8 @@
 
     #debug-btn {
       position: fixed;
-      top: 10px;
-      right: 10px;
+      top: 140px;
+      right: 20px;
       width: 30px;
       height: 30px;
       background: rgba(255,255,255,0.3);
@@ -342,6 +342,11 @@
 <div id="go-total-points" style="position:fixed;left:50%;transform:translateX(-50%);
      color:#FFD700;font-family:Arial,sans-serif;font-size:20px;text-align:center;
      text-shadow:2px 2px 4px #000;z-index:10;display:none;"></div>
+<!-- Level Complete Text (DOM element for debug outline support) -->
+<div id="level-complete-text" style="position:fixed;left:50%;top:35%;transform:translateX(-50%);
+     color:#FFD700;font-family:Georgia,serif;font-size:clamp(28px, 5vh, 48px);text-align:center;
+     text-shadow:3px 3px 6px #000, -1px -1px 2px #000;z-index:60;display:none;white-space:pre-line;
+     line-height:1.3;"></div>
 <!-- Game Over Button Container -->
 <div id="go-btn-container" style="position:fixed;left:50%;transform:translateX(-50%);
      width:180px;display:none;flex-direction:column;align-items:center;gap:8px;z-index:10;">
@@ -1038,7 +1043,7 @@ const UIManager = {
 
     // Hide HUD & gameplay elements
     ['game-hud', 'question-frame', 'choices-container', 'item-bar', 'go-title', 'go-total-points',
-     'menu-logo', 'menu-welcome-display', 'menu-points-display', 'zone-detail-frame'].forEach(id => {
+     'menu-logo', 'menu-welcome-display', 'menu-points-display', 'zone-detail-frame', 'level-complete-text'].forEach(id => {
       const el = this.get(id);
       if (el) el.style.display = 'none';
     });
@@ -2189,7 +2194,7 @@ class LevelScene extends Phaser.Scene {
 
       saveUser(user);
 
-      // Show level complete with points earned
+      // Show level complete with points earned (using DOM element for debug outline support)
       let completeMsg = `Level Complete!\n+${totalLevelPoints} Points`;
       if (bonusPoints > 0) {
         completeMsg += ` (${bonusPoints} bonus)`;
@@ -2197,13 +2202,23 @@ class LevelScene extends Phaser.Scene {
       if (isPerfect) {
         completeMsg += '\nPERFECT!';
       }
-      this.promptText.setText(completeMsg);
+      const levelCompleteEl = document.getElementById('level-complete-text');
+      if (levelCompleteEl) {
+        levelCompleteEl.textContent = completeMsg;
+        levelCompleteEl.style.display = 'block';
+      }
+      this.promptText.setText(''); // Clear Phaser text
 
       // Store for use in showing popup
       this.isZoneComplete = isZoneComplete;
       this.zoneCompleteZoneId = zoneId;
     } else {
-      this.promptText.setText('Level Complete!');
+      const levelCompleteEl = document.getElementById('level-complete-text');
+      if (levelCompleteEl) {
+        levelCompleteEl.textContent = 'Level Complete!';
+        levelCompleteEl.style.display = 'block';
+      }
+      this.promptText.setText(''); // Clear Phaser text
       this.isZoneComplete = false;
     }
 
@@ -2242,6 +2257,10 @@ class LevelScene extends Phaser.Scene {
     const btnNextHide2 = document.getElementById('btn-next');
     if (btnNextHide2) { btnNextHide2.style.display='none'; btnNextHide2.onclick=null; }
 
+    // Hide level complete text
+    const levelCompleteEl = document.getElementById('level-complete-text');
+    if (levelCompleteEl) levelCompleteEl.style.display = 'none';
+
     // Reset tracking for new level
     this.damageTaken = 0;
     this.startingHealth = this.registry.get('health');
@@ -2257,6 +2276,10 @@ class LevelScene extends Phaser.Scene {
   }
 
   showZoneCompletePopup(zoneId) {
+    // Hide level complete text when showing zone complete popup
+    const levelCompleteEl = document.getElementById('level-complete-text');
+    if (levelCompleteEl) levelCompleteEl.style.display = 'none';
+
     const container = document.getElementById('zone-complete-container');
     const frame = document.getElementById('zone-complete-frame');
     const subtitle = document.getElementById('zone-complete-subtitle');
