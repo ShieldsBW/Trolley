@@ -58,6 +58,7 @@ The game consists of 8 main scenes built with Phaser.js:
      | - Zone 1     | | - Top 10    | | - Cosmetics| | - Stats    |
      | - Zone 2     | |   scores    | | - Consumab.| | - Achieve. |
      | - Zone 3     | | - Back btn  | | - Back btn | | - Back btn |
+     | - Zone 4     |        |              |              |
      | - Difficulty | +------+------+ +-----+------+ +------+-----+
      | - Back btn   |        |              |              |
      +------+-------+        |              |              |
@@ -166,7 +167,7 @@ The game consists of 8 main scenes built with Phaser.js:
 - MainMenuScene (Back button)
 
 **Key Elements:**
-- Zone markers (Zone 1, 2, 3)
+- Zone markers (Zone 1, 2, 3, 4)
 - Zone detail panel with:
   - Zone name and description
   - Progress indicator (X/5 levels)
@@ -369,4 +370,4 @@ Hold the magnifying glass button (bottom-left corner) to show debug outlines:
 
 ---
 
-*Document generated: January 18, 2026*
+*Document updated: January 19, 2026*

@@ -122,6 +122,7 @@ Final Points = Base Choice Points × Zone Modifier × Difficulty Modifier × Ite
 | Zone 1 (Starter Rails) | 1.0x | 1.00x |
 | Zone 2 (Industrial) | 1.3x | 1.05x |
 | Zone 3 (City Center) | 1.6x | 1.10x |
+| Zone 4 (Summit Line) | 1.9x | 1.15x |
 
 | Difficulty | Additional Modifier |
 |------------|---------------------|
@@ -165,13 +166,14 @@ Each dilemma presents a binary choice with trade-offs:
 
 ### 3.1 Zone Structure
 
-The game features 3 zones with escalating challenge:
+The game features 4 zones with escalating challenge:
 
 | Zone | Name | Stages/Level | Levels | Theme |
 |------|------|--------------|--------|-------|
 | 1 | Starter Rails | 3 | 5 | Suburban, pastoral |
 | 2 | Industrial District | 4 | 5 | Factories, steam |
 | 3 | City Center | 5 | 5 | Urban, high-stakes |
+| 4 | Summit Line | 6 | 5 | Mountain railway, treacherous passes |
 
 ### 3.2 Unlock Requirements
 
@@ -185,6 +187,10 @@ Zone 2: Unlocked
     │ (Complete 5 levels)
     ▼
 Zone 3: Unlocked
+    │
+    │ (Complete 5 levels)
+    ▼
+Zone 4: Unlocked
 ```
 
 ### 3.3 Difficulty Tiers
@@ -341,6 +347,7 @@ Currency Earned = Level Points × Zone Currency Bonus
 | Starter Champion | Complete Zone 1 | 🏆 |
 | Industrial Expert | Complete Zone 2 | 🏭 |
 | City Master | Complete Zone 3 | 🌆 |
+| Summit Conqueror | Complete Zone 4 | 🏔️ |
 | Perfect Run | Complete level with no damage | ⭐ |
 | Shopaholic | Purchase first item | 🛒 |
 | Collector | Own 3+ cosmetics | 🎨 |
@@ -565,7 +572,7 @@ To add a new zone:
 | Feature | Priority | Notes |
 |---------|----------|-------|
 | Backend Sync | High | User accounts, cloud saves |
-| More Zones | Medium | Zones 4-6 with new themes |
+| More Zones | Medium | Zones 5-6 with new themes (Zone 4 completed) |
 | Daily Challenges | Medium | Special dilemmas with bonus rewards |
 | Sound Effects | Medium | Audio feedback for choices |
 | Animated Trolley | Low | Trolley movement during gameplay |
@@ -621,7 +628,7 @@ Currency = 80 × 1.05 (zone bonus) = 84 points
 ### Zone Unlock Chain
 
 ```
-Zone 1 (free) → 5 levels → Zone 2 → 5 levels → Zone 3
+Zone 1 (free) → 5 levels → Zone 2 → 5 levels → Zone 3 → 5 levels → Zone 4
 ```
 
 ---
@@ -632,6 +639,7 @@ Zone 1 (free) → 5 levels → Zone 2 → 5 levels → Zone 3
 |----------|---------|
 | `STYLE_GUIDE.md` | Visual design specifications |
 | `SCREEN_FLOW_DIAGRAM.md` | Navigation and scene flow |
+| `ZONE_CREATION_GUIDE.md` | Step-by-step guide for adding new zones |
 | `Feature Implementation Plan.md` | Original feature planning |
 | `assets-manifest.json` | Asset generation prompts |
 
