@@ -144,6 +144,46 @@
 - **Warning Panel**: Brass frame + hazard stripe header
 - **Score/Stats**: Brass frame with plaque-style inset areas
 
+### Overflow & Scroll Behavior
+
+**CRITICAL: Never use scroll bars.** Scroll bars break the vintage aesthetic and feel out of place in the game's UI.
+
+**Instead, use these alternatives:**
+
+| Situation | Solution |
+|-----------|----------|
+| Too many items to display | Use **pagination** (page 1 of N, with arrow buttons) |
+| Content might overflow | Use **responsive scaling** with `clamp()` and viewport units |
+| Long text content | Use **text truncation** (`text-overflow: ellipsis`) |
+| Variable content amounts | Reduce **items per page** to guarantee fit |
+
+**CSS Rules:**
+- Always use `overflow: hidden` on content containers
+- Never use `overflow-y: auto` or `overflow-x: auto`
+- Use `clamp(min, preferred, max)` for font sizes and element dimensions
+- Use viewport-relative units (`vh`, `vw`) for layout sizing
+
+**Example - Shop Items:**
+```css
+/* Good: Items scale to fit, pagination handles overflow */
+#shop-items-grid {
+  overflow: hidden;
+  display: flex;
+  flex-wrap: wrap;
+}
+.shop-item {
+  width: clamp(80px, 18vw, 110px);
+  padding: 6px;
+}
+
+/* Bad: Scroll bar appears when items overflow */
+#shop-items-grid {
+  overflow-y: auto;  /* ❌ Never do this */
+}
+```
+
+---
+
 ### Icons & Symbols
 
 **Style Guidelines:**
@@ -770,6 +810,6 @@ Reference the existing assets: [attach reference images]
 
 ---
 
-*Document Version: 1.2*
-*Last Updated: January 18, 2026*
+*Document Version: 1.3*
+*Last Updated: January 19, 2026*
 *For use with automated asset generation pipeline*

@@ -552,7 +552,7 @@
       </div>
       <!-- Items area -->
       <div id="shop-items" style="width:100%;flex:1;display:flex;flex-direction:column;overflow:hidden;background:rgba(0,0,0,0.4);border-radius:0 8px 8px 8px;padding:10px;border-top:3px solid #FFD700;">
-        <div id="shop-items-grid" style="flex:1;display:flex;flex-wrap:wrap;justify-content:center;align-content:flex-start;overflow-y:auto;"></div>
+        <div id="shop-items-grid" style="flex:1;display:flex;flex-wrap:wrap;justify-content:center;align-content:flex-start;overflow:hidden;"></div>
         <div id="shop-pagination" style="display:flex;justify-content:center;align-items:center;gap:15px;padding-top:8px;border-top:1px solid rgba(255,255,255,0.2);margin-top:8px;flex-shrink:0;">
           <button id="shop-prev" style="padding:5px 12px;font-size:clamp(12px, 2vh, 16px);background:#FFD700;color:#000;border:none;border-radius:5px;cursor:pointer;">←</button>
           <span id="shop-page-info" style="color:#F5DEB3;font-family:Arial;font-size:clamp(11px, 1.8vh, 14px);">Page 1 / 1</span>
@@ -2902,7 +2902,7 @@ class ShopScene extends Phaser.Scene {
 
     this.currentTab = 'cosmetics';
     this.currentPage = 0;
-    this.itemsPerPage = 4; // Reduced for frame constraints
+    this.itemsPerPage = 6; // 2 rows x 3 columns to fill the grid
     this.renderShop();
 
     // Setup tabs
@@ -3026,11 +3026,11 @@ class ShopScene extends Phaser.Scene {
         const itemCard = document.createElement('div');
         itemCard.style.cssText = `
           display: inline-block;
-          width: clamp(90px, 20vw, 130px);
-          margin: 4px;
-          padding: 8px;
+          width: clamp(80px, 18vw, 110px);
+          margin: 3px;
+          padding: 6px;
           background: rgba(255,255,255,0.1);
-          border-radius: 8px;
+          border-radius: 6px;
           text-align: center;
           vertical-align: top;
         `;
@@ -3039,8 +3039,8 @@ class ShopScene extends Phaser.Scene {
         const preview = document.createElement('div');
         preview.style.cssText = `
           width: 90%;
-          height: clamp(40px, 8vh, 60px);
-          margin: 0 auto 6px;
+          height: clamp(35px, 6vh, 50px);
+          margin: 0 auto 4px;
           background: ${item.preview ? `url('${item.preview}') center/contain no-repeat` : item.color};
           border-radius: 4px;
           border: 2px solid ${isEquipped ? '#FFD700' : 'transparent'};
@@ -3048,12 +3048,12 @@ class ShopScene extends Phaser.Scene {
 
         // Name
         const name = document.createElement('div');
-        name.style.cssText = 'color: #F5DEB3; font-family: Arial; font-size: clamp(10px, 1.5vh, 13px); margin-bottom: 3px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;';
+        name.style.cssText = 'color: #F5DEB3; font-family: Arial; font-size: clamp(9px, 1.3vh, 12px); margin-bottom: 2px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;';
         name.textContent = item.name;
 
         // Price/Status
         const status = document.createElement('div');
-        status.style.cssText = 'color: #FFD700; font-family: Arial; font-size: clamp(9px, 1.3vh, 11px); margin-bottom: 6px;';
+        status.style.cssText = 'color: #FFD700; font-family: Arial; font-size: clamp(8px, 1.2vh, 10px); margin-bottom: 4px;';
         if (isOwned) {
           status.textContent = isEquipped ? 'EQUIPPED' : 'OWNED';
           status.style.color = isEquipped ? '#4CAF50' : '#888';
@@ -3130,38 +3130,38 @@ class ShopScene extends Phaser.Scene {
         const itemCard = document.createElement('div');
         itemCard.style.cssText = `
           display: inline-block;
-          width: clamp(90px, 20vw, 130px);
-          margin: 4px;
-          padding: 8px;
+          width: clamp(80px, 18vw, 110px);
+          margin: 3px;
+          padding: 6px;
           background: rgba(255,255,255,0.1);
-          border-radius: 8px;
+          border-radius: 6px;
           text-align: center;
           vertical-align: top;
         `;
 
         // Icon (from item config)
         const icon = document.createElement('div');
-        icon.style.cssText = 'font-size: clamp(20px, 4vh, 28px); margin-bottom: 4px;';
+        icon.style.cssText = 'font-size: clamp(18px, 3.5vh, 24px); margin-bottom: 2px;';
         icon.textContent = item.icon || '📦';
 
         // Name
         const name = document.createElement('div');
-        name.style.cssText = 'color: #F5DEB3; font-family: Arial; font-size: clamp(10px, 1.5vh, 13px); margin-bottom: 3px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;';
+        name.style.cssText = 'color: #F5DEB3; font-family: Arial; font-size: clamp(9px, 1.3vh, 12px); margin-bottom: 2px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;';
         name.textContent = item.name;
 
         // Effect
         const effect = document.createElement('div');
-        effect.style.cssText = 'color: #4CAF50; font-family: Arial; font-size: clamp(9px, 1.3vh, 11px); margin-bottom: 3px;';
+        effect.style.cssText = 'color: #4CAF50; font-family: Arial; font-size: clamp(8px, 1.1vh, 10px); margin-bottom: 2px;';
         effect.textContent = item.effect;
 
         // Owned count
         const ownedText = document.createElement('div');
-        ownedText.style.cssText = 'color: #888; font-family: Arial; font-size: clamp(8px, 1.2vh, 10px); margin-bottom: 4px;';
+        ownedText.style.cssText = 'color: #888; font-family: Arial; font-size: clamp(7px, 1vh, 9px); margin-bottom: 2px;';
         ownedText.textContent = `Owned: ${owned}`;
 
         // Price
         const price = document.createElement('div');
-        price.style.cssText = 'color: #FFD700; font-family: Arial; font-size: clamp(9px, 1.3vh, 11px); margin-bottom: 6px;';
+        price.style.cssText = 'color: #FFD700; font-family: Arial; font-size: clamp(8px, 1.2vh, 10px); margin-bottom: 4px;';
         price.textContent = `💰 ${item.price}`;
 
         // Buy button
