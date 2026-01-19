@@ -82,6 +82,15 @@
         "type": "gameplay",
         "description": "City center with buildings and busy environment",
         "prompt": "Railway tracks branching through a bustling 1920s city center, art deco buildings rising on both sides, vintage cars and pedestrians near crossings, trolley wires overhead, dramatic perspective down the tracks, sunset golden hour lighting reflecting off windows, urban energy with vintage charm, digital painting in Studio Ghibli style, warm amber and brass tones with city grays, game background asset, 16:9 aspect ratio, no text or modern elements"
+      },
+      {
+        "id": "level_04_background",
+        "file": "level_04_background.png",
+        "priority": "high",
+        "size": "1920x1080",
+        "type": "gameplay",
+        "description": "Mountain summit railway with snow and dramatic peaks",
+        "prompt": "Railway tracks winding through a treacherous mountain pass, snow-capped peaks rising dramatically on both sides, vintage cog railway trolley climbing steep grade, wooden trestle bridge spanning a misty gorge, icy blue sky with wispy clouds, patches of snow on rocky terrain, pine trees clinging to cliff edges, dramatic alpine lighting with cold blue shadows and warm golden highlights on snow, digital painting in Studio Ghibli style, cyan and white tones with warm brass accents, sense of danger and adventure, game background asset, 16:9 aspect ratio, no text"
       }
     ],
     "buttons": [
@@ -255,6 +264,16 @@
         "description": "Zone 3 City Center icon - urban skyline",
         "backgroundColor": "white",
         "prompt": "Circular brass medallion icon featuring art deco city skyline with tall buildings and clock tower, trolley tracks leading into city, purple and pink sunset tones, brass frame border with rivets, centered composition, isolated on solid white background, simple clean silhouette with solid defined edges, simple design, appealing design, game map marker icon, Victorian urban aesthetic, flat 2D artwork",
+        "negativePrompt": "shadow, drop shadow, cast shadow, 3D effects, checkerboard, transparency pattern, fine details at edges, text, words"
+      },
+      {
+        "id": "icon_zone4",
+        "file": "icon_zone4.png",
+        "priority": "high",
+        "size": "128x128",
+        "description": "Zone 4 Summit Line icon - snowy mountain peak",
+        "backgroundColor": "white",
+        "prompt": "Circular brass medallion icon featuring a snow-capped mountain peak with railway tracks winding up the slope, vintage trolley car climbing the mountain pass, icy blue and white tones with cyan accents, dramatic clouds swirling around summit, brass frame border with rivets, centered composition, isolated on solid white background, simple clean silhouette with solid defined edges, simple design, appealing design, game map marker icon, Victorian alpine railway aesthetic, flat 2D artwork",
         "negativePrompt": "shadow, drop shadow, cast shadow, 3D effects, checkerboard, transparency pattern, fine details at edges, text, words"
       }
     ],

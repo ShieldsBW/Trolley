@@ -167,6 +167,25 @@
     #debug-btn:hover { background: rgba(255,255,255,0.5); }
     #debug-btn:active { background: rgba(255,255,255,0.7); }
 
+    #debug-unlock-btn {
+      position: fixed;
+      top: 175px;
+      right: 20px;
+      width: 30px;
+      height: 30px;
+      background: rgba(255,200,100,0.3);
+      border: 1px solid rgba(255,200,100,0.5);
+      border-radius: 4px;
+      cursor: pointer;
+      z-index: 9999;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 16px;
+    }
+    #debug-unlock-btn:hover { background: rgba(255,200,100,0.5); }
+    #debug-unlock-btn:active { background: rgba(255,200,100,0.7); }
+
     /* =====================================================
        Phase 3: Responsive Media Queries
        ===================================================== */
@@ -294,6 +313,8 @@
 <body>
 <!-- Debug button - hold to show outlines -->
 <div id="debug-btn" title="Hold to show debug outlines">🔍</div>
+<!-- Debug button - unlock all zones/difficulties (only visible on world map) -->
+<div id="debug-unlock-btn" title="Unlock all zones and difficulties" style="display:none;">🔓</div>
 
 <img id="menu-bg" src="assets/backgrounds/menu_bg.png" alt="" style="position:fixed;left:0;top:0;width:100vw;height:calc(var(--vh, 1vh) * 100);object-fit:cover;z-index:-1;display:none;"/>
 <img id="level-bg" src="assets/backgrounds/level_01_background.png" alt="" style="position:fixed;left:0;top:0;width:100vw;height:calc(var(--vh, 1vh) * 100);object-fit:cover;z-index:-1;display:none;"/>
@@ -492,6 +513,9 @@
       <!-- Line from Zone 2 to Zone 3 -->
       <line x1="47%" y1="33%" x2="72%" y2="15%" stroke="#4a3a20" stroke-width="4" stroke-linecap="round"/>
       <line x1="47%" y1="33%" x2="72%" y2="15%" stroke="#8B7355" stroke-width="2" stroke-linecap="round" stroke-dasharray="8,4"/>
+      <!-- Line from Zone 3 to Zone 4 -->
+      <line x1="72%" y1="15%" x2="92%" y2="35%" stroke="#4a3a20" stroke-width="4" stroke-linecap="round"/>
+      <line x1="72%" y1="15%" x2="92%" y2="35%" stroke="#8B7355" stroke-width="2" stroke-linecap="round" stroke-dasharray="8,4"/>
     </svg>
     <!-- Zone 1: Starter Rails -->
     <div class="zone-marker" data-zone="1" style="position:absolute;left:15%;top:50%;width:min(100px, 20vw);height:min(100px, 20vw);cursor:pointer;transition:all 0.3s ease;filter:drop-shadow(0 4px 8px rgba(0,0,0,0.7));">
@@ -510,6 +534,13 @@
     <!-- Zone 3: City Terminal -->
     <div class="zone-marker" data-zone="3" style="position:absolute;left:65%;top:5%;width:min(100px, 20vw);height:min(100px, 20vw);cursor:pointer;transition:all 0.3s ease;filter:drop-shadow(0 4px 8px rgba(0,0,0,0.7));">
       <img src="assets/icons/icon_zone3.png" style="width:100%;height:100%;object-fit:contain;"/>
+      <div class="zone-lock-overlay" style="display:none;position:absolute;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.5);border-radius:50%;display:flex;align-items:center;justify-content:center;">
+        <img src="assets/icons/icon_locked.png" style="width:50%;height:50%;object-fit:contain;"/>
+      </div>
+    </div>
+    <!-- Zone 4: Summit Line -->
+    <div class="zone-marker" data-zone="4" style="position:absolute;left:85%;top:25%;width:min(100px, 20vw);height:min(100px, 20vw);cursor:pointer;transition:all 0.3s ease;filter:drop-shadow(0 4px 8px rgba(0,0,0,0.7));">
+      <img src="assets/icons/icon_zone4.png" style="width:100%;height:100%;object-fit:contain;"/>
       <div class="zone-lock-overlay" style="display:none;position:absolute;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.5);border-radius:50%;display:flex;align-items:center;justify-content:center;">
         <img src="assets/icons/icon_locked.png" style="width:50%;height:50%;object-fit:contain;"/>
       </div>
@@ -655,6 +686,45 @@ window.addEventListener('resize', setViewportHeight);
     debugBtn.addEventListener('touchstart', (e) => { e.preventDefault(); enableDebug(); });
     debugBtn.addEventListener('touchend', disableDebug);
     debugBtn.addEventListener('touchcancel', disableDebug);
+  }
+})();
+
+// Debug button - unlock all zones and difficulties
+(function() {
+  const unlockBtn = document.getElementById('debug-unlock-btn');
+  if (unlockBtn) {
+    unlockBtn.addEventListener('click', () => {
+      const user = getUser();
+      if (!user) return;
+
+      // Unlock all zones by adding 5 completed levels per zone
+      const zones = [1, 2, 3, 4];
+      user.progress.completedLevels = [];
+      zones.forEach(zoneId => {
+        for (let level = 1; level <= 5; level++) {
+          user.progress.completedLevels.push({
+            zone: zoneId,
+            level: level,
+            score: 100,
+            perfect: false
+          });
+        }
+      });
+
+      // Unlock all difficulties (set highest completed to 3 for each zone)
+      user.progress.zoneCompletions = {};
+      zones.forEach(zoneId => {
+        user.progress.zoneCompletions[zoneId] = 3;
+      });
+
+      saveUser(user);
+      console.log('[DEBUG] Unlocked all zones and difficulties');
+
+      // Refresh the world map if we're on it
+      if (window.game && window.game.scene.isActive('WorldMapScene')) {
+        window.game.scene.getScene('WorldMapScene').scene.restart();
+      }
+    });
   }
 })();
 
@@ -805,6 +875,18 @@ const ZoneConfig = [
     currencyBonus: 1.1,
     color: '#E91E63',
     bgSuffix: 'level_01_background.png' // reuse until new assets
+  },
+  {
+    id: 4,
+    name: 'Summit Line',
+    description: 'Treacherous mountain passes await.',
+    choicesPerLevel: 6,
+    levelsRequired: 5,
+    difficultyMod: 1.9,
+    unlockRequirement: 5, // need 5 levels from zone 3
+    currencyBonus: 1.15,
+    color: '#00BCD4',
+    bgSuffix: 'level_04_background.png'
   }
 ];
 
@@ -836,6 +918,15 @@ const ZonePrompts = {
     {prompt:'School zone - children present!',opts:[{text:'Slow down',pts:4,hp:2},{text:'Maintain speed',pts:12,hp:-3}]},
     {prompt:'Traffic signal malfunction!',opts:[{text:'Go anyway',pts:15,hp:-4},{text:'Wait',pts:3,hp:1}]},
     {prompt:'Pedestrian on tracks!',opts:[{text:'Emergency stop',pts:6,hp:3},{text:'Swerve',pts:14,hp:-5}]}
+  ],
+  4: [ // Summit Line
+    {prompt:'Avalanche warning - push through or wait?',opts:[{text:'Risk it',pts:22,hp:-6},{text:'Wait it out',pts:5,hp:0}]},
+    {prompt:'Tracks frozen over - salt reserves low!',opts:[{text:'Use all salt',pts:10,hp:2},{text:'Slide through',pts:18,hp:-5}]},
+    {prompt:'Stranded climbers spotted off the pass!',opts:[{text:'Stop to rescue',pts:14,hp:-3},{text:'Radio for help',pts:6,hp:0}]},
+    {prompt:'Narrow cliff edge - rockslide blocking half!',opts:[{text:'Squeeze past',pts:20,hp:-7},{text:'Clear debris',pts:8,hp:-2}]},
+    {prompt:'Blizzard reducing visibility to zero!',opts:[{text:'Push blind',pts:24,hp:-7},{text:'Emergency stop',pts:4,hp:1}]},
+    {prompt:'Wooden trestle bridge groaning under weight!',opts:[{text:'Full speed across',pts:25,hp:-8},{text:'Slow crawl',pts:10,hp:-3}]},
+    {prompt:'Passenger suffering altitude sickness!',opts:[{text:'Descend now',pts:8,hp:3},{text:'Continue to summit',pts:16,hp:-4}]}
   ]
 };
 
@@ -1059,7 +1150,7 @@ const UIManager = {
 
     // Hide all containers
     ['login-container', 'worldmap-container', 'shop-container', 'profile-container',
-     'consequence-container', 'zone-complete-container', 'leaderboard-container', 'game-inventory-overlay'].forEach(id => {
+     'consequence-container', 'zone-complete-container', 'leaderboard-container', 'game-inventory-overlay', 'debug-unlock-btn'].forEach(id => {
       const el = this.get(id);
       if (el) el.style.display = 'none';
     });
@@ -2715,6 +2806,10 @@ class WorldMapScene extends Phaser.Scene {
     if (worldmapBg) worldmapBg.style.display = 'block';
     const worldmapContainer = document.getElementById('worldmap-container');
     if (worldmapContainer) worldmapContainer.style.display = 'block';
+
+    // Show debug unlock button on world map
+    const debugUnlockBtn = document.getElementById('debug-unlock-btn');
+    if (debugUnlockBtn) debugUnlockBtn.style.display = 'flex';
 
     // Get user data
     const user = getUser();
