@@ -226,6 +226,36 @@
         "backgroundColor": "white",
         "prompt": "Five-pointed gold star icon, simple bold star shape, brass metallic finish with slight emboss, centered composition, isolated on solid white background, simple clean silhouette with solid defined edges, simple design, appealing design, game achievement icon, high contrast, flat 2D artwork",
         "negativePrompt": "shadow, drop shadow, cast shadow, 3D effects, checkerboard, transparency pattern, fine details at edges"
+      },
+      {
+        "id": "icon_zone1",
+        "file": "icon_zone1.png",
+        "priority": "high",
+        "size": "128x128",
+        "description": "Zone 1 Starter Rails icon - peaceful countryside train",
+        "backgroundColor": "white",
+        "prompt": "Circular brass medallion icon featuring a vintage green trolley car on pastoral countryside tracks, rolling green hills in background, peaceful sunrise glow, brass frame border with rivets, warm earth tones, centered composition, isolated on solid white background, simple clean silhouette with solid defined edges, simple design, appealing design, game map marker icon, Victorian railway aesthetic, flat 2D artwork",
+        "negativePrompt": "shadow, drop shadow, cast shadow, 3D effects, checkerboard, transparency pattern, fine details at edges, text, words"
+      },
+      {
+        "id": "icon_zone2",
+        "file": "icon_zone2.png",
+        "priority": "high",
+        "size": "128x128",
+        "description": "Zone 2 Industrial District icon - factory and steam",
+        "backgroundColor": "white",
+        "prompt": "Circular brass medallion icon featuring industrial factory silhouettes with steam pipes and smokestacks, trolley tracks in foreground, orange and brown industrial tones, brass frame border with rivets, centered composition, isolated on solid white background, simple clean silhouette with solid defined edges, simple design, appealing design, game map marker icon, Victorian industrial aesthetic, flat 2D artwork",
+        "negativePrompt": "shadow, drop shadow, cast shadow, 3D effects, checkerboard, transparency pattern, fine details at edges, text, words"
+      },
+      {
+        "id": "icon_zone3",
+        "file": "icon_zone3.png",
+        "priority": "high",
+        "size": "128x128",
+        "description": "Zone 3 City Center icon - urban skyline",
+        "backgroundColor": "white",
+        "prompt": "Circular brass medallion icon featuring art deco city skyline with tall buildings and clock tower, trolley tracks leading into city, purple and pink sunset tones, brass frame border with rivets, centered composition, isolated on solid white background, simple clean silhouette with solid defined edges, simple design, appealing design, game map marker icon, Victorian urban aesthetic, flat 2D artwork",
+        "negativePrompt": "shadow, drop shadow, cast shadow, 3D effects, checkerboard, transparency pattern, fine details at edges, text, words"
       }
     ],
     "frames": [

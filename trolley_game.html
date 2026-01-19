@@ -98,6 +98,27 @@
       animation: zoneCompleteScaleIn 0.4s ease-out forwards;
     }
 
+    /* Zone marker selection and hover styles */
+    .zone-marker {
+      transform: scale(1);
+    }
+    .zone-marker:hover {
+      transform: scale(1.1);
+      filter: drop-shadow(0 6px 12px rgba(0,0,0,0.8)) brightness(1.1) !important;
+    }
+    .zone-marker.selected {
+      transform: scale(1.15);
+      filter: drop-shadow(0 0 15px rgba(255,215,0,0.8)) drop-shadow(0 6px 12px rgba(0,0,0,0.8)) brightness(1.2) !important;
+    }
+    .zone-marker.locked {
+      filter: grayscale(70%) drop-shadow(0 4px 8px rgba(0,0,0,0.7)) !important;
+      cursor: not-allowed;
+    }
+    .zone-marker.locked:hover {
+      transform: scale(1.02);
+      filter: grayscale(70%) drop-shadow(0 4px 8px rgba(0,0,0,0.7)) !important;
+    }
+
     /* Difficulty selector styles */
     .difficulty-btn {
       width: 36px;
@@ -158,13 +179,10 @@
         --font-size-base: clamp(13px, 2.5vw, 16px);
       }
 
-      /* Reduce zone marker sizes */
+      /* Reduce zone marker sizes for tablets */
       .zone-marker {
-        width: 60px !important;
-        height: 60px !important;
-      }
-      .zone-marker span {
-        font-size: 28px !important;
+        width: min(80px, 18vw) !important;
+        height: min(80px, 18vw) !important;
       }
 
       /* Adjust shop grid */
@@ -204,13 +222,10 @@
         height: var(--choice-frame-height) !important;
       }
 
-      /* Reduce zone marker sizes further */
+      /* Reduce zone marker sizes for mobile */
       .zone-marker {
-        width: 50px !important;
-        height: 50px !important;
-      }
-      .zone-marker span {
-        font-size: 24px !important;
+        width: min(65px, 16vw) !important;
+        height: min(65px, 16vw) !important;
       }
 
       /* Shop grid single column */
@@ -255,12 +270,10 @@
         --min-touch-target: 40px;
       }
 
+      /* Smallest screens - compact zone markers */
       .zone-marker {
-        width: 44px !important;
-        height: 44px !important;
-      }
-      .zone-marker span {
-        font-size: 20px !important;
+        width: min(50px, 15vw) !important;
+        height: min(50px, 15vw) !important;
       }
     }
 
@@ -471,14 +484,35 @@
 
   <!-- Zone Markers (left side of map) - using percentage positions for responsiveness -->
   <div id="zone-markers" style="position:absolute;left:5%;top:20%;width:45%;height:60%;">
-    <div class="zone-marker" data-zone="1" style="position:absolute;left:15%;top:55%;width:min(80px, 15vw);height:min(80px, 15vw);background:rgba(0,0,0,0.6);border:3px solid #B8860B;border-radius:50%;display:flex;align-items:center;justify-content:center;cursor:pointer;transition:all 0.2s;">
-      <span style="font-size:clamp(24px, 5vw, 36px);">🚂</span>
+    <!-- Connecting lines between zones -->
+    <svg style="position:absolute;width:100%;height:100%;pointer-events:none;overflow:visible;">
+      <!-- Line from Zone 1 to Zone 2 -->
+      <line x1="22%" y1="58%" x2="47%" y2="35%" stroke="#4a3a20" stroke-width="4" stroke-linecap="round"/>
+      <line x1="22%" y1="58%" x2="47%" y2="35%" stroke="#8B7355" stroke-width="2" stroke-linecap="round" stroke-dasharray="8,4"/>
+      <!-- Line from Zone 2 to Zone 3 -->
+      <line x1="47%" y1="33%" x2="72%" y2="15%" stroke="#4a3a20" stroke-width="4" stroke-linecap="round"/>
+      <line x1="47%" y1="33%" x2="72%" y2="15%" stroke="#8B7355" stroke-width="2" stroke-linecap="round" stroke-dasharray="8,4"/>
+    </svg>
+    <!-- Zone 1: Starter Rails -->
+    <div class="zone-marker" data-zone="1" style="position:absolute;left:15%;top:50%;width:min(100px, 20vw);height:min(100px, 20vw);cursor:pointer;transition:all 0.3s ease;filter:drop-shadow(0 4px 8px rgba(0,0,0,0.7));">
+      <img src="assets/icons/icon_zone1.png" style="width:100%;height:100%;object-fit:contain;"/>
+      <div class="zone-lock-overlay" style="display:none;position:absolute;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.5);border-radius:50%;display:flex;align-items:center;justify-content:center;">
+        <img src="assets/icons/icon_locked.png" style="width:50%;height:50%;object-fit:contain;"/>
+      </div>
     </div>
-    <div class="zone-marker" data-zone="2" style="position:absolute;left:40%;top:30%;width:min(80px, 15vw);height:min(80px, 15vw);background:rgba(0,0,0,0.6);border:3px solid #B8860B;border-radius:50%;display:flex;align-items:center;justify-content:center;cursor:pointer;transition:all 0.2s;">
-      <span style="font-size:clamp(24px, 5vw, 36px);">🏭</span>
+    <!-- Zone 2: Industrial Junction -->
+    <div class="zone-marker" data-zone="2" style="position:absolute;left:40%;top:25%;width:min(100px, 20vw);height:min(100px, 20vw);cursor:pointer;transition:all 0.3s ease;filter:drop-shadow(0 4px 8px rgba(0,0,0,0.7));">
+      <img src="assets/icons/icon_zone2.png" style="width:100%;height:100%;object-fit:contain;"/>
+      <div class="zone-lock-overlay" style="display:none;position:absolute;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.5);border-radius:50%;display:flex;align-items:center;justify-content:center;">
+        <img src="assets/icons/icon_locked.png" style="width:50%;height:50%;object-fit:contain;"/>
+      </div>
     </div>
-    <div class="zone-marker" data-zone="3" style="position:absolute;left:65%;top:10%;width:min(80px, 15vw);height:min(80px, 15vw);background:rgba(0,0,0,0.6);border:3px solid #B8860B;border-radius:50%;display:flex;align-items:center;justify-content:center;cursor:pointer;transition:all 0.2s;">
-      <span style="font-size:clamp(24px, 5vw, 36px);">🌆</span>
+    <!-- Zone 3: City Terminal -->
+    <div class="zone-marker" data-zone="3" style="position:absolute;left:65%;top:5%;width:min(100px, 20vw);height:min(100px, 20vw);cursor:pointer;transition:all 0.3s ease;filter:drop-shadow(0 4px 8px rgba(0,0,0,0.7));">
+      <img src="assets/icons/icon_zone3.png" style="width:100%;height:100%;object-fit:contain;"/>
+      <div class="zone-lock-overlay" style="display:none;position:absolute;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.5);border-radius:50%;display:flex;align-items:center;justify-content:center;">
+        <img src="assets/icons/icon_locked.png" style="width:50%;height:50%;object-fit:contain;"/>
+      </div>
     </div>
   </div>
 
@@ -2700,30 +2734,23 @@ class WorldMapScene extends Phaser.Scene {
         isUnlocked = prevZoneCompleted >= zone.unlockRequirement || zone.id <= unlockedZone;
       }
 
-      // Update marker appearance based on lock status
-      const icon = marker.querySelector('span');
+      // Reset classes and apply lock status
+      marker.classList.remove('selected', 'locked');
+      const lockOverlay = marker.querySelector('.zone-lock-overlay');
       if (!isUnlocked) {
-        marker.style.opacity = '0.5';
-        marker.style.cursor = 'not-allowed';
-        if (icon) icon.textContent = '🔒';
+        marker.classList.add('locked');
+        if (lockOverlay) lockOverlay.style.display = 'flex';
+      } else {
+        if (lockOverlay) lockOverlay.style.display = 'none';
       }
 
-      // Hover effects
-      marker.onmouseover = () => {
-        marker.style.transform = 'scale(1.1)';
-        marker.style.borderColor = '#FFD700';
-      };
-      marker.onmouseout = () => {
-        marker.style.transform = 'scale(1)';
-        marker.style.borderColor = this.selectedZone === zoneId ? '#FFD700' : '#B8860B';
-      };
-
-      // Click to show zone details
+      // Click to show zone details (CSS handles hover via :hover pseudo-class)
       marker.onclick = () => {
+        if (!isUnlocked) return; // Ignore clicks on locked zones
         this.showZoneDetails(zone, user, isUnlocked);
-        // Highlight selected marker
-        zoneMarkers.forEach(m => m.style.borderColor = '#B8860B');
-        marker.style.borderColor = '#FFD700';
+        // Update selected state via CSS class
+        zoneMarkers.forEach(m => m.classList.remove('selected'));
+        marker.classList.add('selected');
         this.selectedZone = zoneId;
       };
     });
