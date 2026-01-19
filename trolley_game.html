@@ -306,13 +306,16 @@
      style="position:fixed;left:50%;top:400px;transform:translateX(-50%);
             height:105px;width:auto;z-index:3;display:none;cursor:pointer;"/>
 <img id="btn-shop" src="assets/buttons/button_shop.png" alt="Shop"
-     style="position:fixed;left:calc(50% - 120px);top:525px;transform:translateX(-50%);
+     style="position:fixed;left:calc(50% - 180px);top:525px;transform:translateX(-50%);
             height:55px;width:auto;z-index:3;display:none;cursor:pointer;"/>
 <img id="btn-leaderboard" src="assets/buttons/button_leaderboard.png" alt="Leaderboard"
-     style="position:fixed;left:50%;top:525px;transform:translateX(-50%);
+     style="position:fixed;left:calc(50% - 60px);top:525px;transform:translateX(-50%);
+            height:55px;width:auto;z-index:3;display:none;cursor:pointer;"/>
+<img id="btn-inventory" src="assets/buttons/button_inventory.png" alt="Inventory"
+     style="position:fixed;left:calc(50% + 60px);top:525px;transform:translateX(-50%);
             height:55px;width:auto;z-index:3;display:none;cursor:pointer;"/>
 <img id="btn-profile" src="assets/buttons/button_profile.png" alt="Profile"
-     style="position:fixed;left:calc(50% + 120px);top:525px;transform:translateX(-50%);
+     style="position:fixed;left:calc(50% + 180px);top:525px;transform:translateX(-50%);
             height:55px;width:auto;z-index:3;display:none;cursor:pointer;"/>
 <img id="btn-logout" src="assets/buttons/button_logout.png" alt="Logout"
      style="position:fixed;left:calc(50% - 70px);bottom:30px;transform:translateX(-50%);
@@ -393,6 +396,20 @@
     <div id="hud-level" style="color:#fff;font-family:Arial,sans-serif;font-size:18px;text-shadow:2px 2px 4px #000;margin-bottom:3px;">Level: 1</div>
     <div id="hud-stage" style="color:#fff;font-family:Arial,sans-serif;font-size:18px;text-shadow:2px 2px 4px #000;margin-bottom:3px;">Stage: 1</div>
     <div id="hud-zone" style="color:#fff;font-family:Arial,sans-serif;font-size:16px;text-shadow:2px 2px 4px #000;">Zone Name</div>
+  </div>
+  <!-- Inventory icon button -->
+  <div id="hud-inventory-btn" style="position:absolute;right:20px;top:90px;width:40px;height:40px;background:rgba(0,0,0,0.6);border:2px solid #FFD700;border-radius:8px;cursor:pointer;display:flex;align-items:center;justify-content:center;" title="Inventory">
+    <span style="font-size:20px;">🎒</span>
+  </div>
+</div>
+
+<!-- Game Inventory Overlay -->
+<div id="game-inventory-overlay" style="position:fixed;left:0;top:0;width:100vw;height:calc(var(--vh, 1vh) * 100);background:rgba(0,0,0,0.8);display:none;z-index:150;align-items:center;justify-content:center;">
+  <div id="game-inventory-panel" style="background:rgba(30,30,30,0.95);border:3px solid #FFD700;border-radius:12px;padding:20px;max-width:350px;width:90%;max-height:70vh;overflow-y:auto;">
+    <h2 style="color:#FFD700;font-family:Georgia,serif;font-size:24px;text-align:center;margin:0 0 15px 0;text-shadow:2px 2px 4px #000;">Inventory</h2>
+    <div id="game-inventory-items" style="display:flex;flex-direction:column;gap:10px;"></div>
+    <div id="game-inventory-limit" style="color:#888;font-family:Arial;font-size:12px;text-align:center;margin-top:15px;">(0/3 items used this level)</div>
+    <button id="game-inventory-close" style="display:block;margin:15px auto 0;padding:10px 24px;background:#FFD700;color:#000;border:none;border-radius:5px;cursor:pointer;font-family:Arial;font-size:14px;">Close</button>
   </div>
 </div>
 
@@ -518,33 +535,55 @@
 
 <!-- Shop Scene Elements -->
 <div id="shop-container" style="position:fixed;left:0;top:0;width:100vw;height:calc(var(--vh, 1vh) * 100);background:transparent;display:none;z-index:100;">
-  <h1 style="position:absolute;left:50%;top:20px;transform:translateX(-50%);color:#ffd700;font-family:Arial;font-size:36px;text-shadow:2px 2px 4px #000;">SHOP</h1>
-  <div id="shop-points" style="position:absolute;right:30px;top:25px;color:#ffd700;font-family:Arial;font-size:24px;">💰 0 Points</div>
-  <div id="shop-tabs" style="position:absolute;left:50%;top:100px;transform:translateX(-50%);display:flex;gap:0;">
-    <button id="tab-cosmetics" style="padding:12px 35px;font-size:16px;background:#ffd700;color:#000;border:none;border-radius:8px 8px 0 0;cursor:pointer;margin-bottom:-1px;">Cosmetics</button>
-    <button id="tab-consumables" style="padding:12px 35px;font-size:16px;background:#555;color:#fff;border:none;border-radius:8px 8px 0 0;cursor:pointer;margin-bottom:-1px;">Consumables</button>
-  </div>
-  <div id="shop-items" style="position:absolute;left:50%;top:148px;transform:translateX(-50%);width:90%;max-width:720px;height:auto;max-height:calc(100% - 220px);background:rgba(0,0,0,0.7);border-radius:0 10px 10px 10px;padding:15px;overflow:hidden;border-top:3px solid #ffd700;display:flex;flex-direction:column;">
-    <div id="shop-items-grid" style="flex:1;display:flex;flex-wrap:wrap;justify-content:center;align-content:flex-start;"></div>
-    <div id="shop-pagination" style="display:flex;justify-content:center;align-items:center;gap:20px;padding-top:12px;border-top:1px solid rgba(255,255,255,0.2);margin-top:8px;flex-shrink:0;">
-      <button id="shop-prev" style="padding:6px 14px;font-size:16px;background:#ffd700;color:#000;border:none;border-radius:5px;cursor:pointer;">←</button>
-      <span id="shop-page-info" style="color:#fff;font-family:Arial;font-size:13px;">Page 1 / 1</span>
-      <button id="shop-next" style="padding:6px 14px;font-size:16px;background:#ffd700;color:#000;border:none;border-radius:5px;cursor:pointer;">→</button>
+  <!-- Shop frame - centered -->
+  <div id="shop-frame" style="position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);width:calc(var(--vh, 1vh) * 90 * 0.64);height:calc(var(--vh, 1vh) * 90);">
+    <!-- Frame image layer (aspect ratio 944:1472 = 0.64:1) -->
+    <img src="assets/frames/frame_leaderboard.png" style="position:absolute;inset:0;width:100%;height:100%;object-fit:fill;pointer-events:none;"/>
+    <!-- Safe area for content (insets: top 15%, right 15%, bottom 15%, left 15%) -->
+    <div id="shop-safe-area" style="position:absolute;top:15%;left:15%;right:15%;bottom:15%;display:flex;flex-direction:column;align-items:center;overflow:hidden;">
+      <h1 id="shop-title" style="color:#FFD700;font-family:Georgia,serif;font-size:clamp(24px, 5vh, 48px);margin:0;text-shadow:2px 2px 4px #000;">SHOP</h1>
+      <div id="shop-points" style="color:#F5DEB3;font-family:Arial,sans-serif;font-size:clamp(14px, 2.5vh, 20px);margin-bottom:1vh;text-shadow:1px 1px 2px #000;">💰 0 Points</div>
+      <!-- Shop tabs -->
+      <div id="shop-tabs" style="display:flex;gap:0;margin-bottom:1vh;width:100%;justify-content:center;">
+        <button id="tab-cosmetics" style="padding:8px 20px;font-size:clamp(12px, 2vh, 16px);background:#FFD700;color:#000;border:none;border-radius:8px 8px 0 0;cursor:pointer;">Cosmetics</button>
+        <button id="tab-consumables" style="padding:8px 20px;font-size:clamp(12px, 2vh, 16px);background:#555;color:#fff;border:none;border-radius:8px 8px 0 0;cursor:pointer;">Consumables</button>
+      </div>
+      <!-- Items area -->
+      <div id="shop-items" style="width:100%;flex:1;display:flex;flex-direction:column;overflow:hidden;background:rgba(0,0,0,0.4);border-radius:0 8px 8px 8px;padding:10px;border-top:3px solid #FFD700;">
+        <div id="shop-items-grid" style="flex:1;display:flex;flex-wrap:wrap;justify-content:center;align-content:flex-start;overflow-y:auto;"></div>
+        <div id="shop-pagination" style="display:flex;justify-content:center;align-items:center;gap:15px;padding-top:8px;border-top:1px solid rgba(255,255,255,0.2);margin-top:8px;flex-shrink:0;">
+          <button id="shop-prev" style="padding:5px 12px;font-size:clamp(12px, 2vh, 16px);background:#FFD700;color:#000;border:none;border-radius:5px;cursor:pointer;">←</button>
+          <span id="shop-page-info" style="color:#F5DEB3;font-family:Arial;font-size:clamp(11px, 1.8vh, 14px);">Page 1 / 1</span>
+          <button id="shop-next" style="padding:5px 12px;font-size:clamp(12px, 2vh, 16px);background:#FFD700;color:#000;border:none;border-radius:5px;cursor:pointer;">→</button>
+        </div>
+      </div>
+      <!-- Back button container -->
+      <div id="shop-btn-container" style="margin-top:2vh;"></div>
     </div>
   </div>
-  <button id="btn-shop-back" style="position:absolute;left:20px;bottom:20px;padding:12px 24px;font-size:16px;background:#ffd700;color:#000;border:none;border-radius:5px;cursor:pointer;">
-    ← Back to Menu
-  </button>
 </div>
 
 <!-- Profile Scene Elements -->
 <div id="profile-container" style="position:fixed;left:0;top:0;width:100vw;height:calc(var(--vh, 1vh) * 100);background:transparent;display:none;z-index:100;">
-  <h1 style="position:absolute;left:50%;top:20px;transform:translateX(-50%);color:#fff;font-family:Arial;font-size:36px;text-shadow:2px 2px 4px #000;">PROFILE</h1>
-  <div id="profile-content" style="position:absolute;left:50%;top:80px;transform:translateX(-50%);width:80%;max-width:600px;background:rgba(0,0,0,0.7);border-radius:10px;padding:30px;"></div>
-  <div id="achievements-content" style="position:absolute;left:50%;top:480px;transform:translateX(-50%);width:80%;max-width:600px;background:rgba(0,0,0,0.7);border-radius:10px;padding:20px;"></div>
-  <button id="btn-profile-back" style="position:absolute;left:20px;bottom:20px;padding:12px 24px;font-size:16px;background:#fff;color:#0d7377;border:none;border-radius:5px;cursor:pointer;">
-    ← Back to Menu
-  </button>
+  <!-- Profile frame - centered -->
+  <div id="profile-frame" style="position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);width:calc(var(--vh, 1vh) * 90 * 0.64);height:calc(var(--vh, 1vh) * 90);">
+    <!-- Frame image layer (aspect ratio 944:1472 = 0.64:1) -->
+    <img src="assets/frames/frame_leaderboard.png" style="position:absolute;inset:0;width:100%;height:100%;object-fit:fill;pointer-events:none;"/>
+    <!-- Safe area for content (insets: top 15%, right 15%, bottom 15%, left 15%) -->
+    <div id="profile-safe-area" style="position:absolute;top:15%;left:15%;right:15%;bottom:15%;display:flex;flex-direction:column;align-items:center;overflow:hidden;">
+      <h1 id="profile-title" style="color:#FFD700;font-family:Georgia,serif;font-size:clamp(24px, 5vh, 48px);margin:0 0 1vh 0;text-shadow:2px 2px 4px #000;">PROFILE</h1>
+      <!-- Tab bar -->
+      <div id="profile-tabs" style="display:flex;gap:0;margin-bottom:1vh;width:100%;justify-content:center;">
+        <button id="tab-stats" style="padding:8px 20px;font-size:clamp(12px, 2vh, 16px);background:#FFD700;color:#000;border:none;border-radius:8px 8px 0 0;cursor:pointer;">Stats</button>
+        <button id="tab-inventory" style="padding:8px 20px;font-size:clamp(12px, 2vh, 16px);background:#555;color:#fff;border:none;border-radius:8px 8px 0 0;cursor:pointer;">Inventory</button>
+        <button id="tab-achievements" style="padding:8px 20px;font-size:clamp(12px, 2vh, 16px);background:#555;color:#fff;border:none;border-radius:8px 8px 0 0;cursor:pointer;">Achievements</button>
+      </div>
+      <!-- Tab content area -->
+      <div id="profile-tab-content" style="width:100%;flex:1;display:flex;flex-direction:column;overflow-y:auto;background:rgba(0,0,0,0.4);border-radius:0 8px 8px 8px;padding:10px;border-top:3px solid #FFD700;"></div>
+      <!-- Back button container -->
+      <div id="profile-btn-container" style="margin-top:2vh;"></div>
+    </div>
+  </div>
 </div>
 
 <!-- Item Bar for Level Scene -->
@@ -985,13 +1024,13 @@ const UIManager = {
 
     // Hide all containers
     ['login-container', 'worldmap-container', 'shop-container', 'profile-container',
-     'consequence-container', 'zone-complete-container', 'leaderboard-container'].forEach(id => {
+     'consequence-container', 'zone-complete-container', 'leaderboard-container', 'game-inventory-overlay'].forEach(id => {
       const el = this.get(id);
       if (el) el.style.display = 'none';
     });
 
     // Hide all buttons
-    ['btn-worldmap', 'btn-shop', 'btn-leaderboard', 'btn-profile', 'btn-logout', 'btn-quit',
+    ['btn-worldmap', 'btn-shop', 'btn-leaderboard', 'btn-profile', 'btn-inventory', 'btn-logout', 'btn-quit',
      'btn-continue', 'btn-next', 'btn-menu', 'btn-submit', 'btn-try', 'btn-worldmap-go'].forEach(id => {
       const el = this.get(id);
       if (el) {
@@ -1505,6 +1544,12 @@ class MainMenuScene extends Phaser.Scene {
       btnShop.onclick = () => this.scene.start('ShopScene');
     }
 
+    const btnInventory = document.getElementById('btn-inventory');
+    if (btnInventory) {
+      btnInventory.style.display = 'block';
+      btnInventory.onclick = () => this.scene.start('ProfileScene', { tab: 'inventory' });
+    }
+
     const btnProfile = document.getElementById('btn-profile');
     if (btnProfile) {
       btnProfile.style.display = 'block';
@@ -1646,8 +1691,9 @@ class LevelScene extends Phaser.Scene {
       this.add.text(20, 80, '2x POINTS ACTIVE!', {font:'16px Arial', fill:'#FF9800'});
     }
 
-    // Setup item bar
+    // Setup item bar and game inventory overlay
     this.setupItemBar();
+    this.setupGameInventory();
     // Moved down by 200px (from y=100 to y=300) and doubled font size (24px -> 48px)
     this.promptText = this.add.text(400,300, '', {font:'48px Arial', fill:'#fff', align:'center', wordWrap:{width:1400}}).setOrigin(0.5);
 
@@ -1730,6 +1776,103 @@ class LevelScene extends Phaser.Scene {
 
     // Show or hide item bar
     itemBar.style.display = hasAnyItems ? 'block' : 'none';
+  }
+
+  setupGameInventory() {
+    const inventoryBtn = document.getElementById('hud-inventory-btn');
+    const overlay = document.getElementById('game-inventory-overlay');
+    const closeBtn = document.getElementById('game-inventory-close');
+
+    if (inventoryBtn && overlay) {
+      inventoryBtn.onclick = () => {
+        this.renderGameInventory();
+        overlay.style.display = 'flex';
+      };
+    }
+
+    if (closeBtn && overlay) {
+      closeBtn.onclick = () => {
+        overlay.style.display = 'none';
+      };
+    }
+
+    // Close overlay when clicking outside panel
+    if (overlay) {
+      overlay.onclick = (e) => {
+        if (e.target === overlay) {
+          overlay.style.display = 'none';
+        }
+      };
+    }
+  }
+
+  renderGameInventory() {
+    const user = getUser();
+    const itemsContainer = document.getElementById('game-inventory-items');
+    const limitEl = document.getElementById('game-inventory-limit');
+
+    if (!user || !itemsContainer) return;
+
+    // Update limit text
+    if (limitEl) {
+      limitEl.textContent = `(${this.itemsUsedThisLevel}/${GAME_CONSTANTS.MAX_ITEMS_PER_LEVEL} items used this level)`;
+    }
+
+    const userConsumables = user.inventory.consumables || {};
+    const hasAnyItems = Object.values(userConsumables).some(count => count > 0);
+
+    if (!hasAnyItems) {
+      itemsContainer.innerHTML = '<div style="color:#888;font-family:Arial;text-align:center;padding:20px;">No consumables owned.<br>Visit the Shop to buy items!</div>';
+      return;
+    }
+
+    let html = '';
+    const canUseMore = this.itemsUsedThisLevel < GAME_CONSTANTS.MAX_ITEMS_PER_LEVEL;
+
+    ShopItems.consumables.forEach(itemConfig => {
+      const count = userConsumables[itemConfig.id] || 0;
+      if (count > 0) {
+        // Check if this specific item can be used
+        const canUseThis = canUseMore && (!itemConfig.onePerLevel || this.pointMultiplier === 1);
+        const btnDisabled = !canUseThis;
+        const btnStyle = canUseThis
+          ? `background:${itemConfig.buttonColor};color:#fff;cursor:pointer;`
+          : 'background:#666;color:#aaa;cursor:not-allowed;';
+
+        html += `
+          <div style="display:flex;align-items:center;gap:12px;padding:10px;background:rgba(255,255,255,0.1);border-radius:8px;">
+            <div style="font-size:28px;width:40px;text-align:center;">${itemConfig.icon || '📦'}</div>
+            <div style="flex:1;">
+              <div style="color:#F5DEB3;font-family:Arial;font-size:14px;">${itemConfig.name}</div>
+              <div style="color:#4CAF50;font-family:Arial;font-size:12px;">${itemConfig.effect}</div>
+              <div style="color:#888;font-family:Arial;font-size:11px;">Owned: ${count}</div>
+            </div>
+            <button class="game-inv-use-btn" data-item-id="${itemConfig.id}" data-item-value="${itemConfig.value}" ${btnDisabled ? 'disabled' : ''}
+              style="padding:8px 16px;border:none;border-radius:5px;font-family:Arial;font-size:12px;${btnStyle}">
+              Use
+            </button>
+          </div>
+        `;
+      }
+    });
+
+    if (!canUseMore) {
+      html += '<div style="color:#FF9800;font-family:Arial;font-size:12px;text-align:center;padding:10px;">Maximum items used this level!</div>';
+    }
+
+    itemsContainer.innerHTML = html;
+
+    // Add click handlers to use buttons
+    itemsContainer.querySelectorAll('.game-inv-use-btn').forEach(btn => {
+      if (!btn.disabled) {
+        btn.onclick = () => {
+          const itemId = btn.getAttribute('data-item-id');
+          const itemValue = parseInt(btn.getAttribute('data-item-value'), 10);
+          this.useConsumable(itemId, itemValue);
+          this.renderGameInventory(); // Refresh the overlay
+        };
+      }
+    });
   }
 
   useConsumable(itemId, value) {
@@ -2731,7 +2874,7 @@ class ShopScene extends Phaser.Scene {
     const gameOverBg = document.getElementById('gameover-bg'); if (gameOverBg) gameOverBg.style.display = 'none';
 
     // Hide all buttons
-    const buttons = ['btn-worldmap', 'btn-leaderboard', 'btn-shop', 'btn-profile', 'btn-logout', 'btn-continue', 'btn-next', 'btn-menu', 'btn-submit', 'btn-try', 'btn-worldmap-go', 'btn-quit'];
+    const buttons = ['btn-worldmap', 'btn-leaderboard', 'btn-shop', 'btn-profile', 'btn-logout', 'btn-continue', 'btn-next', 'btn-menu', 'btn-submit', 'btn-try', 'btn-worldmap-go', 'btn-quit', 'btn-inventory'];
     buttons.forEach(id => {
       const btn = document.getElementById(id);
       if (btn) { btn.style.display = 'none'; btn.onclick = null; }
@@ -2745,7 +2888,7 @@ class ShopScene extends Phaser.Scene {
 
     this.currentTab = 'cosmetics';
     this.currentPage = 0;
-    this.itemsPerPage = 6; // 2 rows of 3 items
+    this.itemsPerPage = 4; // Reduced for frame constraints
     this.renderShop();
 
     // Setup tabs
@@ -2756,7 +2899,7 @@ class ShopScene extends Phaser.Scene {
       tabCosmetics.onclick = () => {
         this.currentTab = 'cosmetics';
         this.currentPage = 0; // Reset to first page when switching tabs
-        tabCosmetics.style.background = '#ffd700';
+        tabCosmetics.style.background = '#FFD700';
         tabCosmetics.style.color = '#000';
         tabConsumables.style.background = '#555';
         tabConsumables.style.color = '#fff';
@@ -2768,7 +2911,7 @@ class ShopScene extends Phaser.Scene {
       tabConsumables.onclick = () => {
         this.currentTab = 'consumables';
         this.currentPage = 0; // Reset to first page when switching tabs
-        tabConsumables.style.background = '#ffd700';
+        tabConsumables.style.background = '#FFD700';
         tabConsumables.style.color = '#000';
         tabCosmetics.style.background = '#555';
         tabCosmetics.style.color = '#fff';
@@ -2800,13 +2943,18 @@ class ShopScene extends Phaser.Scene {
       };
     }
 
-    // Setup back button
-    const backBtn = document.getElementById('btn-shop-back');
-    if (backBtn) {
+    // Create back button in container
+    const btnContainer = document.getElementById('shop-btn-container');
+    if (btnContainer) {
+      btnContainer.innerHTML = '';
+      const backBtn = document.createElement('button');
+      backBtn.style.cssText = 'padding:10px 24px;font-size:clamp(12px, 2vh, 16px);background:#FFD700;color:#000;border:none;border-radius:5px;cursor:pointer;font-family:Arial;';
+      backBtn.textContent = '← Back to Menu';
       backBtn.onclick = () => {
         shopContainer.style.display = 'none';
         this.scene.start('MainMenuScene');
       };
+      btnContainer.appendChild(backBtn);
     }
   }
 
@@ -2864,11 +3012,11 @@ class ShopScene extends Phaser.Scene {
         const itemCard = document.createElement('div');
         itemCard.style.cssText = `
           display: inline-block;
-          width: 180px;
-          margin: 6px;
-          padding: 12px;
+          width: clamp(90px, 20vw, 130px);
+          margin: 4px;
+          padding: 8px;
           background: rgba(255,255,255,0.1);
-          border-radius: 10px;
+          border-radius: 8px;
           text-align: center;
           vertical-align: top;
         `;
@@ -2876,22 +3024,22 @@ class ShopScene extends Phaser.Scene {
         // Image preview (with fallback to color)
         const preview = document.createElement('div');
         preview.style.cssText = `
-          width: 140px;
-          height: 75px;
-          margin: 0 auto 8px;
+          width: 90%;
+          height: clamp(40px, 8vh, 60px);
+          margin: 0 auto 6px;
           background: ${item.preview ? `url('${item.preview}') center/contain no-repeat` : item.color};
-          border-radius: 5px;
-          border: 3px solid ${isEquipped ? '#ffd700' : 'transparent'};
+          border-radius: 4px;
+          border: 2px solid ${isEquipped ? '#FFD700' : 'transparent'};
         `;
 
         // Name
         const name = document.createElement('div');
-        name.style.cssText = 'color: #fff; font-family: Arial; font-size: 13px; margin-bottom: 4px;';
+        name.style.cssText = 'color: #F5DEB3; font-family: Arial; font-size: clamp(10px, 1.5vh, 13px); margin-bottom: 3px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;';
         name.textContent = item.name;
 
         // Price/Status
         const status = document.createElement('div');
-        status.style.cssText = 'color: #ffd700; font-family: Arial; font-size: 11px; margin-bottom: 8px;';
+        status.style.cssText = 'color: #FFD700; font-family: Arial; font-size: clamp(9px, 1.3vh, 11px); margin-bottom: 6px;';
         if (isOwned) {
           status.textContent = isEquipped ? 'EQUIPPED' : 'OWNED';
           status.style.color = isEquipped ? '#4CAF50' : '#888';
@@ -2902,12 +3050,12 @@ class ShopScene extends Phaser.Scene {
         // Button
         const btn = document.createElement('button');
         btn.style.cssText = `
-          padding: 6px 14px;
+          padding: 4px 10px;
           border: none;
-          border-radius: 5px;
+          border-radius: 4px;
           cursor: pointer;
           font-family: Arial;
-          font-size: 11px;
+          font-size: clamp(9px, 1.3vh, 11px);
         `;
 
         if (isOwned) {
@@ -2928,7 +3076,7 @@ class ShopScene extends Phaser.Scene {
           }
         } else {
           btn.textContent = 'Buy';
-          btn.style.background = canAfford ? '#ffd700' : '#666';
+          btn.style.background = canAfford ? '#FFD700' : '#666';
           btn.style.color = canAfford ? '#000' : '#aaa';
           btn.style.cursor = canAfford ? 'pointer' : 'not-allowed';
           if (canAfford) {
@@ -2968,50 +3116,50 @@ class ShopScene extends Phaser.Scene {
         const itemCard = document.createElement('div');
         itemCard.style.cssText = `
           display: inline-block;
-          width: 180px;
-          margin: 6px;
-          padding: 12px;
+          width: clamp(90px, 20vw, 130px);
+          margin: 4px;
+          padding: 8px;
           background: rgba(255,255,255,0.1);
-          border-radius: 10px;
+          border-radius: 8px;
           text-align: center;
           vertical-align: top;
         `;
 
         // Icon (from item config)
         const icon = document.createElement('div');
-        icon.style.cssText = 'font-size: 28px; margin-bottom: 6px;';
+        icon.style.cssText = 'font-size: clamp(20px, 4vh, 28px); margin-bottom: 4px;';
         icon.textContent = item.icon || '📦';
 
         // Name
         const name = document.createElement('div');
-        name.style.cssText = 'color: #fff; font-family: Arial; font-size: 13px; margin-bottom: 4px;';
+        name.style.cssText = 'color: #F5DEB3; font-family: Arial; font-size: clamp(10px, 1.5vh, 13px); margin-bottom: 3px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;';
         name.textContent = item.name;
 
         // Effect
         const effect = document.createElement('div');
-        effect.style.cssText = 'color: #4CAF50; font-family: Arial; font-size: 11px; margin-bottom: 4px;';
+        effect.style.cssText = 'color: #4CAF50; font-family: Arial; font-size: clamp(9px, 1.3vh, 11px); margin-bottom: 3px;';
         effect.textContent = item.effect;
 
         // Owned count
         const ownedText = document.createElement('div');
-        ownedText.style.cssText = 'color: #888; font-family: Arial; font-size: 10px; margin-bottom: 6px;';
+        ownedText.style.cssText = 'color: #888; font-family: Arial; font-size: clamp(8px, 1.2vh, 10px); margin-bottom: 4px;';
         ownedText.textContent = `Owned: ${owned}`;
 
         // Price
         const price = document.createElement('div');
-        price.style.cssText = 'color: #ffd700; font-family: Arial; font-size: 11px; margin-bottom: 8px;';
+        price.style.cssText = 'color: #FFD700; font-family: Arial; font-size: clamp(9px, 1.3vh, 11px); margin-bottom: 6px;';
         price.textContent = `💰 ${item.price}`;
 
         // Buy button
         const btn = document.createElement('button');
         btn.style.cssText = `
-          padding: 6px 14px;
+          padding: 4px 10px;
           border: none;
-          border-radius: 5px;
+          border-radius: 4px;
           cursor: ${canAfford ? 'pointer' : 'not-allowed'};
           font-family: Arial;
-          font-size: 11px;
-          background: ${canAfford ? '#ffd700' : '#666'};
+          font-size: clamp(9px, 1.3vh, 11px);
+          background: ${canAfford ? '#FFD700' : '#666'};
           color: ${canAfford ? '#000' : '#aaa'};
         `;
         btn.textContent = 'Buy';
@@ -3055,6 +3203,11 @@ class ShopScene extends Phaser.Scene {
 class ProfileScene extends Phaser.Scene {
   constructor() { super('ProfileScene'); }
 
+  init(data) {
+    // Accept optional tab parameter (e.g., { tab: 'inventory' })
+    this.initialTab = data && data.tab ? data.tab : 'stats';
+  }
+
   create() {
     // Hide all DOM elements
     hideAllContainers();
@@ -3065,7 +3218,7 @@ class ProfileScene extends Phaser.Scene {
     const gameOverBg = document.getElementById('gameover-bg'); if (gameOverBg) gameOverBg.style.display = 'none';
 
     // Hide all buttons
-    const buttons = ['btn-worldmap', 'btn-leaderboard', 'btn-shop', 'btn-profile', 'btn-logout', 'btn-continue', 'btn-next', 'btn-menu', 'btn-submit', 'btn-try', 'btn-worldmap-go', 'btn-quit'];
+    const buttons = ['btn-worldmap', 'btn-leaderboard', 'btn-shop', 'btn-profile', 'btn-logout', 'btn-continue', 'btn-next', 'btn-menu', 'btn-submit', 'btn-try', 'btn-worldmap-go', 'btn-quit', 'btn-inventory'];
     buttons.forEach(id => {
       const btn = document.getElementById(id);
       if (btn) { btn.style.display = 'none'; btn.onclick = null; }
@@ -3083,82 +3236,194 @@ class ProfileScene extends Phaser.Scene {
       return;
     }
 
-    // Render profile content
-    const profileContent = document.getElementById('profile-content');
-    if (profileContent) {
-      profileContent.innerHTML = `
-        <div style="text-align: center; margin-bottom: 20px;">
-          <div style="font-size: 64px;">${user.isGuest ? '👤' : '🎮'}</div>
-          <h2 style="color: #fff; font-family: Arial; margin: 10px 0;">${user.username}</h2>
-          <p style="color: rgba(255,255,255,0.7); font-family: Arial; font-size: 12px;">
-            ${user.isGuest ? 'Guest Account' : 'Registered Player'} |
-            Joined: ${new Date(user.createdAt).toLocaleDateString()}
-          </p>
-        </div>
-        <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 15px; text-align: center;">
-          <div style="background: rgba(0,0,0,0.2); padding: 15px; border-radius: 8px;">
-            <div style="color: #ffd700; font-size: 24px; font-family: Arial;">${user.inventory.currency}</div>
-            <div style="color: #fff; font-size: 12px; font-family: Arial;">Points</div>
-          </div>
-          <div style="background: rgba(0,0,0,0.2); padding: 15px; border-radius: 8px;">
-            <div style="color: #4CAF50; font-size: 24px; font-family: Arial;">${user.stats.totalGames}</div>
-            <div style="color: #fff; font-size: 12px; font-family: Arial;">Games Played</div>
-          </div>
-          <div style="background: rgba(0,0,0,0.2); padding: 15px; border-radius: 8px;">
-            <div style="color: #2196F3; font-size: 24px; font-family: Arial;">${user.stats.totalPoints}</div>
-            <div style="color: #fff; font-size: 12px; font-family: Arial;">Total Points</div>
-          </div>
-          <div style="background: rgba(0,0,0,0.2); padding: 15px; border-radius: 8px;">
-            <div style="color: #FF9800; font-size: 24px; font-family: Arial;">${user.stats.choicesMade}</div>
-            <div style="color: #fff; font-size: 12px; font-family: Arial;">Choices Made</div>
-          </div>
-          <div style="background: rgba(0,0,0,0.2); padding: 15px; border-radius: 8px;">
-            <div style="color: #E91E63; font-size: 24px; font-family: Arial;">${user.stats.perfectLevels}</div>
-            <div style="color: #fff; font-size: 12px; font-family: Arial;">Perfect Levels</div>
-          </div>
-          <div style="background: rgba(0,0,0,0.2); padding: 15px; border-radius: 8px;">
-            <div style="color: #9C27B0; font-size: 24px; font-family: Arial;">${user.progress.completedLevels.length}</div>
-            <div style="color: #fff; font-size: 12px; font-family: Arial;">Levels Completed</div>
-          </div>
-        </div>
-      `;
-    }
+    this.currentTab = this.initialTab;
 
-    // Render achievements
-    const achievementsContent = document.getElementById('achievements-content');
-    if (achievementsContent) {
-      let achievementsHTML = '<h3 style="color: #fff; font-family: Arial; margin-bottom: 15px; text-align: center;">Achievements</h3>';
-      achievementsHTML += '<div style="display: flex; flex-wrap: wrap; justify-content: center; gap: 10px;">';
+    // Setup tab buttons
+    const tabStats = document.getElementById('tab-stats');
+    const tabInventory = document.getElementById('tab-inventory');
+    const tabAchievements = document.getElementById('tab-achievements');
 
-      AchievementDefs.forEach(achievement => {
-        const earned = user.achievements.includes(achievement.id);
-        achievementsHTML += `
-          <div style="
-            width: 80px;
-            padding: 10px;
-            background: ${earned ? 'rgba(76, 175, 80, 0.3)' : 'rgba(0,0,0,0.3)'};
-            border-radius: 8px;
-            text-align: center;
-            opacity: ${earned ? '1' : '0.5'};
-          ">
-            <div style="font-size: 24px;">${earned ? achievement.icon : '🔒'}</div>
-            <div style="color: #fff; font-size: 10px; font-family: Arial; margin-top: 5px;">${achievement.name}</div>
-          </div>
-        `;
+    const setActiveTab = (tabName) => {
+      this.currentTab = tabName;
+      // Update tab button styles
+      [tabStats, tabInventory, tabAchievements].forEach(tab => {
+        if (tab) {
+          tab.style.background = '#555';
+          tab.style.color = '#fff';
+        }
       });
+      const activeTabEl = tabName === 'stats' ? tabStats : (tabName === 'inventory' ? tabInventory : tabAchievements);
+      if (activeTabEl) {
+        activeTabEl.style.background = '#FFD700';
+        activeTabEl.style.color = '#000';
+      }
+      // Render content
+      if (tabName === 'stats') this.renderStats();
+      else if (tabName === 'inventory') this.renderInventory();
+      else if (tabName === 'achievements') this.renderAchievements();
+    };
 
-      achievementsHTML += '</div>';
-      achievementsContent.innerHTML = achievementsHTML;
-    }
+    if (tabStats) tabStats.onclick = () => setActiveTab('stats');
+    if (tabInventory) tabInventory.onclick = () => setActiveTab('inventory');
+    if (tabAchievements) tabAchievements.onclick = () => setActiveTab('achievements');
 
-    // Setup back button
-    const backBtn = document.getElementById('btn-profile-back');
-    if (backBtn) {
+    // Create back button in container
+    const btnContainer = document.getElementById('profile-btn-container');
+    if (btnContainer) {
+      btnContainer.innerHTML = '';
+      const backBtn = document.createElement('button');
+      backBtn.style.cssText = 'padding:10px 24px;font-size:clamp(12px, 2vh, 16px);background:#FFD700;color:#000;border:none;border-radius:5px;cursor:pointer;font-family:Arial;';
+      backBtn.textContent = '← Back to Menu';
       backBtn.onclick = () => {
         profileContainer.style.display = 'none';
         this.scene.start('MainMenuScene');
       };
+      btnContainer.appendChild(backBtn);
     }
+
+    // Set initial tab
+    setActiveTab(this.currentTab);
+  }
+
+  renderStats() {
+    const user = getUser();
+    if (!user) return;
+
+    const contentArea = document.getElementById('profile-tab-content');
+    if (!contentArea) return;
+
+    contentArea.innerHTML = `
+      <div style="text-align:center;margin-bottom:15px;">
+        <div style="font-size:clamp(36px, 6vh, 64px);">${user.isGuest ? '👤' : '🎮'}</div>
+        <h2 style="color:#FFD700;font-family:Georgia,serif;margin:8px 0;font-size:clamp(18px, 3vh, 28px);text-shadow:1px 1px 2px #000;">${user.username}</h2>
+        <p style="color:#F5DEB3;font-family:Arial;font-size:clamp(10px, 1.5vh, 14px);text-shadow:1px 1px 2px #000;">
+          ${user.isGuest ? 'Guest Account' : 'Registered Player'} |
+          Joined: ${new Date(user.createdAt).toLocaleDateString()}
+        </p>
+      </div>
+      <div style="display:grid;grid-template-columns:repeat(3, 1fr);gap:8px;text-align:center;">
+        <div style="background:rgba(0,0,0,0.3);padding:10px;border-radius:8px;">
+          <div style="color:#FFD700;font-size:clamp(16px, 3vh, 24px);font-family:Arial;text-shadow:1px 1px 2px #000;">${user.inventory.currency}</div>
+          <div style="color:#F5DEB3;font-size:clamp(9px, 1.3vh, 12px);font-family:Arial;">Points</div>
+        </div>
+        <div style="background:rgba(0,0,0,0.3);padding:10px;border-radius:8px;">
+          <div style="color:#4CAF50;font-size:clamp(16px, 3vh, 24px);font-family:Arial;text-shadow:1px 1px 2px #000;">${user.stats.totalGames}</div>
+          <div style="color:#F5DEB3;font-size:clamp(9px, 1.3vh, 12px);font-family:Arial;">Games Played</div>
+        </div>
+        <div style="background:rgba(0,0,0,0.3);padding:10px;border-radius:8px;">
+          <div style="color:#2196F3;font-size:clamp(16px, 3vh, 24px);font-family:Arial;text-shadow:1px 1px 2px #000;">${user.stats.totalPoints}</div>
+          <div style="color:#F5DEB3;font-size:clamp(9px, 1.3vh, 12px);font-family:Arial;">Total Points</div>
+        </div>
+        <div style="background:rgba(0,0,0,0.3);padding:10px;border-radius:8px;">
+          <div style="color:#FF9800;font-size:clamp(16px, 3vh, 24px);font-family:Arial;text-shadow:1px 1px 2px #000;">${user.stats.choicesMade}</div>
+          <div style="color:#F5DEB3;font-size:clamp(9px, 1.3vh, 12px);font-family:Arial;">Choices Made</div>
+        </div>
+        <div style="background:rgba(0,0,0,0.3);padding:10px;border-radius:8px;">
+          <div style="color:#E91E63;font-size:clamp(16px, 3vh, 24px);font-family:Arial;text-shadow:1px 1px 2px #000;">${user.stats.perfectLevels}</div>
+          <div style="color:#F5DEB3;font-size:clamp(9px, 1.3vh, 12px);font-family:Arial;">Perfect Levels</div>
+        </div>
+        <div style="background:rgba(0,0,0,0.3);padding:10px;border-radius:8px;">
+          <div style="color:#9C27B0;font-size:clamp(16px, 3vh, 24px);font-family:Arial;text-shadow:1px 1px 2px #000;">${user.progress.completedLevels.length}</div>
+          <div style="color:#F5DEB3;font-size:clamp(9px, 1.3vh, 12px);font-family:Arial;">Levels Done</div>
+        </div>
+      </div>
+    `;
+  }
+
+  renderInventory() {
+    const user = getUser();
+    if (!user) return;
+
+    const contentArea = document.getElementById('profile-tab-content');
+    if (!contentArea) return;
+
+    let html = '';
+
+    // Trolley Skins Section
+    html += `<div style="margin-bottom:15px;">
+      <h3 style="color:#FFD700;font-family:Georgia,serif;font-size:clamp(14px, 2.5vh, 20px);margin:0 0 10px 0;text-shadow:1px 1px 2px #000;">Trolley Skins</h3>
+      <div style="display:flex;flex-wrap:wrap;gap:8px;justify-content:center;">`;
+
+    // Get owned cosmetics
+    const ownedCosmetics = user.inventory.cosmetics || [];
+    const equippedSkin = user.equipped ? user.equipped.trolleyAppearance : 'trolley_default';
+
+    if (ownedCosmetics.length === 0) {
+      html += `<div style="color:#888;font-family:Arial;font-size:clamp(11px, 1.8vh, 14px);padding:20px;">No skins owned yet. Visit the Shop!</div>`;
+    } else {
+      ShopItems.cosmetics.filter(item => ownedCosmetics.includes(item.id)).forEach(item => {
+        const isEquipped = equippedSkin === item.id;
+        html += `
+          <div style="width:80px;padding:8px;background:rgba(0,0,0,0.3);border-radius:8px;text-align:center;border:2px solid ${isEquipped ? '#FFD700' : 'transparent'};">
+            <div style="width:60px;height:35px;margin:0 auto 5px;background:${item.preview ? `url('${item.preview}') center/contain no-repeat` : item.color};border-radius:4px;"></div>
+            <div style="color:#F5DEB3;font-family:Arial;font-size:clamp(8px, 1.2vh, 11px);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${item.name}</div>
+            ${isEquipped ? '<div style="color:#4CAF50;font-size:clamp(7px, 1vh, 10px);font-family:Arial;">EQUIPPED</div>' : ''}
+          </div>
+        `;
+      });
+    }
+
+    html += `</div></div>`;
+
+    // Consumables Section
+    html += `<div>
+      <h3 style="color:#FFD700;font-family:Georgia,serif;font-size:clamp(14px, 2.5vh, 20px);margin:0 0 10px 0;text-shadow:1px 1px 2px #000;">Consumables</h3>
+      <div style="display:flex;flex-wrap:wrap;gap:8px;justify-content:center;">`;
+
+    // Get owned consumables
+    const ownedConsumables = user.inventory.consumables || {};
+    const hasConsumables = Object.values(ownedConsumables).some(count => count > 0);
+
+    if (!hasConsumables) {
+      html += `<div style="color:#888;font-family:Arial;font-size:clamp(11px, 1.8vh, 14px);padding:20px;">No consumables owned. Visit the Shop!</div>`;
+    } else {
+      ShopItems.consumables.forEach(item => {
+        const count = ownedConsumables[item.id] || 0;
+        if (count > 0) {
+          html += `
+            <div style="width:70px;padding:8px;background:rgba(0,0,0,0.3);border-radius:8px;text-align:center;position:relative;">
+              <div style="font-size:clamp(20px, 4vh, 32px);margin-bottom:3px;">${item.icon || '📦'}</div>
+              <div style="color:#F5DEB3;font-family:Arial;font-size:clamp(8px, 1.2vh, 11px);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${item.name}</div>
+              <div style="position:absolute;top:3px;right:3px;background:#FFD700;color:#000;font-size:clamp(9px, 1.3vh, 12px);font-family:Arial;font-weight:bold;padding:2px 5px;border-radius:10px;">x${count}</div>
+            </div>
+          `;
+        }
+      });
+    }
+
+    html += `</div></div>`;
+
+    contentArea.innerHTML = html;
+  }
+
+  renderAchievements() {
+    const user = getUser();
+    if (!user) return;
+
+    const contentArea = document.getElementById('profile-tab-content');
+    if (!contentArea) return;
+
+    let html = '<div style="display:flex;flex-wrap:wrap;justify-content:center;gap:8px;">';
+
+    AchievementDefs.forEach(achievement => {
+      const earned = user.achievements.includes(achievement.id);
+      html += `
+        <div style="
+          width:70px;
+          padding:8px;
+          background:${earned ? 'rgba(76, 175, 80, 0.3)' : 'rgba(0,0,0,0.3)'};
+          border-radius:8px;
+          text-align:center;
+          opacity:${earned ? '1' : '0.5'};
+        ">
+          <div style="font-size:clamp(18px, 3vh, 28px);">${earned ? achievement.icon : '🔒'}</div>
+          <div style="color:#F5DEB3;font-size:clamp(8px, 1.2vh, 11px);font-family:Arial;margin-top:4px;">${achievement.name}</div>
+        </div>
+      `;
+    });
+
+    html += '</div>';
+    contentArea.innerHTML = html;
   }
 }
 

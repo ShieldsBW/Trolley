@@ -122,6 +122,52 @@ async function getOpenAI() {
 }
 
 // ============================================================================
+// REMBG BACKGROUND REMOVAL
+// ============================================================================
+
+import { execSync } from 'child_process';
+
+/**
+ * Remove background from an image using rembg (AI-powered)
+ * @param {string} imagePath - Path to the image file
+ * @returns {Promise<{success: boolean, error?: string}>}
+ */
+async function removeBackgroundWithRembg(imagePath) {
+  const spinner = ora(`Removing background: ${path.basename(imagePath)}...`).start();
+
+  try {
+    const rembgScript = path.join(__dirname, 'rembg-remove.py');
+
+    // Check if rembg script exists
+    if (!await fs.pathExists(rembgScript)) {
+      spinner.warn(chalk.yellow(`rembg-remove.py not found, skipping background removal`));
+      return { success: false, error: 'rembg script not found' };
+    }
+
+    // Run rembg with --trim flag
+    execSync(`python "${rembgScript}" "${imagePath}" --trim`, {
+      stdio: 'pipe',
+      timeout: 120000 // 2 minute timeout
+    });
+
+    spinner.succeed(chalk.green(`Background removed: ${path.basename(imagePath)}`));
+    return { success: true };
+
+  } catch (error) {
+    spinner.fail(chalk.red(`Background removal failed: ${error.message}`));
+    return { success: false, error: error.message };
+  }
+}
+
+/**
+ * Check if an asset type needs background removal
+ */
+function needsBackgroundRemoval(assetId) {
+  // Backgrounds don't need removal, everything else does
+  return !assetId.includes('bg') && !assetId.includes('background');
+}
+
+// ============================================================================
 // GENERATE COMMAND - DALL-E 3 Image Generation
 // ============================================================================
 
@@ -219,6 +265,12 @@ async function generateAsset(asset, options = {}) {
     await fs.writeFile(outputPath, buffer);
 
     spinner.succeed(chalk.green(`Generated ${asset.id}${versionSuffix} -> ${path.relative(PROJECT_ROOT, outputPath)}`));
+
+    // Automatically remove background for non-background assets (unless --no-rembg)
+    // Commander sets options.rembg = false when --no-rembg is used (default is undefined/true)
+    if (options.rembg !== false && needsBackgroundRemoval(asset.id)) {
+      await removeBackgroundWithRembg(outputPath);
+    }
 
     return {
       success: true,
@@ -855,6 +907,7 @@ program
   .option('-s, --style <style>', 'Image style (vivid, natural)', 'vivid')
   .option('-v, --versions <n>', 'Generate N versions for selection (useful for text assets)', '1')
   .option('-t, --textless', 'Generate without text (for code overlay)')
+  .option('--no-rembg', 'Skip automatic background removal with rembg')
   .action(generateCommand);
 
 program

@@ -174,6 +174,16 @@
         "backgroundColor": "white",
         "prompt": "Vintage railway sign button reading LOGOUT, horizontal rectangle shape, brass metal frame with decorative corner rivets, silver-gray inset panel, cream colored serif text clearly readable, isolated on solid white background, simple contained shape with clean solid edges, simple design, appealing design, game UI button, Victorian industrial style, flat 2D artwork",
         "negativePrompt": "shadow, drop shadow, cast shadow, 3D effects, checkerboard, transparency pattern, gradient background"
+      },
+      {
+        "id": "button_inventory",
+        "file": "button_inventory.png",
+        "priority": "high",
+        "type": "secondary",
+        "text": "INVENTORY",
+        "backgroundColor": "white",
+        "prompt": "Vintage railway sign button reading INVENTORY, horizontal rectangle shape, brass metal frame with decorative corner rivets, warm brown wooden inset panel, cream colored serif text clearly readable, isolated on solid white background, simple contained shape with clean solid edges, simple design, appealing design, game UI button, Victorian industrial style, flat 2D artwork",
+        "negativePrompt": "shadow, drop shadow, cast shadow, 3D effects, checkerboard, transparency pattern, gradient background"
       }
     ],
     "icons": [
