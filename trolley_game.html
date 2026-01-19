@@ -564,9 +564,8 @@
   </div>
 
   <!-- Back Button -->
-  <button id="btn-worldmap-back" style="position:absolute;left:20px;bottom:20px;padding:12px 24px;font-size:16px;background:#e94560;color:#fff;border:none;border-radius:5px;cursor:pointer;">
-    ← Back to Menu
-  </button>
+  <img id="btn-worldmap-back" src="assets/buttons/button_menu.png" alt="Menu"
+       style="position:absolute;left:20px;bottom:20px;width:auto;height:clamp(40px, 8vh, 60px);cursor:pointer;transition:transform 0.1s;"/>
 </div>
 
 <!-- Shop Scene Elements -->
@@ -2988,9 +2987,12 @@ class ShopScene extends Phaser.Scene {
     const btnContainer = document.getElementById('shop-btn-container');
     if (btnContainer) {
       btnContainer.innerHTML = '';
-      const backBtn = document.createElement('button');
-      backBtn.style.cssText = 'padding:10px 24px;font-size:clamp(12px, 2vh, 16px);background:#FFD700;color:#000;border:none;border-radius:5px;cursor:pointer;font-family:Arial;';
-      backBtn.textContent = '← Back to Menu';
+      const backBtn = document.createElement('img');
+      backBtn.src = 'assets/buttons/button_menu.png';
+      backBtn.alt = 'Menu';
+      backBtn.style.cssText = 'width:auto;height:clamp(40px, 8vh, 60px);cursor:pointer;transition:transform 0.1s;';
+      backBtn.onmouseover = () => backBtn.style.transform = 'scale(1.05)';
+      backBtn.onmouseout = () => backBtn.style.transform = 'scale(1)';
       backBtn.onclick = () => {
         shopContainer.style.display = 'none';
         this.scene.start('MainMenuScene');
@@ -3312,9 +3314,12 @@ class ProfileScene extends Phaser.Scene {
     const btnContainer = document.getElementById('profile-btn-container');
     if (btnContainer) {
       btnContainer.innerHTML = '';
-      const backBtn = document.createElement('button');
-      backBtn.style.cssText = 'padding:10px 24px;font-size:clamp(12px, 2vh, 16px);background:#FFD700;color:#000;border:none;border-radius:5px;cursor:pointer;font-family:Arial;';
-      backBtn.textContent = '← Back to Menu';
+      const backBtn = document.createElement('img');
+      backBtn.src = 'assets/buttons/button_menu.png';
+      backBtn.alt = 'Menu';
+      backBtn.style.cssText = 'width:auto;height:clamp(40px, 8vh, 60px);cursor:pointer;transition:transform 0.1s;';
+      backBtn.onmouseover = () => backBtn.style.transform = 'scale(1.05)';
+      backBtn.onmouseout = () => backBtn.style.transform = 'scale(1)';
       backBtn.onclick = () => {
         profileContainer.style.display = 'none';
         this.scene.start('MainMenuScene');
