@@ -1589,13 +1589,15 @@ class MainMenuScene extends Phaser.Scene {
     const btnLogout = document.getElementById('btn-logout');
     if (btnLogout && user) {
       btnLogout.style.display = 'block';
+      btnLogout.style.height = '53px'; // Match quit button's scaled height
+      btnLogout.style.width = 'auto';
       btnLogout.onclick = () => {
         clearUser();
         this.scene.start('LoginScene');
       };
     }
 
-    // Show Quit button at bottom (right of Logout)
+    // Show Quit button at bottom (right of Logout) - half size for main menu
     const btnQuitMM = document.getElementById('btn-quit');
     if (btnQuitMM) {
       btnQuitMM.style.display = 'block';
@@ -1603,7 +1605,9 @@ class MainMenuScene extends Phaser.Scene {
       btnQuitMM.style.left = 'calc(50% + 70px)';
       btnQuitMM.style.bottom = '30px';
       btnQuitMM.style.top = '';
-      btnQuitMM.style.transform = 'translateX(-50%)';
+      btnQuitMM.style.height = 'auto'; // Use natural height
+      btnQuitMM.style.transformOrigin = 'bottom center'; // Align by bottom edge
+      btnQuitMM.style.transform = 'translateX(-50%) scale(0.5)'; // Half size = 53px
       btnQuitMM.style.zIndex = '10';
       btnQuitMM.onclick = () => window.close();
     }
