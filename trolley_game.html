@@ -306,16 +306,13 @@
      style="position:fixed;left:50%;top:400px;transform:translateX(-50%);
             height:105px;width:auto;z-index:3;display:none;cursor:pointer;"/>
 <img id="btn-shop" src="assets/buttons/button_shop.png" alt="Shop"
-     style="position:fixed;left:calc(50% - 180px);top:525px;transform:translateX(-50%);
+     style="position:fixed;left:calc(50% - 120px);top:525px;transform:translateX(-50%);
             height:55px;width:auto;z-index:3;display:none;cursor:pointer;"/>
 <img id="btn-leaderboard" src="assets/buttons/button_leaderboard.png" alt="Leaderboard"
-     style="position:fixed;left:calc(50% - 60px);top:525px;transform:translateX(-50%);
-            height:55px;width:auto;z-index:3;display:none;cursor:pointer;"/>
-<img id="btn-inventory" src="assets/buttons/button_inventory.png" alt="Inventory"
-     style="position:fixed;left:calc(50% + 60px);top:525px;transform:translateX(-50%);
+     style="position:fixed;left:50%;top:525px;transform:translateX(-50%);
             height:55px;width:auto;z-index:3;display:none;cursor:pointer;"/>
 <img id="btn-profile" src="assets/buttons/button_profile.png" alt="Profile"
-     style="position:fixed;left:calc(50% + 180px);top:525px;transform:translateX(-50%);
+     style="position:fixed;left:calc(50% + 120px);top:525px;transform:translateX(-50%);
             height:55px;width:auto;z-index:3;display:none;cursor:pointer;"/>
 <img id="btn-logout" src="assets/buttons/button_logout.png" alt="Logout"
      style="position:fixed;left:calc(50% - 70px);bottom:30px;transform:translateX(-50%);
@@ -1030,7 +1027,7 @@ const UIManager = {
     });
 
     // Hide all buttons
-    ['btn-worldmap', 'btn-shop', 'btn-leaderboard', 'btn-profile', 'btn-inventory', 'btn-logout', 'btn-quit',
+    ['btn-worldmap', 'btn-shop', 'btn-leaderboard', 'btn-profile', 'btn-logout', 'btn-quit',
      'btn-continue', 'btn-next', 'btn-menu', 'btn-submit', 'btn-try', 'btn-worldmap-go'].forEach(id => {
       const el = this.get(id);
       if (el) {
@@ -1542,12 +1539,6 @@ class MainMenuScene extends Phaser.Scene {
     if (btnShop) {
       btnShop.style.display = 'block';
       btnShop.onclick = () => this.scene.start('ShopScene');
-    }
-
-    const btnInventory = document.getElementById('btn-inventory');
-    if (btnInventory) {
-      btnInventory.style.display = 'block';
-      btnInventory.onclick = () => this.scene.start('ProfileScene', { tab: 'inventory' });
     }
 
     const btnProfile = document.getElementById('btn-profile');
@@ -2874,7 +2865,7 @@ class ShopScene extends Phaser.Scene {
     const gameOverBg = document.getElementById('gameover-bg'); if (gameOverBg) gameOverBg.style.display = 'none';
 
     // Hide all buttons
-    const buttons = ['btn-worldmap', 'btn-leaderboard', 'btn-shop', 'btn-profile', 'btn-logout', 'btn-continue', 'btn-next', 'btn-menu', 'btn-submit', 'btn-try', 'btn-worldmap-go', 'btn-quit', 'btn-inventory'];
+    const buttons = ['btn-worldmap', 'btn-leaderboard', 'btn-shop', 'btn-profile', 'btn-logout', 'btn-continue', 'btn-next', 'btn-menu', 'btn-submit', 'btn-try', 'btn-worldmap-go', 'btn-quit'];
     buttons.forEach(id => {
       const btn = document.getElementById(id);
       if (btn) { btn.style.display = 'none'; btn.onclick = null; }
@@ -3218,7 +3209,7 @@ class ProfileScene extends Phaser.Scene {
     const gameOverBg = document.getElementById('gameover-bg'); if (gameOverBg) gameOverBg.style.display = 'none';
 
     // Hide all buttons
-    const buttons = ['btn-worldmap', 'btn-leaderboard', 'btn-shop', 'btn-profile', 'btn-logout', 'btn-continue', 'btn-next', 'btn-menu', 'btn-submit', 'btn-try', 'btn-worldmap-go', 'btn-quit', 'btn-inventory'];
+    const buttons = ['btn-worldmap', 'btn-leaderboard', 'btn-shop', 'btn-profile', 'btn-logout', 'btn-continue', 'btn-next', 'btn-menu', 'btn-submit', 'btn-try', 'btn-worldmap-go', 'btn-quit'];
     buttons.forEach(id => {
       const btn = document.getElementById(id);
       if (btn) { btn.style.display = 'none'; btn.onclick = null; }
