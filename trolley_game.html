@@ -2,6 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
   <title>Trolley Problem Prototype</title>
   <script src="https://cdn.jsdelivr.net/npm/phaser@3/dist/phaser.min.js"></script>
   <style>
@@ -26,6 +27,63 @@
       touch-action: manipulation; /* Disable double-tap zoom */
     }
     canvas { display: block; margin: 0 auto; }
+
+    /* Prevent text selection on interactive elements (mobile UX) */
+    button, img, [role="button"], .zone-marker, [onclick],
+    .choice-frame, #game-hud, .item-btn, [id*="btn-"] {
+      -webkit-user-select: none;
+      -moz-user-select: none;
+      -ms-user-select: none;
+      user-select: none;
+      -webkit-touch-callout: none;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    /* Portrait orientation overlay - forces landscape */
+    #portrait-overlay {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      background: rgba(0, 0, 0, 0.95);
+      z-index: 99999;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      color: #F5DEB3;
+      font-family: Georgia, serif;
+      text-align: center;
+      padding: 20px;
+      box-sizing: border-box;
+    }
+    #portrait-overlay .rotate-icon {
+      font-size: 64px;
+      margin-bottom: 20px;
+      animation: rotate-hint 2s ease-in-out infinite;
+    }
+    @keyframes rotate-hint {
+      0%, 100% { transform: rotate(0deg); }
+      50% { transform: rotate(90deg); }
+    }
+    #portrait-overlay h2 {
+      color: #FFD700;
+      font-size: 24px;
+      margin: 0 0 10px 0;
+    }
+    #portrait-overlay p {
+      font-size: 16px;
+      margin: 0;
+      opacity: 0.8;
+    }
+
+    /* Show overlay only in portrait orientation on mobile */
+    @media screen and (orientation: portrait) and (max-width: 900px) {
+      #portrait-overlay {
+        display: flex !important;
+      }
+    }
 
     /* Ensure all clickable elements meet minimum touch target size */
     button, [role="button"], .zone-marker, [onclick] {
@@ -307,10 +365,170 @@
       #game-hud {
         padding: 8px !important;
       }
+
+      /* Login screen - compact for landscape mobile */
+      #login-container > div {
+        top: 50% !important;
+        transform: translate(-50%, -50%) scale(0.85) !important;
+      }
+      #login-container img[alt="Trolley Problem"] {
+        width: min(350px, 50vw) !important;
+        margin-bottom: 0 !important;
+      }
+      #login-container p {
+        font-size: 14px !important;
+        margin-top: 2px !important;
+        margin-bottom: 15px !important;
+      }
+      #login-container > div > div {
+        padding: 15px 20px !important;
+      }
+      #login-container input {
+        padding: 8px !important;
+        font-size: 16px !important;
+        margin-bottom: 10px !important;
+      }
+      #login-container button {
+        padding: 8px !important;
+        font-size: 14px !important;
+        margin: 3px !important;
+      }
+
+      /* Main menu - compact for landscape mobile */
+      #menu-logo {
+        left: 5% !important;
+        top: 5% !important;
+        width: min(250px, 35vw) !important;
+      }
+      #menu-welcome-display {
+        top: 28% !important;
+        font-size: 14px !important;
+      }
+      #menu-points-display {
+        top: 38% !important;
+        font-size: 14px !important;
+      }
+      #btn-worldmap {
+        top: 52% !important;
+        height: 60px !important;
+      }
+      #btn-shop, #btn-leaderboard, #btn-profile {
+        top: 75% !important;
+        height: 40px !important;
+      }
+      #btn-logout {
+        bottom: 8px !important;
+        height: 35px !important;
+      }
+
+      /* World map - adjust for landscape */
+      #worldmap-title {
+        font-size: 20px !important;
+        left: 15px !important;
+        top: 10px !important;
+      }
+      #zone-markers {
+        width: 48% !important;
+        left: 0% !important;
+        top: 15% !important;
+        height: 75% !important;
+      }
+      #zone-markers svg {
+        overflow: visible !important;
+      }
+      .zone-marker {
+        width: min(60px, 15vw) !important;
+        height: min(60px, 15vw) !important;
+      }
+      #zone-detail-frame {
+        width: min(380px, 48vw) !important;
+        right: 1% !important;
+        height: calc(var(--vh, 1vh) * 85) !important;
+      }
+      #zone-detail-safe-area {
+        top: 12% !important;
+        left: 28% !important;
+        right: 28% !important;
+        bottom: 12% !important;
+      }
+      #zone-detail-safe-area h2 {
+        font-size: 18px !important;
+      }
+      #zone-detail-safe-area p {
+        font-size: 11px !important;
+      }
+
+      /* Zone progress tracker - compact */
+      #zone-progress-tracker {
+        height: 50px !important;
+        bottom: 2% !important;
+        width: min(85vw, 600px) !important;
+      }
+      #progress-trolley {
+        width: 40px !important;
+        height: 40px !important;
+      }
+
+      /* Level complete text and next level button */
+      #level-complete-text {
+        top: 20% !important;
+        font-size: clamp(18px, 4vh, 28px) !important;
+        max-width: 80vw !important;
+      }
+      #btn-next {
+        top: 45% !important;
+        height: 50px !important;
+        width: auto !important;
+      }
+
+      /* Game HUD - more compact for mobile */
+      #game-hud {
+        top: 5px !important;
+        left: 5px !important;
+        right: 5px !important;
+        padding: 5px 10px !important;
+        font-size: 12px !important;
+      }
+      #hud-health, #hud-points {
+        font-size: 14px !important;
+      }
+      #hud-level, #hud-stage, #hud-zone {
+        font-size: 12px !important;
+      }
+
+      /* Question and choice frames */
+      #question-frame {
+        top: 60px !important;
+        width: min(90vw, 500px) !important;
+        height: min(120px, 25vh) !important;
+      }
+      #choices-container {
+        top: auto !important;
+        bottom: 70px !important;
+      }
+      .choice-frame {
+        width: min(42vw, 200px) !important;
+        height: min(100px, 18vh) !important;
+      }
+
+      /* Menu button position */
+      #btn-menu {
+        right: 8px !important;
+        bottom: 8px !important;
+        transform: scale(0.4) !important;
+        transform-origin: bottom right !important;
+      }
     }
   </style>
 </head>
 <body>
+<!-- Portrait orientation overlay - shown when device is in portrait mode -->
+<div id="portrait-overlay">
+  <div class="rotate-icon">📱</div>
+  <h2>Please Rotate Your Device</h2>
+  <p>This game is best played in landscape mode</p>
+</div>
+
 <!-- Debug button - hold to show outlines -->
 <div id="debug-btn" title="Hold to show debug outlines">🔍</div>
 <!-- Debug button - unlock all zones/difficulties (only visible on world map) -->
@@ -669,6 +887,12 @@ function setViewportHeight() {
 }
 setViewportHeight();
 window.addEventListener('resize', setViewportHeight);
+
+// Mobile detection helper
+function isMobileDevice() {
+  return /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) ||
+         (window.matchMedia && window.matchMedia('(max-width: 900px)').matches && 'ontouchstart' in window);
+}
 
 // Debug button - hold to show outlines
 (function() {
@@ -1689,18 +1913,23 @@ class MainMenuScene extends Phaser.Scene {
     }
 
     // Show Quit button at bottom (right of Logout) - half size for main menu
+    // Hidden on mobile since window.close() doesn't work in browsers
     const btnQuitMM = document.getElementById('btn-quit');
     if (btnQuitMM) {
-      btnQuitMM.style.display = 'block';
-      btnQuitMM.style.position = 'fixed';
-      btnQuitMM.style.left = 'calc(50% + 70px)';
-      btnQuitMM.style.bottom = '30px';
-      btnQuitMM.style.top = '';
-      btnQuitMM.style.height = 'auto'; // Use natural height
-      btnQuitMM.style.transformOrigin = 'bottom center'; // Align by bottom edge
-      btnQuitMM.style.transform = 'translateX(-50%) scale(0.5)'; // Half size = 53px
-      btnQuitMM.style.zIndex = '10';
-      btnQuitMM.onclick = () => window.close();
+      if (isMobileDevice()) {
+        btnQuitMM.style.display = 'none';
+      } else {
+        btnQuitMM.style.display = 'block';
+        btnQuitMM.style.position = 'fixed';
+        btnQuitMM.style.left = 'calc(50% + 70px)';
+        btnQuitMM.style.bottom = '30px';
+        btnQuitMM.style.top = '';
+        btnQuitMM.style.height = 'auto'; // Use natural height
+        btnQuitMM.style.transformOrigin = 'bottom center'; // Align by bottom edge
+        btnQuitMM.style.transform = 'translateX(-50%) scale(0.5)'; // Half size = 53px
+        btnQuitMM.style.zIndex = '10';
+        btnQuitMM.onclick = () => window.close();
+      }
     }
   }
 }
@@ -1837,17 +2066,22 @@ class LevelScene extends Phaser.Scene {
     }
 
     // Quit button (DOM image) bottom-right, offset from Menu
+    // Hide quit button on mobile since window.close() doesn't work in browsers
     const btnQuitLV = document.getElementById('btn-quit');
     if (btnQuitLV) {
-      btnQuitLV.style.display = 'block';
-      btnQuitLV.style.height = 'auto'; // Override HTML's height:45px
-      btnQuitLV.style.right = '180px';
-      btnQuitLV.style.bottom = '16px';
-      btnQuitLV.style.left = '';
-      btnQuitLV.style.top = '';
-      btnQuitLV.style.transformOrigin = 'bottom right';
-      btnQuitLV.style.transform = 'scale(0.524)';
-      btnQuitLV.onclick = () => window.close();
+      if (isMobileDevice()) {
+        btnQuitLV.style.display = 'none';
+      } else {
+        btnQuitLV.style.display = 'block';
+        btnQuitLV.style.height = 'auto'; // Override HTML's height:45px
+        btnQuitLV.style.right = '180px';
+        btnQuitLV.style.bottom = '16px';
+        btnQuitLV.style.left = '';
+        btnQuitLV.style.top = '';
+        btnQuitLV.style.transformOrigin = 'bottom right';
+        btnQuitLV.style.transform = 'scale(0.524)';
+        btnQuitLV.onclick = () => window.close();
+      }
     }
 
     // Set up DOM-based choice frames
