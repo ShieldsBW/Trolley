@@ -88,10 +88,6 @@
     body.debug-active [id*="go-"],
     body.debug-active #go-total-points,
     body.debug-active #go-btn-container { outline: 1px solid limegreen !important; }
-    /* Zone Progress Tracker - cyan */
-    body.debug-active #zone-progress-tracker,
-    body.debug-active #progress-svg,
-    body.debug-active #progress-trolley { outline: 1px solid cyan !important; }
 
     /* Zone Complete popup animation */
     @keyframes zoneCompleteScaleIn {
@@ -460,21 +456,6 @@
       </div>
     </div>
   </div>
-</div>
-
-<!-- Zone Progress Tracker -->
-<div id="zone-progress-tracker" style="position:fixed;left:50%;bottom:8%;transform:translateX(-50%);
-     width:min(75vw, 800px);height:100px;display:none;z-index:45;overflow:visible;">
-  <!-- Dark transparent background -->
-  <div style="position:absolute;left:-10px;top:-10px;right:-10px;bottom:-10px;background:rgba(0,0,0,0.6);border-radius:12px;"></div>
-  <svg id="progress-svg" width="100%" height="100%" style="overflow:visible;position:relative;">
-    <!-- Paths and nodes will be drawn dynamically -->
-  </svg>
-  <!-- Trolley icon positioned absolutely within the container -->
-  <img id="progress-trolley" src="assets/trolley_skins/trolley_preview_standard.png" alt="Trolley"
-       style="position:absolute;width:80px;height:80px;object-fit:contain;
-              filter:drop-shadow(0 0 8px rgba(255,215,0,0.6)) drop-shadow(0 4px 6px rgba(0,0,0,0.8));
-              transition:left 1.2s ease-in-out, top 1.2s ease-in-out;pointer-events:none;"/>
 </div>
 
 <!-- Login Scene Elements -->
@@ -1046,9 +1027,7 @@ const UIManager = {
     'shop-points', 'shop-items-grid', 'shop-page-info', 'shop-prev', 'shop-next',
     'tab-cosmetics', 'tab-consumables',
     // Profile
-    'profile-content', 'achievements-content',
-    // Zone Progress Tracker
-    'zone-progress-tracker', 'progress-svg', 'progress-trolley'
+    'profile-content', 'achievements-content'
   ],
 
   // Initialize cache at startup
@@ -1097,8 +1076,7 @@ const UIManager = {
 
     // Hide HUD & gameplay elements
     ['game-hud', 'question-frame', 'choices-container', 'item-bar', 'go-title', 'go-total-points',
-     'menu-logo', 'menu-welcome-display', 'menu-points-display', 'zone-detail-frame', 'level-complete-text',
-     'zone-progress-tracker'].forEach(id => {
+     'menu-logo', 'menu-welcome-display', 'menu-points-display', 'zone-detail-frame', 'level-complete-text'].forEach(id => {
       const el = this.get(id);
       if (el) el.style.display = 'none';
     });
@@ -1175,203 +1153,6 @@ const UIManager = {
         el.style.opacity = enabled ? '1' : '0.6';
       }
     });
-  }
-};
-
-// =====================================================
-// ZONE PROGRESS TRACKER (Visual path through zones)
-// =====================================================
-const ZoneProgressTracker = {
-  container: null,
-  svg: null,
-  trolleyImg: null,
-  choices: [], // Array of 'A' or 'B' for each stage
-  maxStages: 5,
-  nodeRadius: 8,
-  pathWidth: 3,
-  colors: {
-    path: '#B8860B',        // Dark gold for paths
-    pathTaken: '#FFD700',   // Bright gold for taken path
-    pathNotTaken: '#444',   // Grey for not-taken path
-    node: '#B8860B',        // Dark gold for nodes
-    nodeActive: '#FFD700',  // Bright gold for current node
-    nodeFuture: '#666'      // Grey for future nodes
-  },
-
-  init() {
-    this.container = document.getElementById('zone-progress-tracker');
-    this.svg = document.getElementById('progress-svg');
-    this.trolleyImg = document.getElementById('progress-trolley');
-  },
-
-  reset(maxStages = 5) {
-    this.choices = [];
-    this.maxStages = maxStages;
-    this.render();
-  },
-
-  show() {
-    if (this.container) this.container.style.display = 'block';
-  },
-
-  hide() {
-    if (this.container) this.container.style.display = 'none';
-  },
-
-  updateTrolleySkin() {
-    if (!this.trolleyImg) return;
-    const user = getUser();
-    // Default to standard trolley
-    let previewPath = 'assets/trolley_skins/trolley_preview_standard.png';
-    if (user && user.inventory.equippedSkin) {
-      const equipped = ShopItems.cosmetics.find(c => c.id === user.inventory.equippedSkin);
-      if (equipped && equipped.preview) {
-        previewPath = equipped.preview;
-      }
-    }
-    this.trolleyImg.src = previewPath;
-  },
-
-  recordChoice(choice) {
-    // choice should be 'A' or 'B'
-    this.choices.push(choice);
-    this.render();
-    this.animateTrolley();
-  },
-
-  render() {
-    if (!this.svg || !this.container) return;
-
-    const width = this.container.offsetWidth || 600;
-    const height = this.container.offsetHeight || 100;
-    const centerY = height / 2;
-    const padding = 15; // Padding from top/bottom edges
-    const maxForkHeight = (height - padding * 2) / 2; // Max deviation from center
-    const segmentWidth = (width - 80) / this.maxStages;
-    // Calculate fork height but constrain it to stay within bounds
-    const forkHeight = Math.min(segmentWidth * 0.3, maxForkHeight);
-
-    // Clear existing SVG content
-    this.svg.innerHTML = '';
-
-    // Calculate current position tracking through the path
-    let currentX = 40;
-    let currentY = centerY;
-
-    // Draw start node
-    this.addNode(currentX, currentY, 0, this.colors.nodeActive);
-
-    // Only draw up to current stage + 1 (show current fork, hide future ones)
-    const stagesToDraw = Math.min(this.choices.length + 1, this.maxStages);
-
-    // Draw each stage's fork (only completed stages + current fork)
-    for (let i = 0; i < stagesToDraw; i++) {
-      const startX = currentX;
-      const startY = currentY;
-      const endX = startX + segmentWidth;
-      const topY = startY - forkHeight / 2;
-      const bottomY = startY + forkHeight / 2;
-
-      const hasChoice = i < this.choices.length;
-      const choice = hasChoice ? this.choices[i] : null;
-      const isCurrentFork = i === this.choices.length; // This is the next decision
-
-      // Draw top path (Choice A) - gray for upcoming paths
-      const topPathColor = isCurrentFork ? this.colors.pathNotTaken :
-                          (choice === 'A' ? this.colors.pathTaken : this.colors.pathNotTaken);
-      this.addPath(startX, startY, endX, topY, topPathColor, choice === 'A');
-
-      // Draw bottom path (Choice B) - gray for upcoming paths
-      const bottomPathColor = isCurrentFork ? this.colors.pathNotTaken :
-                             (choice === 'B' ? this.colors.pathTaken : this.colors.pathNotTaken);
-      this.addPath(startX, startY, endX, bottomY, bottomPathColor, choice === 'B');
-
-      // Draw end nodes for this fork - gray for upcoming nodes
-      const topNodeColor = isCurrentFork ? this.colors.nodeFuture :
-                          (choice === 'A' ? this.colors.nodeActive : this.colors.pathNotTaken);
-      const bottomNodeColor = isCurrentFork ? this.colors.nodeFuture :
-                             (choice === 'B' ? this.colors.nodeActive : this.colors.pathNotTaken);
-
-      this.addNode(endX, topY, i + 1, topNodeColor);
-      this.addNode(endX, bottomY, i + 1, bottomNodeColor);
-
-      // Update current position for next segment
-      if (hasChoice) {
-        currentX = endX;
-        currentY = choice === 'A' ? topY : bottomY;
-      }
-    }
-
-    // Position trolley at current location
-    this.positionTrolley(false);
-  },
-
-  addPath(x1, y1, x2, y2, color, isChosen) {
-    const path = document.createElementNS('http://www.w3.org/2000/svg', 'line');
-    path.setAttribute('x1', x1);
-    path.setAttribute('y1', y1);
-    path.setAttribute('x2', x2);
-    path.setAttribute('y2', y2);
-    path.setAttribute('stroke', color);
-    path.setAttribute('stroke-width', isChosen ? this.pathWidth + 1 : this.pathWidth);
-    path.setAttribute('stroke-linecap', 'round');
-    if (isChosen) {
-      path.setAttribute('filter', 'drop-shadow(0 0 4px rgba(255,215,0,0.5))');
-    }
-    this.svg.appendChild(path);
-  },
-
-  addNode(x, y, stageIndex, color = this.colors.node) {
-    const circle = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
-    circle.setAttribute('cx', x);
-    circle.setAttribute('cy', y);
-    circle.setAttribute('r', this.nodeRadius);
-    circle.setAttribute('fill', color);
-    circle.setAttribute('stroke', '#000');
-    circle.setAttribute('stroke-width', '2');
-    this.svg.appendChild(circle);
-  },
-
-  getTrolleyPosition() {
-    const width = this.container?.offsetWidth || 600;
-    const height = this.container?.offsetHeight || 100;
-    const centerY = height / 2;
-    const padding = 15;
-    const maxForkHeight = (height - padding * 2) / 2;
-    const segmentWidth = (width - 80) / this.maxStages;
-    const forkHeight = Math.min(segmentWidth * 0.3, maxForkHeight);
-
-    let x = 40;
-    let y = centerY;
-
-    // Calculate position based on choices made
-    for (let i = 0; i < this.choices.length; i++) {
-      const startY = y;
-      const topY = startY - forkHeight / 2;
-      const bottomY = startY + forkHeight / 2;
-
-      x += segmentWidth;
-      y = this.choices[i] === 'A' ? topY : bottomY;
-    }
-
-    return { x, y };
-  },
-
-  positionTrolley(animate = false) {
-    if (!this.trolleyImg || !this.container) return;
-
-    const pos = this.getTrolleyPosition();
-    const trolleySize = 80;
-
-    // Position trolley centered on the node
-    this.trolleyImg.style.left = (pos.x - trolleySize / 2) + 'px';
-    this.trolleyImg.style.top = (pos.y - trolleySize / 2) + 'px';
-  },
-
-  animateTrolley() {
-    // The CSS transition handles the animation
-    // Just ensure we're positioning at the new location
-    this.positionTrolley(true);
   }
 };
 
@@ -1942,16 +1723,6 @@ class LevelScene extends Phaser.Scene {
     // Setup item bar and game inventory overlay
     this.setupItemBar();
     this.setupGameInventory();
-
-    // Setup zone progress tracker
-    const currentStage = this.registry.get('stage') || 1;
-    if (currentStage === 1) {
-      // Reset tracker at start of each level
-      ZoneProgressTracker.reset(zoneConfig.choicesPerLevel);
-      ZoneProgressTracker.updateTrolleySkin();
-    }
-    ZoneProgressTracker.show();
-
     // Moved down by 200px (from y=100 to y=300) and doubled font size (24px -> 48px)
     this.promptText = this.add.text(400,300, '', {font:'48px Arial', fill:'#fff', align:'center', wordWrap:{width:1400}}).setOrigin(0.5);
 
@@ -1973,12 +1744,13 @@ class LevelScene extends Phaser.Scene {
     const btnQuitLV = document.getElementById('btn-quit');
     if (btnQuitLV) {
       btnQuitLV.style.display = 'block';
-      btnQuitLV.style.right = '196px';
+      btnQuitLV.style.height = 'auto'; // Override HTML's height:45px
+      btnQuitLV.style.right = '180px';
       btnQuitLV.style.bottom = '16px';
       btnQuitLV.style.left = '';
       btnQuitLV.style.top = '';
       btnQuitLV.style.transformOrigin = 'bottom right';
-      btnQuitLV.style.transform = 'scale(0.5)';
+      btnQuitLV.style.transform = 'scale(0.524)';
       btnQuitLV.onclick = () => window.close();
     }
 
@@ -2249,9 +2021,6 @@ class LevelScene extends Phaser.Scene {
   }
   handleChoice(idx) {
     const j = this.junctions[this.junctionIndex], opt = j.opts[idx];
-
-    // Record choice in progress tracker (A=0, B=1)
-    ZoneProgressTracker.recordChoice(idx === 0 ? 'A' : 'B');
 
     // Apply point multiplier
     const pointsEarned = Math.floor(opt.pts * this.pointMultiplier);
@@ -2532,11 +2301,6 @@ class LevelScene extends Phaser.Scene {
     this.itemsUsedThisLevel = 0;
     this.pointMultiplier = this.registry.get('pointMultiplier') || 1;
 
-    // Reset progress tracker for new level
-    const zoneId = this.registry.get('zone') || 1;
-    const zoneConfig = ZoneConfig.find(z => z.id === zoneId) || ZoneConfig[0];
-    ZoneProgressTracker.reset(zoneConfig.choicesPerLevel);
-
     // Re-setup item bar for the new level
     this.setupItemBar();
 
@@ -2549,9 +2313,6 @@ class LevelScene extends Phaser.Scene {
     // Hide level complete text when showing zone complete popup
     const levelCompleteEl = document.getElementById('level-complete-text');
     if (levelCompleteEl) levelCompleteEl.style.display = 'none';
-
-    // Hide progress tracker for zone complete
-    ZoneProgressTracker.hide();
 
     const container = document.getElementById('zone-complete-container');
     const frame = document.getElementById('zone-complete-frame');
@@ -2680,9 +2441,6 @@ class GameOverScene extends Phaser.Scene {
     // Hide all containers
     hideAllContainers();
 
-    // Hide zone progress tracker
-    ZoneProgressTracker.hide();
-
     // Hide menu DOM elements that don't belong on this screen
     const domBg = document.getElementById('menu-bg'); if (domBg) domBg.style.display='none';
     const domLogo = document.getElementById('menu-logo'); if (domLogo) domLogo.style.display='none';
@@ -2753,10 +2511,6 @@ class GameOverScene extends Phaser.Scene {
           this.registry.set('stage', 1);
           this.registry.set('pointMultiplier', 1);
           this.registry.set('itemsUsedThisLevel', 0);
-          // Reset progress tracker to clear any lingering state
-          const zoneId = this.registry.get('zone') || 1;
-          const zoneConfig = ZoneConfig.find(z => z.id === zoneId) || ZoneConfig[0];
-          ZoneProgressTracker.reset(zoneConfig.choicesPerLevel);
           hideAllGOButtons();
           this.scene.start('LevelScene');
         }},
@@ -3725,9 +3479,6 @@ class ProfileScene extends Phaser.Scene {
 // =====================================================
 // Initialize UIManager
 UIManager.init();
-
-// Initialize ZoneProgressTracker
-ZoneProgressTracker.init();
 
 // Check if user exists to determine starting scene
 const existingUser = getUser();
