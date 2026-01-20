@@ -1308,15 +1308,14 @@
         outline: 3px solid lime !important;
       }
 
-      /* Safe area - scaled down content to fit */
+      /* Safe area - scaled down content to fit, vertically centered */
       #zone-detail-safe-area {
         top: 8% !important;
         left: 20% !important;
         right: 20% !important;
         bottom: 15% !important;
         overflow: hidden !important;
-        justify-content: flex-start !important;
-        padding-top: 1% !important;
+        justify-content: center !important;
       }
 
       #zone-detail-name {
@@ -4969,6 +4968,24 @@ class WorldMapScene extends Phaser.Scene {
     if (worldmapBg) worldmapBg.style.display = 'block';
     const worldmapContainer = document.getElementById('worldmap-container');
     if (worldmapContainer) worldmapContainer.style.display = 'block';
+
+    // EARLY: Setup menu button for portrait mode (moved here to ensure it runs)
+    const menuBtnEarly = document.getElementById('btn-menu');
+    if (menuBtnEarly) {
+      menuBtnEarly.style.display = 'block';
+      // DEBUG: bright magenta border to show this early code runs
+      menuBtnEarly.style.setProperty('outline', '8px solid magenta', 'important');
+      menuBtnEarly.style.setProperty('box-shadow', '0 0 30px magenta', 'important');
+      // Portrait mode positioning
+      if (window.innerHeight > window.innerWidth) {
+        menuBtnEarly.style.setProperty('left', '8px', 'important');
+        menuBtnEarly.style.setProperty('top', '8px', 'important');
+        menuBtnEarly.style.setProperty('right', 'auto', 'important');
+        menuBtnEarly.style.setProperty('bottom', 'auto', 'important');
+        menuBtnEarly.style.setProperty('transform', 'scale(0.25)', 'important');
+        menuBtnEarly.style.setProperty('transform-origin', 'top left', 'important');
+      }
+    }
 
     // Show debug unlock button on world map
     const debugUnlockBtn = document.getElementById('debug-unlock-btn');
