@@ -1290,8 +1290,10 @@
         height: min(55px, 16vw) !important;
       }
 
-      /* Menu button positioning is now handled per-scene via JavaScript */
-      /* See WorldMapScene.create() and LevelScene.create() for scene-specific positioning */
+      /* Hide menu button by default in portrait - scenes will show it via JS if needed */
+      #btn-menu {
+        display: none !important;
+      }
 
       /* Zone detail panel at bottom half */
       #zone-detail-frame {
@@ -1304,8 +1306,6 @@
         width: 92vw !important;
         height: 52vh !important;
         max-height: 52vh !important;
-        /* DEBUG: bright border to verify CSS is loading */
-        outline: 3px solid lime !important;
       }
 
       /* Safe area - scaled down content to fit, vertically centered, shifted down 10px */
@@ -3872,17 +3872,18 @@ class LevelScene extends Phaser.Scene {
     // Menu button (DOM image) - position varies by orientation
     const domMenuBtn2 = document.getElementById('btn-menu');
     if (domMenuBtn2) {
-      domMenuBtn2.style.display = 'block';
+      // Use setProperty with important to override portrait CSS that hides it
+      domMenuBtn2.style.setProperty('display', 'block', 'important');
       domMenuBtn2.onclick = () => this.scene.start('MainMenuScene');
 
       // Portrait mode: top-left, smaller scale
       if (window.innerHeight > window.innerWidth && window.innerWidth <= 1200) {
-        domMenuBtn2.style.left = '8px';
-        domMenuBtn2.style.top = '8px';
-        domMenuBtn2.style.right = 'auto';
-        domMenuBtn2.style.bottom = 'auto';
-        domMenuBtn2.style.transformOrigin = 'top left';
-        domMenuBtn2.style.transform = 'scale(0.375)';
+        domMenuBtn2.style.setProperty('left', '8px', 'important');
+        domMenuBtn2.style.setProperty('top', '8px', 'important');
+        domMenuBtn2.style.setProperty('right', 'auto', 'important');
+        domMenuBtn2.style.setProperty('bottom', 'auto', 'important');
+        domMenuBtn2.style.setProperty('transform-origin', 'top left', 'important');
+        domMenuBtn2.style.setProperty('transform', 'scale(0.375)', 'important');
       } else {
         // Landscape: bottom-right placement at 50% scale
         domMenuBtn2.style.right = '16px';
