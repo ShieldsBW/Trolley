@@ -197,8 +197,10 @@ The game consists of 8 main scenes built with Phaser.js:
 - Points display (top-left)
 - Level indicator (top-right)
 - Menu button (bottom-right)
-- Item bar (equipped consumables)
+- Item bar (left side, vertical layout) - shows owned consumables during gameplay
+- Zone Progress Tracker (bottom center) - animated SVG trolley path visualization
 - Consequence popup (after choice)
+- Level Complete overlay (after completing all stages)
 
 **Gameplay Flow:**
 ```
@@ -358,7 +360,11 @@ Unlock next difficulty tier
 
 ## Debug Mode
 
-Hold the magnifying glass button (bottom-left corner) to show debug outlines:
+Debug controls are located in the bottom-left corner of the game screen:
+- **Magnifying glass button**: Hold to show debug outlines
+- **Unlock button**: Unlocks all zones (when visible)
+
+Hold the magnifying glass button to show debug outlines:
 - **Red**: Frame elements
 - **Lime/Green**: Safe areas, Game Over elements
 - **Cyan**: Buttons
@@ -370,4 +376,4 @@ Hold the magnifying glass button (bottom-left corner) to show debug outlines:
 
 ---
 
-*Document updated: January 19, 2026*
+*Document updated: January 19, 2026 (v1.1)*

@@ -1,7 +1,7 @@
 # Zone Creation Guide
 
 > **Purpose:** Step-by-step reference for adding new zones to The Trolley Problem game.
-> **Last Updated:** January 19, 2026
+> **Last Updated:** January 19, 2026 (v1.1)
 
 ---
 
@@ -271,6 +271,8 @@ Confirm assets were created:
 - [ ] Point values calculate correctly with zone modifier
 - [ ] HP damage/healing works as expected
 - [ ] Zone complete popup shows after level 5
+- [ ] Zone Progress Tracker displays correctly and resets between levels
+- [ ] Item bar functions properly if player has consumables
 
 ### 5.4 Progression Testing
 - [ ] Points earned are added to user currency

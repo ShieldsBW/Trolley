@@ -1,6 +1,6 @@
 # The Trolley Problem - Game Design Document
 
-> **Version:** 1.0
+> **Version:** 1.1
 > **Last Updated:** January 19, 2026
 > **Status:** Living Document - Updated as features evolve
 
@@ -273,8 +273,8 @@ Currency Earned = Level Points × Zone Currency Bonus
 - **Max 3 items per level** (prevents trivializing difficulty)
 - Point Booster limited to **once per level**
 - Items consumed on use (deducted from inventory)
-- Item bar visible during gameplay (bottom of screen)
-- Inventory overlay accessible via HUD button
+- Item bar visible during gameplay (left side, vertical layout)
+- Inventory overlay accessible via HUD backpack button (🎒)
 
 ### 4.4 Shop UI
 
@@ -400,15 +400,20 @@ LoginScene ──→ MainMenuScene ←──┐
 │                              │    Zone: Starter     │
 │                              │    [🎒] [🔍]         │
 ├─────────────────────────────────────────────────────┤
-│                                                      │
-│              [DILEMMA QUESTION]                      │
-│                                                      │
-│    [CHOICE A]              [CHOICE B]                │
-│                                                      │
-├─────────────────────────────────────────────────────┤
-│ [+3 HP] [+7 HP] [2x Pts]    (0/3 used)    [Menu]   │
+│        │                                             │
+│ Items  │        [DILEMMA QUESTION]                  │
+│ [+3HP] │                                             │
+│ [+7HP] │    [CHOICE A]         [CHOICE B]           │
+│ [2xPts]│                                             │
+│ (0/3)  │                                             │
+├────────┴────────────────────────────────────────────┤
+│    ●────●────●────●────●   [🚃]     [Menu] [Quit]  │
+│        Zone Progress Tracker                        │
 └─────────────────────────────────────────────────────┘
 ```
+
+**Item Bar:** Positioned on left side, vertical layout, shows owned consumables
+**Zone Progress Tracker:** Visual path at bottom showing player's choices through the level with animated trolley
 
 ### 6.3 UI Principles
 
@@ -474,6 +479,44 @@ Hold magnifying glass button (top-right during gameplay) to show colored outline
 - DocumentFragment for batch DOM updates
 - Responsive breakpoints for mobile/tablet/desktop
 - Efficient scene transitions
+
+### 7.5 Mobile Support
+
+The game supports mobile devices with responsive layouts:
+
+**Portrait Mode:**
+- Scaled UI elements for smaller screens
+- Touch-friendly button sizes (minimum 44px touch targets)
+
+**Landscape Mode (Primary Mobile Experience):**
+- Optimized layout for max-height: 480px viewports
+- Compact HUD with reduced text sizes
+- Item bar on left side with vertical layout
+- Zone progress tracker spans bottom of screen
+- Level complete UI positioned above tracker
+- Shop/Profile frames repositioned for landscape
+
+**Responsive Features:**
+- CSS `clamp()` for fluid typography
+- Viewport-relative sizing (vw, vh, calc)
+- Media queries for orientation and height breakpoints
+
+### 7.6 Zone Progress Tracker
+
+Visual feedback system showing player's path through a level:
+
+**Features:**
+- SVG-based branching path visualization
+- Animated trolley icon following player's choices
+- Gold highlights for chosen path, gray for unchosen
+- Dynamic scaling/centering when paths drift up/down
+- Resets automatically on level completion or Try Again
+- Updates equipped trolley skin from cosmetics
+
+**Technical Details:**
+- Two-pass rendering: calculate extents, then draw with transforms
+- CSS transitions for smooth trolley movement
+- Properly handles container visibility for dimension calculations
 
 ---
 
@@ -575,8 +618,11 @@ To add a new zone:
 | More Zones | Medium | Zones 5-6 with new themes (Zone 4 completed) |
 | Daily Challenges | Medium | Special dilemmas with bonus rewards |
 | Sound Effects | Medium | Audio feedback for choices |
-| Animated Trolley | Low | Trolley movement during gameplay |
 | Multiplayer Race | Low | Compete for speed/score |
+
+**Recently Completed:**
+- ✅ Animated Trolley - Zone Progress Tracker with animated trolley visualization
+- ✅ Mobile Support - Full responsive layout for portrait and landscape modes
 
 ### 9.2 Balancing Guidelines
 

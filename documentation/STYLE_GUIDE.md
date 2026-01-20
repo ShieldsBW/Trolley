@@ -617,6 +617,72 @@ Uses the consequence frame (`frame_consequence.png`) with:
 - Subtitle: "[Next Zone Name] Unlocked!" or "All Zones Complete!"
 - Continue button
 
+### Item Bar (Gameplay HUD)
+
+The item bar displays owned consumables during gameplay. It is positioned on the left side with vertical layout.
+
+```
++----------+
+| [Health] |  <- Consumable button (full width)
++----------+
+| [Shield] |  <- Consumable button (full width)
++----------+
+| [Boost]  |  <- Consumable button (full width)
++----------+
+```
+
+**Item Bar Specifications:**
+- **Position**: Left side, vertically centered (10px from left edge)
+- **Layout**: Vertical flex column with 6px gap between items
+- **Background**: Semi-transparent black (`rgba(0,0,0,0.7)`)
+- **Width**: ~70px (compact to not obstruct gameplay)
+- **Padding**: 8px
+- **Border-radius**: 8px
+- **Z-index**: 55 (above game HUD at 48)
+
+**Item Button Specifications:**
+- Full width within container
+- Minimum height: 32px (touch target)
+- Background color: Item-specific (Health=green, Shield=blue, Boost=gold)
+- Text: White, includes count (e.g., "Heal (3)")
+
+### Zone Progress Tracker (Gameplay)
+
+The Zone Progress Tracker shows the player's path through the current level using animated SVG visualization.
+
+```
++----------------------------------------+
+|              [PATH VISUALIZATION]       |
+|                                         |
+|   START ─┬─ LEFT ─┬─ LEFT ─ [TROLLEY]  |
+|          │        └─ (future)           |
+|          └─ (future)                    |
+|                                         |
++----------------------------------------+
+```
+
+**Tracker Specifications:**
+- **Position**: Bottom center of gameplay screen
+- **Background**: Semi-transparent black (`rgba(0,0,0,0.85)`)
+- **Padding**: 25px desktop, 15px mobile
+- **Border-radius**: 12px
+- **Z-index**: 45 (below choices and question)
+
+**Path Visualization:**
+- SVG-based branching path visualization
+- Start node: Yellow circle
+- Path segments: 80px length, angled ±30° based on choice
+- Left choices: Cyan (`#4ecdc4`)
+- Right choices: Coral (`#ff6b6b`)
+- Animated trolley icon moves along the path
+- Dynamic scaling to fit container with 5px internal buffer
+
+**Mobile Layout:**
+- Uses CSS calc() for responsive positioning
+- Top: `calc(140px + min(75px, 16vh) + 5px)`
+- Bottom: 10px
+- Width: `min(85vw, 500px)`
+
 ### Difficulty Selector (World Map)
 
 Zone detail panel includes difficulty buttons:
@@ -638,6 +704,52 @@ Zone detail panel includes difficulty buttons:
 - **Available**: Gold background (`#ffd700`), black text
 - **Selected**: Darker gold (`#b8860b`), bold text
 - **Locked**: Gray background (`#666`), lock icon, not clickable
+
+---
+
+## 11.5 Z-Index Hierarchy
+
+The game uses a carefully managed z-index hierarchy to ensure proper layering of UI elements.
+
+**Gameplay Screen Z-Index Stack:**
+
+| Z-Index | Element | Purpose |
+|---------|---------|---------|
+| 70+ | Level complete button (mobile) | Ensures clickability above tracker |
+| 55 | Item bar | Consumable buttons during gameplay |
+| 54 | Choices container | Choice buttons |
+| 52 | Question frame | Dilemma text display |
+| 48 | Game HUD | Health, points, level indicator |
+| 45 | Zone progress tracker | Path visualization |
+| 40 | Menu button | Bottom-right menu access |
+
+**General Rules:**
+- Interactive elements must be above visual-only elements
+- Mobile may require higher z-indexes for touch targets
+- Overlays and popups should use 100+ range
+- Debug elements should use 1000+ range
+
+---
+
+## 11.6 Mobile Support
+
+The game is designed to work on mobile devices in landscape orientation.
+
+**Breakpoints:**
+- Mobile landscape: `max-height: 480px` and `orientation: landscape`
+
+**Mobile-Specific Adjustments:**
+- Touch targets: Minimum 32-44px for all interactive elements
+- Font scaling: Uses `clamp()` and viewport units
+- Layout: Compact spacing, reduced padding
+- Z-index: Some elements need higher z-index for touch accessibility
+
+**CSS Pattern:**
+```css
+@media screen and (max-height: 480px) and (orientation: landscape) {
+  /* Mobile landscape styles */
+}
+```
 
 ---
 
@@ -810,6 +922,6 @@ Reference the existing assets: [attach reference images]
 
 ---
 
-*Document Version: 1.3*
+*Document Version: 1.4*
 *Last Updated: January 19, 2026*
 *For use with automated asset generation pipeline*
