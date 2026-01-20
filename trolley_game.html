@@ -3642,6 +3642,9 @@ class MainMenuScene extends Phaser.Scene {
     // Hide all containers first
     hideAllContainers();
 
+    // Hide swipe card from portrait mode gameplay
+    SwipeCardManager.hide();
+
     const domBg = document.getElementById('menu-bg'); if (domBg) domBg.style.display = 'block';
     const domLogo = document.getElementById('menu-logo'); if (domLogo) domLogo.style.display = 'block';
     // Hide level background when on main menu
