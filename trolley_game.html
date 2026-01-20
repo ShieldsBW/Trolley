@@ -327,12 +327,13 @@
         left: 8px !important;
         top: 50% !important;
         transform: translateY(-50%) !important;
-        padding: 8px !important;
-        gap: 6px !important;
+        padding: 6px !important;
+        gap: 5px !important;
+        width: 60px !important;
       }
       #item-bar button {
-        padding: 6px 10px !important;
-        font-size: 10px !important;
+        padding: 5px 3px !important;
+        font-size: 9px !important;
       }
 
       /* HUD - smaller text */
@@ -929,16 +930,17 @@
         top: 50% !important;
         bottom: auto !important;
         transform: translateY(-50%) !important;
-        padding: 6px !important;
-        font-size: 9px !important;
-        gap: 4px !important;
+        padding: 5px !important;
+        font-size: 8px !important;
+        gap: 3px !important;
+        width: 50px !important;
       }
       #item-bar button {
-        padding: 4px 6px !important;
-        font-size: 9px !important;
+        padding: 4px 2px !important;
+        font-size: 8px !important;
       }
       #items-used {
-        font-size: 8px !important;
+        font-size: 7px !important;
       }
 
       /* Game inventory overlay */
@@ -1338,12 +1340,12 @@
 </div>
 
 <!-- Item Bar for Level Scene -->
-<div id="item-bar" style="position:fixed;left:10px;top:50%;transform:translateY(-50%);display:none;z-index:46;background:rgba(0,0,0,0.7);padding:10px;border-radius:10px;flex-direction:column;align-items:center;gap:8px;">
-  <span style="color:#fff;font-family:Arial;font-size:12px;margin-bottom:5px;">Items</span>
-  <button id="item-hp-small" style="padding:8px 12px;background:#4CAF50;color:#fff;border:none;border-radius:5px;cursor:pointer;display:none;width:100%;font-size:11px;">+3 HP (0)</button>
-  <button id="item-hp-large" style="padding:8px 12px;background:#2196F3;color:#fff;border:none;border-radius:5px;cursor:pointer;display:none;width:100%;font-size:11px;">+7 HP (0)</button>
-  <button id="item-point-boost" style="padding:8px 12px;background:#FF9800;color:#fff;border:none;border-radius:5px;cursor:pointer;display:none;width:100%;font-size:11px;">2x Pts (0)</button>
-  <span id="items-used" style="color:#aaa;font-family:Arial;font-size:10px;">(0/3)</span>
+<div id="item-bar" style="position:fixed;left:10px;top:50%;transform:translateY(-50%);display:none;z-index:46;background:rgba(0,0,0,0.7);padding:8px;border-radius:8px;flex-direction:column;align-items:stretch;gap:6px;width:70px;">
+  <span style="color:#fff;font-family:Arial;font-size:10px;text-align:center;">Items</span>
+  <button id="item-hp-small" style="padding:6px 4px;background:#4CAF50;color:#fff;border:none;border-radius:4px;cursor:pointer;display:none;font-size:10px;">+3HP</button>
+  <button id="item-hp-large" style="padding:6px 4px;background:#2196F3;color:#fff;border:none;border-radius:4px;cursor:pointer;display:none;font-size:10px;">+7HP</button>
+  <button id="item-point-boost" style="padding:6px 4px;background:#FF9800;color:#fff;border:none;border-radius:4px;cursor:pointer;display:none;font-size:10px;">2xPts</button>
+  <span id="items-used" style="color:#aaa;font-family:Arial;font-size:9px;text-align:center;">(0/3)</span>
 </div>
 
 <script>
@@ -2856,8 +2858,8 @@ class LevelScene extends Phaser.Scene {
       itemsUsedEl.textContent = `(${this.itemsUsedThisLevel}/${GAME_CONSTANTS.MAX_ITEMS_PER_LEVEL} used)`;
     }
 
-    // Show or hide item bar
-    itemBar.style.display = hasAnyItems ? 'block' : 'none';
+    // Show or hide item bar (use flex for vertical layout)
+    itemBar.style.display = hasAnyItems ? 'flex' : 'none';
   }
 
   setupGameInventory() {
