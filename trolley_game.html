@@ -570,7 +570,7 @@
 
       /* Choice boxes - raised up, scaled to 75% width */
       #choices-container {
-        top: 160px !important;
+        top: 140px !important;
         bottom: auto !important;
       }
       #choice-a-frame, #choice-b-frame,
@@ -589,10 +589,10 @@
         line-height: 1.2 !important;
       }
 
-      /* Zone progress tracker - compact for mobile */
+      /* Zone progress tracker - compact for mobile, raised 100px */
       #zone-progress-tracker {
         height: 60px !important;
-        bottom: 3% !important;
+        bottom: calc(3% + 100px) !important;
         width: min(85vw, 500px) !important;
       }
       #zone-progress-tracker > div:first-child {
