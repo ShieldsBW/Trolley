@@ -1304,6 +1304,8 @@
         width: 92vw !important;
         height: 52vh !important;
         max-height: 52vh !important;
+        /* DEBUG: bright border to verify CSS is loading */
+        outline: 3px solid lime !important;
       }
 
       /* Safe area - scaled down 20% vertically, 10% horizontally */
@@ -5034,6 +5036,7 @@ class WorldMapScene extends Phaser.Scene {
 
     // Setup menu button - positioned per-scene for portrait mode
     const menuBtn = document.getElementById('btn-menu');
+    console.log('[DEBUG WorldMap] menuBtn found:', !!menuBtn, 'innerHeight:', window.innerHeight, 'innerWidth:', window.innerWidth);
     if (menuBtn) {
       menuBtn.style.display = 'block';
       menuBtn.onclick = () => {
@@ -5041,13 +5044,17 @@ class WorldMapScene extends Phaser.Scene {
         this.scene.start('MainMenuScene');
       };
       // Portrait mode: top-left, 50% scale
-      if (window.innerHeight > window.innerWidth && window.innerWidth <= 900) {
+      const isPortrait = window.innerHeight > window.innerWidth && window.innerWidth <= 900;
+      console.log('[DEBUG WorldMap] isPortrait:', isPortrait);
+      if (isPortrait) {
+        console.log('[DEBUG WorldMap] Applying portrait positioning to menu button');
         menuBtn.style.left = '8px';
         menuBtn.style.top = '8px';
         menuBtn.style.right = 'auto';
         menuBtn.style.bottom = 'auto';
         menuBtn.style.transform = 'scale(0.25)';
         menuBtn.style.transformOrigin = 'top left';
+        console.log('[DEBUG WorldMap] Menu button styles applied:', menuBtn.style.cssText);
       }
     }
 
