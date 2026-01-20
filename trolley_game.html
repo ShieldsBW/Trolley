@@ -1308,7 +1308,7 @@
         outline: 3px solid lime !important;
       }
 
-      /* Safe area - scaled down content to fit, vertically centered */
+      /* Safe area - scaled down content to fit, vertically centered, shifted down 10px */
       #zone-detail-safe-area {
         top: 8% !important;
         left: 20% !important;
@@ -1316,6 +1316,7 @@
         bottom: 15% !important;
         overflow: hidden !important;
         justify-content: center !important;
+        padding-top: 10px !important;
       }
 
       #zone-detail-name {
@@ -4969,22 +4970,10 @@ class WorldMapScene extends Phaser.Scene {
     const worldmapContainer = document.getElementById('worldmap-container');
     if (worldmapContainer) worldmapContainer.style.display = 'block';
 
-    // EARLY: Setup menu button for portrait mode (moved here to ensure it runs)
+    // Hide menu button on world map (removing it for now per user request)
     const menuBtnEarly = document.getElementById('btn-menu');
     if (menuBtnEarly) {
-      menuBtnEarly.style.display = 'block';
-      // DEBUG: bright magenta border to show this early code runs
-      menuBtnEarly.style.setProperty('outline', '8px solid magenta', 'important');
-      menuBtnEarly.style.setProperty('box-shadow', '0 0 30px magenta', 'important');
-      // Portrait mode positioning
-      if (window.innerHeight > window.innerWidth) {
-        menuBtnEarly.style.setProperty('left', '8px', 'important');
-        menuBtnEarly.style.setProperty('top', '8px', 'important');
-        menuBtnEarly.style.setProperty('right', 'auto', 'important');
-        menuBtnEarly.style.setProperty('bottom', 'auto', 'important');
-        menuBtnEarly.style.setProperty('transform', 'scale(0.25)', 'important');
-        menuBtnEarly.style.setProperty('transform-origin', 'top left', 'important');
-      }
+      menuBtnEarly.style.display = 'none';
     }
 
     // Show debug unlock button on world map
@@ -5066,36 +5055,7 @@ class WorldMapScene extends Phaser.Scene {
       };
     }
 
-    // Setup menu button - positioned per-scene for portrait mode
-    const menuBtn = document.getElementById('btn-menu');
-    console.log('[DEBUG WorldMap] menuBtn found:', !!menuBtn, 'innerHeight:', window.innerHeight, 'innerWidth:', window.innerWidth);
-    if (menuBtn) {
-      menuBtn.style.display = 'block';
-      menuBtn.onclick = () => {
-        worldmapContainer.style.display = 'none';
-        this.scene.start('MainMenuScene');
-      };
-
-      // DEBUG v2: Always add cyan border + yellow glow to show this code runs
-      menuBtn.style.setProperty('outline', '5px solid cyan', 'important');
-      menuBtn.style.setProperty('box-shadow', '0 0 20px yellow', 'important');
-
-      // Portrait mode: top-left, 50% scale - use setProperty with important to override any CSS
-      const isPortrait = window.innerHeight > window.innerWidth && window.innerWidth <= 1200;
-      console.log('[DEBUG WorldMap] isPortrait:', isPortrait, 'height:', window.innerHeight, 'width:', window.innerWidth);
-      if (isPortrait) {
-        console.log('[DEBUG WorldMap] Applying portrait positioning to menu button');
-        menuBtn.style.setProperty('left', '8px', 'important');
-        menuBtn.style.setProperty('top', '8px', 'important');
-        menuBtn.style.setProperty('right', 'auto', 'important');
-        menuBtn.style.setProperty('bottom', 'auto', 'important');
-        menuBtn.style.setProperty('transform', 'scale(0.25)', 'important');
-        menuBtn.style.setProperty('transform-origin', 'top left', 'important');
-        // DEBUG: change to red border to show portrait code ran
-        menuBtn.style.setProperty('outline', '5px solid red', 'important');
-        console.log('[DEBUG WorldMap] Menu button styles applied:', menuBtn.style.cssText);
-      }
-    }
+    // Menu button removed from world map for now
 
     // Auto-select first unlocked zone
     const firstMarker = document.querySelector('.zone-marker[data-zone="1"]');
