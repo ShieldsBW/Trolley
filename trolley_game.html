@@ -1290,10 +1290,18 @@
         height: min(55px, 16vw) !important;
       }
 
-      /* Hide menu/back buttons by default in portrait - scenes will show via JS if needed */
-      #btn-menu,
-      #btn-worldmap-back {
+      /* Hide menu button by default in portrait - scenes will show via JS if needed */
+      #btn-menu {
         display: none !important;
+      }
+
+      /* World map return-to-menu button: top-left, half size */
+      #btn-worldmap-back {
+        left: 8px !important;
+        top: 8px !important;
+        bottom: auto !important;
+        transform: scale(0.5) !important;
+        transform-origin: top left !important;
       }
 
       /* Zone detail panel at bottom half */
