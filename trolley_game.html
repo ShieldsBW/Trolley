@@ -322,15 +322,17 @@
         right: 2.5vw !important;
       }
 
-      /* Item bar - compact */
+      /* Item bar - vertical on left side */
       #item-bar {
-        padding: 6px 10px !important;
-        flex-wrap: wrap;
-        gap: 4px;
+        left: 8px !important;
+        top: 50% !important;
+        transform: translateY(-50%) !important;
+        padding: 8px !important;
+        gap: 6px !important;
       }
       #item-bar button {
-        padding: 6px 8px !important;
-        font-size: 12px !important;
+        padding: 6px 10px !important;
+        font-size: 10px !important;
       }
 
       /* HUD - smaller text */
@@ -921,18 +923,22 @@
         height: clamp(35px, 7vh, 50px) !important;
       }
 
-      /* Item bar - compact */
+      /* Item bar - vertical on left side for landscape */
       #item-bar {
-        bottom: 55px !important;
-        padding: 5px 10px !important;
-        font-size: 10px !important;
+        left: 5px !important;
+        top: 50% !important;
+        bottom: auto !important;
+        transform: translateY(-50%) !important;
+        padding: 6px !important;
+        font-size: 9px !important;
+        gap: 4px !important;
       }
       #item-bar button {
-        padding: 4px 8px !important;
-        font-size: 10px !important;
+        padding: 4px 6px !important;
+        font-size: 9px !important;
       }
       #items-used {
-        font-size: 9px !important;
+        font-size: 8px !important;
       }
 
       /* Game inventory overlay */
@@ -1332,12 +1338,12 @@
 </div>
 
 <!-- Item Bar for Level Scene -->
-<div id="item-bar" style="position:fixed;left:50%;bottom:80px;transform:translateX(-50%);display:none;z-index:46;background:rgba(0,0,0,0.7);padding:10px 20px;border-radius:10px;">
-  <span style="color:#fff;font-family:Arial;margin-right:15px;">Items:</span>
-  <button id="item-hp-small" style="padding:8px 12px;margin:0 5px;background:#4CAF50;color:#fff;border:none;border-radius:5px;cursor:pointer;display:none;">+3 HP (0)</button>
-  <button id="item-hp-large" style="padding:8px 12px;margin:0 5px;background:#2196F3;color:#fff;border:none;border-radius:5px;cursor:pointer;display:none;">+7 HP (0)</button>
-  <button id="item-point-boost" style="padding:8px 12px;margin:0 5px;background:#FF9800;color:#fff;border:none;border-radius:5px;cursor:pointer;display:none;">2x Points (0)</button>
-  <span id="items-used" style="color:#aaa;font-family:Arial;margin-left:15px;font-size:14px;">(0/3 used)</span>
+<div id="item-bar" style="position:fixed;left:10px;top:50%;transform:translateY(-50%);display:none;z-index:46;background:rgba(0,0,0,0.7);padding:10px;border-radius:10px;flex-direction:column;align-items:center;gap:8px;">
+  <span style="color:#fff;font-family:Arial;font-size:12px;margin-bottom:5px;">Items</span>
+  <button id="item-hp-small" style="padding:8px 12px;background:#4CAF50;color:#fff;border:none;border-radius:5px;cursor:pointer;display:none;width:100%;font-size:11px;">+3 HP (0)</button>
+  <button id="item-hp-large" style="padding:8px 12px;background:#2196F3;color:#fff;border:none;border-radius:5px;cursor:pointer;display:none;width:100%;font-size:11px;">+7 HP (0)</button>
+  <button id="item-point-boost" style="padding:8px 12px;background:#FF9800;color:#fff;border:none;border-radius:5px;cursor:pointer;display:none;width:100%;font-size:11px;">2x Pts (0)</button>
+  <span id="items-used" style="color:#aaa;font-family:Arial;font-size:10px;">(0/3)</span>
 </div>
 
 <script>
