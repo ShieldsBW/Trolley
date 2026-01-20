@@ -589,10 +589,11 @@
         line-height: 1.2 !important;
       }
 
-      /* Zone progress tracker - compact for mobile, raised 100px */
+      /* Zone progress tracker - positioned with 5px gaps from choices and screen bottom */
       #zone-progress-tracker {
-        height: 60px !important;
-        bottom: calc(3% + 100px) !important;
+        top: calc(140px + min(75px, 16vh) + 5px) !important;  /* 5px below choice buttons */
+        bottom: 5px !important;  /* 5px from screen bottom */
+        height: auto !important;  /* Height determined by top/bottom constraints */
         width: min(85vw, 500px) !important;
       }
       #zone-progress-tracker > div:first-child {
@@ -1933,6 +1934,8 @@ const ZoneProgressTracker = {
   maxStages: 5,
   nodeRadius: 8,
   pathWidth: 3,
+  renderScale: 1,    // Scale factor from render (for trolley positioning)
+  renderOffsetY: 0,  // Y offset from render (for trolley positioning)
   colors: {
     path: '#B8860B',        // Dark gold for paths
     pathTaken: '#FFD700',   // Bright gold for taken path
@@ -1988,63 +1991,102 @@ const ZoneProgressTracker = {
 
     const width = this.container.offsetWidth || 600;
     const height = this.container.offsetHeight || 100;
-    const centerY = height / 2;
-    const padding = 15; // Padding from top/bottom edges
-    const maxForkHeight = (height - padding * 2) / 2; // Max deviation from center
+    const internalPadding = 5; // 5px buffer inside the panel
     const segmentWidth = (width - 80) / this.maxStages;
-    // Calculate fork height but constrain it to stay within bounds
-    const forkHeight = Math.min(segmentWidth * 0.3, maxForkHeight);
+    const baseForkHeight = segmentWidth * 0.3;
 
     // Clear existing SVG content
     this.svg.innerHTML = '';
 
-    // Calculate current position tracking through the path
-    let currentX = 40;
-    let currentY = centerY;
+    // PASS 1: Calculate all positions to find extents
+    const positions = [];
+    let calcX = 40;
+    let calcY = height / 2; // Start at center
+    let minY = calcY;
+    let maxY = calcY;
 
-    // Draw start node
-    this.addNode(currentX, currentY, 0, this.colors.nodeActive);
+    positions.push({ x: calcX, y: calcY, type: 'start' });
 
-    // Only draw up to current stage + 1 (show current fork, hide future ones)
     const stagesToDraw = Math.min(this.choices.length + 1, this.maxStages);
-
-    // Draw each stage's fork (only completed stages + current fork)
     for (let i = 0; i < stagesToDraw; i++) {
-      const startX = currentX;
-      const startY = currentY;
+      const startX = calcX;
+      const startY = calcY;
       const endX = startX + segmentWidth;
-      const topY = startY - forkHeight / 2;
-      const bottomY = startY + forkHeight / 2;
+      const topY = startY - baseForkHeight / 2;
+      const bottomY = startY + baseForkHeight / 2;
 
       const hasChoice = i < this.choices.length;
       const choice = hasChoice ? this.choices[i] : null;
-      const isCurrentFork = i === this.choices.length; // This is the next decision
 
-      // Draw top path (Choice A) - gray for upcoming paths
+      // Track all Y positions including fork endpoints
+      minY = Math.min(minY, topY);
+      maxY = Math.max(maxY, bottomY);
+
+      positions.push({
+        stage: i,
+        startX, startY, endX, topY, bottomY,
+        choice, hasChoice,
+        isCurrentFork: i === this.choices.length
+      });
+
+      if (hasChoice) {
+        calcX = endX;
+        calcY = choice === 'A' ? topY : bottomY;
+      }
+    }
+
+    // PASS 2: Calculate scaling and offset
+    const contentHeight = maxY - minY + (this.nodeRadius * 2); // Include node radius
+    const availableHeight = height - (internalPadding * 2);
+    const scale = contentHeight > availableHeight ? availableHeight / contentHeight : 1;
+
+    // Calculate vertical offset to center the content
+    const scaledContentHeight = contentHeight * scale;
+    const contentCenterY = (minY + maxY) / 2;
+    const targetCenterY = height / 2;
+    const offsetY = targetCenterY - (contentCenterY * scale);
+
+    // Helper function to transform Y coordinates
+    const transformY = (y) => (y * scale) + offsetY;
+
+    // PASS 3: Draw everything with transforms applied
+    // Draw start node
+    const startPos = positions[0];
+    this.addNode(startPos.x, transformY(startPos.y), 0, this.colors.nodeActive);
+
+    // Draw each stage
+    for (let i = 1; i < positions.length; i++) {
+      const p = positions[i];
+      const { startX, startY, endX, topY, bottomY, choice, hasChoice, isCurrentFork, stage } = p;
+
+      // Transform Y coordinates
+      const tStartY = transformY(startY);
+      const tTopY = transformY(topY);
+      const tBottomY = transformY(bottomY);
+
+      // Draw top path (Choice A)
       const topPathColor = isCurrentFork ? this.colors.pathNotTaken :
                           (choice === 'A' ? this.colors.pathTaken : this.colors.pathNotTaken);
-      this.addPath(startX, startY, endX, topY, topPathColor, choice === 'A');
+      this.addPath(startX, tStartY, endX, tTopY, topPathColor, choice === 'A');
 
-      // Draw bottom path (Choice B) - gray for upcoming paths
+      // Draw bottom path (Choice B)
       const bottomPathColor = isCurrentFork ? this.colors.pathNotTaken :
                              (choice === 'B' ? this.colors.pathTaken : this.colors.pathNotTaken);
-      this.addPath(startX, startY, endX, bottomY, bottomPathColor, choice === 'B');
+      this.addPath(startX, tStartY, endX, tBottomY, bottomPathColor, choice === 'B');
 
-      // Draw end nodes for this fork - gray for upcoming nodes
+      // Draw end nodes
       const topNodeColor = isCurrentFork ? this.colors.nodeFuture :
                           (choice === 'A' ? this.colors.nodeActive : this.colors.pathNotTaken);
       const bottomNodeColor = isCurrentFork ? this.colors.nodeFuture :
                              (choice === 'B' ? this.colors.nodeActive : this.colors.pathNotTaken);
 
-      this.addNode(endX, topY, i + 1, topNodeColor);
-      this.addNode(endX, bottomY, i + 1, bottomNodeColor);
-
-      // Update current position for next segment
-      if (hasChoice) {
-        currentX = endX;
-        currentY = choice === 'A' ? topY : bottomY;
-      }
+      this.addNode(endX, tTopY, stage + 1, topNodeColor);
+      this.addNode(endX, tBottomY, stage + 1, bottomNodeColor);
     }
+
+    // Store transform info for trolley positioning
+    this.renderScale = scale;
+    this.renderOffsetY = offsetY;
 
     // Position trolley at current location
     this.positionTrolley(false);
@@ -2080,32 +2122,36 @@ const ZoneProgressTracker = {
     const width = this.container?.offsetWidth || 600;
     const height = this.container?.offsetHeight || 100;
     const centerY = height / 2;
-    const padding = 15;
-    const maxForkHeight = (height - padding * 2) / 2;
     const segmentWidth = (width - 80) / this.maxStages;
-    const forkHeight = Math.min(segmentWidth * 0.3, maxForkHeight);
+    const baseForkHeight = segmentWidth * 0.3;
 
     let x = 40;
     let y = centerY;
 
-    // Calculate position based on choices made
+    // Calculate position based on choices made (using base coordinates)
     for (let i = 0; i < this.choices.length; i++) {
       const startY = y;
-      const topY = startY - forkHeight / 2;
-      const bottomY = startY + forkHeight / 2;
+      const topY = startY - baseForkHeight / 2;
+      const bottomY = startY + baseForkHeight / 2;
 
       x += segmentWidth;
       y = this.choices[i] === 'A' ? topY : bottomY;
     }
 
-    return { x, y };
+    // Apply the same transform used in render()
+    const scale = this.renderScale || 1;
+    const offsetY = this.renderOffsetY || 0;
+    const transformedY = (y * scale) + offsetY;
+
+    return { x, y: transformedY };
   },
 
   positionTrolley(animate = false) {
     if (!this.trolleyImg || !this.container) return;
 
     const pos = this.getTrolleyPosition();
-    const trolleySize = 80;
+    // Use actual trolley size (may be different on mobile)
+    const trolleySize = this.trolleyImg.offsetWidth || 80;
 
     // Position trolley centered on the node
     this.trolleyImg.style.left = (pos.x - trolleySize / 2) + 'px';
