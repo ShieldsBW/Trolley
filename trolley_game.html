@@ -1048,15 +1048,7 @@
       #hud-points { order: 4 !important; }
       #hud-zone { order: 5 !important; display: none !important; }
 
-      /* Menu button - top left like world map */
-      #btn-menu {
-        left: 8px !important;
-        top: 8px !important;
-        right: auto !important;
-        bottom: auto !important;
-        transform: scale(0.375) !important;
-        transform-origin: top left !important;
-      }
+      /* Menu button positioning handled per-scene via JavaScript */
 
       /* Inventory button - below menu button */
       #hud-inventory-btn {
@@ -1298,15 +1290,8 @@
         height: min(55px, 16vw) !important;
       }
 
-      /* Menu button - top left, 75% scale */
-      #btn-menu {
-        left: 8px !important;
-        top: 8px !important;
-        right: auto !important;
-        bottom: auto !important;
-        transform: scale(0.375) !important;
-        transform-origin: top left !important;
-      }
+      /* Menu button positioning is now handled per-scene via JavaScript */
+      /* See WorldMapScene.create() and LevelScene.create() for scene-specific positioning */
 
       /* Zone detail panel at bottom half */
       #zone-detail-frame {
@@ -1321,13 +1306,13 @@
         max-height: 52vh !important;
       }
 
-      /* Safe area includes zone name and start button */
+      /* Safe area - scaled down 20% vertically, 10% horizontally */
       #zone-detail-safe-area {
-        top: 8% !important;
-        left: 8% !important;
-        right: 8% !important;
-        bottom: 8% !important;
-        overflow-y: auto !important;
+        top: 16% !important;
+        left: 12% !important;
+        right: 12% !important;
+        bottom: 16% !important;
+        overflow: hidden !important;
       }
 
       #zone-detail-name {
@@ -3874,18 +3859,29 @@ class LevelScene extends Phaser.Scene {
     // Moved down by 200px (from y=100 to y=300) and doubled font size (24px -> 48px)
     this.promptText = this.add.text(400,300, '', {font:'48px Arial', fill:'#fff', align:'center', wordWrap:{width:1400}}).setOrigin(0.5);
 
-    // Menu button (DOM image)
+    // Menu button (DOM image) - position varies by orientation
     const domMenuBtn2 = document.getElementById('btn-menu');
     if (domMenuBtn2) {
       domMenuBtn2.style.display = 'block';
-      // Bottom-right placement at 50% scale during gameplay
-      domMenuBtn2.style.right = '16px';
-      domMenuBtn2.style.bottom = '16px';
-      domMenuBtn2.style.left = '';
-      domMenuBtn2.style.top = '';
-      domMenuBtn2.style.transformOrigin = 'bottom right';
-      domMenuBtn2.style.transform = 'scale(0.5)';
       domMenuBtn2.onclick = () => this.scene.start('MainMenuScene');
+
+      // Portrait mode: top-left, smaller scale
+      if (window.innerHeight > window.innerWidth && window.innerWidth <= 900) {
+        domMenuBtn2.style.left = '8px';
+        domMenuBtn2.style.top = '8px';
+        domMenuBtn2.style.right = 'auto';
+        domMenuBtn2.style.bottom = 'auto';
+        domMenuBtn2.style.transformOrigin = 'top left';
+        domMenuBtn2.style.transform = 'scale(0.375)';
+      } else {
+        // Landscape: bottom-right placement at 50% scale
+        domMenuBtn2.style.right = '16px';
+        domMenuBtn2.style.bottom = '16px';
+        domMenuBtn2.style.left = '';
+        domMenuBtn2.style.top = '';
+        domMenuBtn2.style.transformOrigin = 'bottom right';
+        domMenuBtn2.style.transform = 'scale(0.5)';
+      }
     }
 
     // Quit button (DOM image) bottom-right, offset from Menu
@@ -5041,6 +5037,25 @@ class WorldMapScene extends Phaser.Scene {
         if (detailPanel) detailPanel.style.display = 'none';
         this.scene.start('MainMenuScene');
       };
+    }
+
+    // Setup menu button - positioned per-scene for portrait mode
+    const menuBtn = document.getElementById('btn-menu');
+    if (menuBtn) {
+      menuBtn.style.display = 'block';
+      menuBtn.onclick = () => {
+        worldmapContainer.style.display = 'none';
+        this.scene.start('MainMenuScene');
+      };
+      // Portrait mode: top-left, 50% scale
+      if (window.innerHeight > window.innerWidth && window.innerWidth <= 900) {
+        menuBtn.style.left = '8px';
+        menuBtn.style.top = '8px';
+        menuBtn.style.right = 'auto';
+        menuBtn.style.bottom = 'auto';
+        menuBtn.style.transform = 'scale(0.25)';
+        menuBtn.style.transformOrigin = 'top left';
+      }
     }
 
     // Auto-select first unlocked zone
