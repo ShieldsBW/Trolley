@@ -78,8 +78,8 @@
       opacity: 0.8;
     }
 
-    /* Show overlay only in portrait orientation on mobile */
-    @media screen and (orientation: portrait) and (max-width: 900px) {
+    /* Show overlay only on very small screens where portrait is impractical */
+    @media screen and (orientation: portrait) and (max-width: 320px) and (max-height: 480px) {
       #portrait-overlay {
         display: flex !important;
       }
@@ -972,6 +972,446 @@
       #hud-inventory-btn span {
         font-size: 16px !important;
       }
+    }
+
+    /* ============================================
+       PORTRAIT ORIENTATION SUPPORT (Mobile)
+       ============================================ */
+    @media screen and (orientation: portrait) and (max-width: 900px) {
+      /* CSS Variables for portrait mode */
+      :root {
+        --swipe-card-width: min(85vw, 350px);
+        --swipe-card-height: auto;
+        --portrait-question-top: 8%;
+        --portrait-card-center: 45%;
+        --portrait-tracker-bottom: 5%;
+      }
+
+      /* Hide traditional side-by-side choices in portrait */
+      #choices-container {
+        display: none !important;
+      }
+
+      /* Question frame repositioned to top */
+      #question-frame {
+        top: var(--portrait-question-top) !important;
+        width: min(95vw, 600px) !important;
+        height: auto !important;
+        min-height: 100px !important;
+        transform: translateX(-50%) !important;
+      }
+
+      /* Zone progress tracker at bottom */
+      #zone-progress-tracker {
+        bottom: var(--portrait-tracker-bottom) !important;
+        top: auto !important;
+        left: 50% !important;
+        transform: translateX(-50%) !important;
+      }
+
+      /* Game HUD for portrait */
+      #game-hud {
+        top: 3px !important;
+        left: 50% !important;
+        right: auto !important;
+        transform: translateX(-50%) !important;
+        width: auto !important;
+        max-width: 90vw !important;
+        padding: 5px 15px !important;
+        font-size: 12px !important;
+      }
+
+      /* Item bar repositioned for portrait */
+      #item-bar {
+        left: 5px !important;
+        top: 80px !important;
+        bottom: auto !important;
+        transform: none !important;
+        width: 55px !important;
+        padding: 5px !important;
+        font-size: 9px !important;
+      }
+
+      /* Menu button - reposition for portrait */
+      #btn-menu {
+        right: 10px !important;
+        bottom: auto !important;
+        top: 60px !important;
+        transform: scale(0.4) !important;
+        transform-origin: top right !important;
+      }
+
+      /* Swipe card container styles */
+      #swipe-card-container {
+        position: fixed !important;
+        left: 50% !important;
+        top: var(--portrait-card-center) !important;
+        transform: translate(-50%, -50%) !important;
+        width: var(--swipe-card-width) !important;
+        z-index: 60 !important;
+        touch-action: pan-y !important;
+      }
+
+      /* The swipeable card */
+      #swipe-card {
+        width: 100% !important;
+        background: rgba(20, 20, 30, 0.95) !important;
+        border: 3px solid #FFD700 !important;
+        border-radius: 15px !important;
+        padding: 20px !important;
+        box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5) !important;
+        transition: transform 0.1s ease-out !important;
+        cursor: grab !important;
+      }
+
+      #swipe-card:active {
+        cursor: grabbing !important;
+      }
+
+      /* Swipe card choice sections */
+      .swipe-choice-section {
+        padding: 15px 10px !important;
+        margin: 5px 0 !important;
+        border-radius: 8px !important;
+        background: rgba(255, 255, 255, 0.05) !important;
+      }
+
+      .swipe-choice-section.left {
+        border-left: 4px solid #e94560 !important;
+      }
+
+      .swipe-choice-section.right {
+        border-left: 4px solid #4ecdc4 !important;
+      }
+
+      .swipe-direction-label {
+        font-size: 10px !important;
+        font-weight: bold !important;
+        text-transform: uppercase !important;
+        letter-spacing: 1px !important;
+        margin-bottom: 8px !important;
+        opacity: 0.7 !important;
+      }
+
+      .swipe-choice-section.left .swipe-direction-label {
+        color: #e94560 !important;
+      }
+
+      .swipe-choice-section.right .swipe-direction-label {
+        color: #4ecdc4 !important;
+      }
+
+      .swipe-choice-text {
+        color: #F5DEB3 !important;
+        font-family: Georgia, serif !important;
+        font-size: 14px !important;
+        line-height: 1.4 !important;
+        margin-bottom: 8px !important;
+      }
+
+      .swipe-choice-stats {
+        color: #FFD700 !important;
+        font-size: 12px !important;
+        font-family: Arial, sans-serif !important;
+      }
+
+      /* Swipe indicators */
+      .swipe-indicator {
+        position: absolute !important;
+        top: 50% !important;
+        transform: translateY(-50%) !important;
+        font-size: 48px !important;
+        opacity: 0 !important;
+        transition: opacity 0.15s ease !important;
+        pointer-events: none !important;
+        z-index: 61 !important;
+      }
+
+      .swipe-indicator.left {
+        left: -60px !important;
+        color: #e94560 !important;
+      }
+
+      .swipe-indicator.right {
+        right: -60px !important;
+        color: #4ecdc4 !important;
+      }
+
+      /* Bottom direction hints */
+      .swipe-hints {
+        display: flex !important;
+        justify-content: space-between !important;
+        margin-top: 15px !important;
+        padding: 0 5px !important;
+        font-family: Arial, sans-serif !important;
+        font-size: 11px !important;
+        font-weight: bold !important;
+      }
+
+      .swipe-hint-left {
+        color: #e94560 !important;
+      }
+
+      .swipe-hint-right {
+        color: #4ecdc4 !important;
+      }
+
+      /* Divider between choices */
+      .swipe-divider {
+        height: 1px !important;
+        background: linear-gradient(90deg, transparent, #FFD700, transparent) !important;
+        margin: 10px 0 !important;
+      }
+
+      /* ========== MAIN MENU PORTRAIT ========== */
+      #menu-logo {
+        left: 50% !important;
+        top: 8% !important;
+        transform: translateX(-50%) !important;
+        width: min(80vw, 350px) !important;
+      }
+
+      #menu-welcome-display {
+        top: 28% !important;
+        left: 50% !important;
+        transform: translateX(-50%) !important;
+        text-align: center !important;
+        font-size: 14px !important;
+        width: 90vw !important;
+      }
+
+      #menu-points-display {
+        top: 34% !important;
+        left: 50% !important;
+        transform: translateX(-50%) !important;
+        text-align: center !important;
+        font-size: 14px !important;
+      }
+
+      #btn-worldmap {
+        top: 45% !important;
+        left: 50% !important;
+        height: 70px !important;
+      }
+
+      #btn-shop {
+        top: 58% !important;
+        left: 50% !important;
+        height: 45px !important;
+      }
+
+      #btn-leaderboard {
+        top: 68% !important;
+        left: 50% !important;
+        height: 45px !important;
+      }
+
+      #btn-profile {
+        top: 78% !important;
+        left: 50% !important;
+        height: 45px !important;
+      }
+
+      #btn-logout {
+        bottom: 5% !important;
+        left: 50% !important;
+        height: 35px !important;
+      }
+
+      #btn-quit {
+        display: none !important;
+      }
+
+      /* ========== WORLD MAP PORTRAIT ========== */
+      #worldmap-title {
+        top: 10px !important;
+        left: 50% !important;
+        transform: translateX(-50%) !important;
+        font-size: 18px !important;
+      }
+
+      /* Zone markers in horizontal row at top */
+      #zone-markers {
+        top: 8% !important;
+        left: 50% !important;
+        transform: translateX(-50%) !important;
+        width: 95vw !important;
+        height: 35% !important;
+        display: flex !important;
+        justify-content: center !important;
+        align-items: flex-start !important;
+      }
+
+      .zone-marker {
+        width: min(60px, 18vw) !important;
+        height: min(60px, 18vw) !important;
+      }
+
+      /* Zone detail panel at bottom half */
+      #zone-detail-frame {
+        position: fixed !important;
+        left: 50% !important;
+        right: auto !important;
+        top: auto !important;
+        bottom: 2% !important;
+        transform: translateX(-50%) !important;
+        width: 95vw !important;
+        height: 50vh !important;
+        max-height: 50vh !important;
+      }
+
+      #zone-detail-safe-area {
+        top: 12% !important;
+        left: 10% !important;
+        right: 10% !important;
+        bottom: 15% !important;
+      }
+
+      #zone-detail-name {
+        font-size: 16px !important;
+      }
+
+      #zone-detail-desc {
+        font-size: 11px !important;
+      }
+
+      .difficulty-btn {
+        width: 30px !important;
+        height: 30px !important;
+        font-size: 14px !important;
+      }
+
+      #btn-zone-start {
+        width: 100px !important;
+      }
+
+      /* ========== SHOP/PROFILE PORTRAIT ========== */
+      #shop-frame, #profile-frame {
+        width: 95vw !important;
+        height: 90vh !important;
+        max-width: 95vw !important;
+      }
+
+      #shop-safe-area, #profile-safe-area {
+        top: 8% !important;
+        left: 8% !important;
+        right: 8% !important;
+        bottom: 8% !important;
+      }
+
+      /* Shop grid - 2 columns for portrait */
+      #shop-items-grid {
+        display: grid !important;
+        grid-template-columns: repeat(2, 1fr) !important;
+        gap: 10px !important;
+      }
+
+      .shop-item {
+        padding: 10px !important;
+      }
+
+      .shop-item-name {
+        font-size: 12px !important;
+      }
+
+      .shop-item-price {
+        font-size: 11px !important;
+      }
+
+      /* Profile grid - 2 columns */
+      #profile-items-grid {
+        grid-template-columns: repeat(2, 1fr) !important;
+      }
+
+      /* ========== LEADERBOARD PORTRAIT ========== */
+      #leaderboard-frame {
+        width: 90vw !important;
+        height: auto !important;
+        max-height: 85vh !important;
+      }
+
+      #leaderboard-safe-area {
+        top: 10% !important;
+        bottom: 10% !important;
+      }
+
+      /* ========== GAME OVER PORTRAIT ========== */
+      #go-title {
+        top: 8% !important;
+        width: min(80vw, 300px) !important;
+        height: auto !important;
+      }
+
+      #go-total-points {
+        top: 22% !important;
+        font-size: 16px !important;
+      }
+
+      #btn-submit {
+        top: 35% !important;
+        width: min(150px, 40vw) !important;
+      }
+
+      #btn-try {
+        top: 50% !important;
+        width: min(200px, 55vw) !important;
+      }
+
+      #btn-worldmap-go {
+        top: 65% !important;
+        width: min(200px, 55vw) !important;
+      }
+
+      /* ========== CONSEQUENCE POPUP PORTRAIT ========== */
+      #consequence-frame {
+        width: 90vw !important;
+        max-width: 90vw !important;
+      }
+
+      #consequence-safe-area {
+        padding: 15px !important;
+      }
+
+      #consequence-text {
+        font-size: 14px !important;
+      }
+
+      #consequence-stats {
+        font-size: 12px !important;
+      }
+    }
+
+    /* Swipe card animations */
+    @keyframes swipeExitLeft {
+      to {
+        transform: translateX(-150vw) rotate(-30deg);
+        opacity: 0;
+      }
+    }
+
+    @keyframes swipeExitRight {
+      to {
+        transform: translateX(150vw) rotate(30deg);
+        opacity: 0;
+      }
+    }
+
+    @keyframes swipeSnapBack {
+      to {
+        transform: translateX(0) rotate(0deg);
+      }
+    }
+
+    .swipe-exit-left {
+      animation: swipeExitLeft 0.3s ease-out forwards !important;
+    }
+
+    .swipe-exit-right {
+      animation: swipeExitRight 0.3s ease-out forwards !important;
+    }
+
+    .swipe-snap-back {
+      animation: swipeSnapBack 0.2s ease-out forwards !important;
     }
   </style>
 </head>
@@ -2463,6 +2903,469 @@ const InputHandler = {
       return { x: e.changedTouches[0].clientX, y: e.changedTouches[0].clientY };
     }
     return { x: e.clientX, y: e.clientY };
+  },
+
+  // Swipe gesture configuration
+  swipeConfig: {
+    minDistance: 80,      // Minimum swipe distance in pixels
+    maxTime: 500,         // Maximum time for a swipe in ms
+    maxRotation: 30,      // Maximum card rotation in degrees
+    velocityThreshold: 0.5 // Velocity threshold for quick swipes
+  },
+
+  // Active swipe states (keyed by element)
+  _swipeStates: new Map(),
+
+  // Initialize swipe gesture on an element
+  initSwipeGesture(element, callbacks) {
+    if (!element) return;
+
+    const state = {
+      isActive: false,
+      startX: 0,
+      startY: 0,
+      startTime: 0,
+      currentX: 0,
+      currentY: 0,
+      velocityX: 0,
+      lastMoveTime: 0
+    };
+
+    this._swipeStates.set(element, state);
+
+    const handleStart = (e) => {
+      const pos = this.getPointerPosition(e);
+      state.isActive = true;
+      state.startX = pos.x;
+      state.startY = pos.y;
+      state.currentX = pos.x;
+      state.currentY = pos.y;
+      state.startTime = Date.now();
+      state.lastMoveTime = state.startTime;
+      state.velocityX = 0;
+
+      if (callbacks.onDragStart) {
+        callbacks.onDragStart({ x: pos.x, y: pos.y });
+      }
+    };
+
+    const handleMove = (e) => {
+      if (!state.isActive) return;
+      e.preventDefault();
+
+      const pos = this.getPointerPosition(e);
+      const now = Date.now();
+      const timeDelta = now - state.lastMoveTime;
+
+      // Calculate velocity
+      if (timeDelta > 0) {
+        state.velocityX = (pos.x - state.currentX) / timeDelta;
+      }
+
+      state.currentX = pos.x;
+      state.currentY = pos.y;
+      state.lastMoveTime = now;
+
+      const deltaX = state.currentX - state.startX;
+      const deltaY = state.currentY - state.startY;
+
+      if (callbacks.onDrag) {
+        callbacks.onDrag({
+          deltaX,
+          deltaY,
+          velocityX: state.velocityX,
+          progress: Math.min(Math.abs(deltaX) / this.swipeConfig.minDistance, 1)
+        });
+      }
+    };
+
+    const handleEnd = (e) => {
+      if (!state.isActive) return;
+      state.isActive = false;
+
+      const pos = this.getPointerPosition(e);
+      const deltaX = pos.x - state.startX;
+      const deltaY = pos.y - state.startY;
+      const elapsed = Date.now() - state.startTime;
+      const distance = Math.abs(deltaX);
+
+      // Determine if this was a valid swipe
+      const isQuickSwipe = Math.abs(state.velocityX) > this.swipeConfig.velocityThreshold;
+      const isLongSwipe = distance >= this.swipeConfig.minDistance && elapsed < this.swipeConfig.maxTime;
+      const isValidSwipe = isQuickSwipe || isLongSwipe;
+
+      if (isValidSwipe) {
+        const direction = deltaX < 0 ? 'left' : 'right';
+        if (direction === 'left' && callbacks.onSwipeLeft) {
+          callbacks.onSwipeLeft({ deltaX, deltaY, velocityX: state.velocityX });
+        } else if (direction === 'right' && callbacks.onSwipeRight) {
+          callbacks.onSwipeRight({ deltaX, deltaY, velocityX: state.velocityX });
+        }
+      } else {
+        // Incomplete swipe - snap back
+        if (callbacks.onDragEnd) {
+          callbacks.onDragEnd({ deltaX, deltaY, cancelled: true });
+        }
+      }
+    };
+
+    // Touch events
+    element.addEventListener('touchstart', handleStart, { passive: true });
+    element.addEventListener('touchmove', handleMove, { passive: false });
+    element.addEventListener('touchend', handleEnd, { passive: true });
+    element.addEventListener('touchcancel', handleEnd, { passive: true });
+
+    // Mouse events for desktop testing
+    element.addEventListener('mousedown', handleStart);
+    element.addEventListener('mousemove', handleMove);
+    element.addEventListener('mouseup', handleEnd);
+    element.addEventListener('mouseleave', handleEnd);
+
+    // Store handlers for cleanup
+    element._swipeHandlers = { handleStart, handleMove, handleEnd };
+  },
+
+  // Remove swipe gesture from an element
+  removeSwipeGesture(element) {
+    if (!element || !element._swipeHandlers) return;
+
+    const { handleStart, handleMove, handleEnd } = element._swipeHandlers;
+
+    element.removeEventListener('touchstart', handleStart);
+    element.removeEventListener('touchmove', handleMove);
+    element.removeEventListener('touchend', handleEnd);
+    element.removeEventListener('touchcancel', handleEnd);
+    element.removeEventListener('mousedown', handleStart);
+    element.removeEventListener('mousemove', handleMove);
+    element.removeEventListener('mouseup', handleEnd);
+    element.removeEventListener('mouseleave', handleEnd);
+
+    this._swipeStates.delete(element);
+    delete element._swipeHandlers;
+  }
+};
+
+// =====================================================
+// SWIPE CARD MANAGER (Portrait mode choice selection)
+// =====================================================
+const SwipeCardManager = {
+  container: null,
+  card: null,
+  leftIndicator: null,
+  rightIndicator: null,
+  isVisible: false,
+  choiceCallback: null,
+  choiceA: null,
+  choiceB: null,
+
+  // Check if we should use swipe mode (portrait orientation on mobile)
+  shouldUseSwipeMode() {
+    const isPortrait = window.innerHeight > window.innerWidth;
+    const isMobile = window.innerWidth <= 900;
+    return isPortrait && isMobile;
+  },
+
+  // Initialize the swipe card manager
+  init() {
+    // Remove existing container if present
+    if (this.container) {
+      this.container.remove();
+    }
+
+    // Create container
+    this.container = document.createElement('div');
+    this.container.id = 'swipe-card-container';
+    this.container.style.cssText = `
+      position: fixed;
+      left: 50%;
+      top: 45%;
+      transform: translate(-50%, -50%);
+      width: min(85vw, 350px);
+      z-index: 60;
+      display: none;
+    `;
+
+    // Create swipe indicators
+    this.leftIndicator = document.createElement('div');
+    this.leftIndicator.className = 'swipe-indicator left';
+    this.leftIndicator.innerHTML = '◀';
+    this.leftIndicator.style.cssText = `
+      position: absolute;
+      left: -50px;
+      top: 50%;
+      transform: translateY(-50%);
+      font-size: 36px;
+      color: #e94560;
+      opacity: 0;
+      transition: opacity 0.15s ease;
+      pointer-events: none;
+    `;
+
+    this.rightIndicator = document.createElement('div');
+    this.rightIndicator.className = 'swipe-indicator right';
+    this.rightIndicator.innerHTML = '▶';
+    this.rightIndicator.style.cssText = `
+      position: absolute;
+      right: -50px;
+      top: 50%;
+      transform: translateY(-50%);
+      font-size: 36px;
+      color: #4ecdc4;
+      opacity: 0;
+      transition: opacity 0.15s ease;
+      pointer-events: none;
+    `;
+
+    // Create the card
+    this.card = document.createElement('div');
+    this.card.id = 'swipe-card';
+    this.card.style.cssText = `
+      width: 100%;
+      background: rgba(20, 20, 30, 0.95);
+      border: 3px solid #FFD700;
+      border-radius: 15px;
+      padding: 20px;
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5);
+      cursor: grab;
+      user-select: none;
+      -webkit-user-select: none;
+    `;
+
+    this.container.appendChild(this.leftIndicator);
+    this.container.appendChild(this.rightIndicator);
+    this.container.appendChild(this.card);
+    document.body.appendChild(this.container);
+
+    // Setup swipe gesture
+    this._setupSwipeGesture();
+
+    // Listen for orientation changes
+    window.addEventListener('resize', () => this._handleOrientationChange());
+    window.addEventListener('orientationchange', () => this._handleOrientationChange());
+  },
+
+  // Create the card content
+  _createCardContent(choiceA, choiceB) {
+    const formatStats = (opt) => {
+      const pts = (opt.pts >= 0 ? '+' : '') + opt.pts + ' pts';
+      const hp = (opt.hp >= 0 ? '+' : '') + opt.hp + ' HP';
+      return `(${pts}, ${hp})`;
+    };
+
+    return `
+      <div class="swipe-choice-section left" style="
+        padding: 15px 10px;
+        margin: 5px 0;
+        border-radius: 8px;
+        background: rgba(255, 255, 255, 0.05);
+        border-left: 4px solid #e94560;
+      ">
+        <div class="swipe-direction-label" style="
+          font-size: 10px;
+          font-weight: bold;
+          text-transform: uppercase;
+          letter-spacing: 1px;
+          margin-bottom: 8px;
+          opacity: 0.7;
+          color: #e94560;
+        ">← SWIPE LEFT</div>
+        <div class="swipe-choice-text" style="
+          color: #F5DEB3;
+          font-family: Georgia, serif;
+          font-size: 14px;
+          line-height: 1.4;
+          margin-bottom: 8px;
+        ">${choiceA.text}</div>
+        <div class="swipe-choice-stats" style="
+          color: #FFD700;
+          font-size: 12px;
+          font-family: Arial, sans-serif;
+        ">${formatStats(choiceA)}</div>
+      </div>
+
+      <div class="swipe-divider" style="
+        height: 1px;
+        background: linear-gradient(90deg, transparent, #FFD700, transparent);
+        margin: 10px 0;
+      "></div>
+
+      <div class="swipe-choice-section right" style="
+        padding: 15px 10px;
+        margin: 5px 0;
+        border-radius: 8px;
+        background: rgba(255, 255, 255, 0.05);
+        border-left: 4px solid #4ecdc4;
+      ">
+        <div class="swipe-direction-label" style="
+          font-size: 10px;
+          font-weight: bold;
+          text-transform: uppercase;
+          letter-spacing: 1px;
+          margin-bottom: 8px;
+          opacity: 0.7;
+          color: #4ecdc4;
+        ">SWIPE RIGHT →</div>
+        <div class="swipe-choice-text" style="
+          color: #F5DEB3;
+          font-family: Georgia, serif;
+          font-size: 14px;
+          line-height: 1.4;
+          margin-bottom: 8px;
+        ">${choiceB.text}</div>
+        <div class="swipe-choice-stats" style="
+          color: #FFD700;
+          font-size: 12px;
+          font-family: Arial, sans-serif;
+        ">${formatStats(choiceB)}</div>
+      </div>
+
+      <div class="swipe-hints" style="
+        display: flex;
+        justify-content: space-between;
+        margin-top: 15px;
+        padding: 0 5px;
+        font-family: Arial, sans-serif;
+        font-size: 11px;
+        font-weight: bold;
+      ">
+        <span class="swipe-hint-left" style="color: #e94560;">◀ CHOICE A</span>
+        <span class="swipe-hint-right" style="color: #4ecdc4;">CHOICE B ▶</span>
+      </div>
+    `;
+  },
+
+  // Setup swipe gesture handling
+  _setupSwipeGesture() {
+    InputHandler.initSwipeGesture(this.card, {
+      onDragStart: () => {
+        this.card.style.transition = 'none';
+        this.card.style.cursor = 'grabbing';
+      },
+
+      onDrag: (data) => {
+        const { deltaX, progress } = data;
+        const maxRotation = InputHandler.swipeConfig.maxRotation;
+        const rotation = (deltaX / 200) * maxRotation;
+        const clampedRotation = Math.max(-maxRotation, Math.min(maxRotation, rotation));
+
+        this.card.style.transform = `translateX(${deltaX}px) rotate(${clampedRotation}deg)`;
+
+        // Show directional indicators based on swipe direction
+        if (deltaX < -20) {
+          this.leftIndicator.style.opacity = Math.min(progress, 1);
+          this.rightIndicator.style.opacity = 0;
+        } else if (deltaX > 20) {
+          this.rightIndicator.style.opacity = Math.min(progress, 1);
+          this.leftIndicator.style.opacity = 0;
+        } else {
+          this.leftIndicator.style.opacity = 0;
+          this.rightIndicator.style.opacity = 0;
+        }
+      },
+
+      onDragEnd: (data) => {
+        // Snap back animation
+        this.card.style.transition = 'transform 0.2s ease-out';
+        this.card.style.transform = 'translateX(0) rotate(0deg)';
+        this.card.style.cursor = 'grab';
+        this.leftIndicator.style.opacity = 0;
+        this.rightIndicator.style.opacity = 0;
+      },
+
+      onSwipeLeft: (data) => {
+        this._handleSwipe('left', data);
+      },
+
+      onSwipeRight: (data) => {
+        this._handleSwipe('right', data);
+      }
+    });
+  },
+
+  // Handle a completed swipe
+  _handleSwipe(direction, data) {
+    // Exit animation
+    this.card.style.transition = 'transform 0.3s ease-out, opacity 0.3s ease-out';
+
+    if (direction === 'left') {
+      this.card.style.transform = 'translateX(-150vw) rotate(-30deg)';
+      this.leftIndicator.style.opacity = 1;
+    } else {
+      this.card.style.transform = 'translateX(150vw) rotate(30deg)';
+      this.rightIndicator.style.opacity = 1;
+    }
+    this.card.style.opacity = '0';
+
+    // Trigger callback after animation
+    setTimeout(() => {
+      // Left = Choice A (index 0), Right = Choice B (index 1)
+      const choiceIndex = direction === 'left' ? 0 : 1;
+      if (this.choiceCallback) {
+        this.choiceCallback(choiceIndex);
+      }
+      this.hide();
+    }, 300);
+  },
+
+  // Show the swipe card with choices
+  show(choiceA, choiceB, callback) {
+    if (!this.container) {
+      this.init();
+    }
+
+    this.choiceA = choiceA;
+    this.choiceB = choiceB;
+    this.choiceCallback = callback;
+
+    // Reset card state
+    this.card.style.transition = 'none';
+    this.card.style.transform = 'translateX(0) rotate(0deg)';
+    this.card.style.opacity = '1';
+    this.leftIndicator.style.opacity = 0;
+    this.rightIndicator.style.opacity = 0;
+
+    // Populate content
+    this.card.innerHTML = this._createCardContent(choiceA, choiceB);
+
+    // Show container
+    this.container.style.display = 'block';
+    this.isVisible = true;
+
+    // Force reflow before enabling transitions
+    this.card.offsetHeight;
+    this.card.style.transition = 'transform 0.1s ease-out';
+  },
+
+  // Hide the swipe card
+  hide() {
+    if (this.container) {
+      this.container.style.display = 'none';
+    }
+    this.isVisible = false;
+    this.choiceCallback = null;
+  },
+
+  // Handle orientation change
+  _handleOrientationChange() {
+    // If we're no longer in swipe mode but card is visible, hide it
+    if (!this.shouldUseSwipeMode() && this.isVisible) {
+      this.hide();
+    }
+  },
+
+  // Cleanup
+  destroy() {
+    if (this.card) {
+      InputHandler.removeSwipeGesture(this.card);
+    }
+    if (this.container) {
+      this.container.remove();
+      this.container = null;
+    }
+    this.card = null;
+    this.leftIndicator = null;
+    this.rightIndicator = null;
+    this.isVisible = false;
   }
 };
 
@@ -2821,12 +3724,58 @@ class LevelScene extends Phaser.Scene {
     // Set up DOM-based choice frames
     this.setupChoiceFrames();
 
+    // Setup orientation change handler
+    this._orientationHandler = () => this._handleOrientationChange();
+    window.addEventListener('resize', this._orientationHandler);
+    window.addEventListener('orientationchange', this._orientationHandler);
+    this._lastOrientation = SwipeCardManager.shouldUseSwipeMode() ? 'portrait' : 'landscape';
+
     // Next level uses DOM image button (btn-next). It will be shown on level completion.
 
     // Start
     this.generateJunctions();
     this.junctionIndex = 0;
     this.showJunction();
+  }
+
+  // Handle orientation changes during gameplay
+  _handleOrientationChange() {
+    const isPortrait = SwipeCardManager.shouldUseSwipeMode();
+    const newOrientation = isPortrait ? 'portrait' : 'landscape';
+
+    // Only react if orientation actually changed
+    if (newOrientation === this._lastOrientation) return;
+    this._lastOrientation = newOrientation;
+
+    // If we're in the middle of showing a junction (not showing consequence)
+    const consContainer = document.getElementById('consequence-container');
+    const isShowingConsequence = consContainer && consContainer.style.display === 'block';
+
+    if (!isShowingConsequence && this.junctionIndex < this.junctions.length) {
+      const j = this.junctions[this.junctionIndex];
+      const choicesContainer = document.getElementById('choices-container');
+
+      if (isPortrait) {
+        // Switched to portrait: hide traditional choices, show swipe card
+        if (choicesContainer) choicesContainer.style.display = 'none';
+        SwipeCardManager.show(j.opts[0], j.opts[1], (idx) => this.handleChoice(idx));
+      } else {
+        // Switched to landscape: hide swipe card, show traditional choices
+        SwipeCardManager.hide();
+        if (choicesContainer) choicesContainer.style.display = '';
+
+        // Re-populate and show choice frames
+        j.opts.forEach((opt, i) => {
+          const pts = (opt.pts >= 0 ? '+' : '') + opt.pts + ' pts';
+          const hp = (opt.hp >= 0 ? '+' : '') + opt.hp + ' HP';
+          const choiceText = document.getElementById(i === 0 ? 'choice-a-text' : 'choice-b-text');
+          if (choiceText) {
+            choiceText.innerHTML = `${opt.text}<br><span style="font-size:14px;color:#FFD700;">(${pts}, ${hp})</span>`;
+          }
+        });
+        this.enableChoiceFrames(true);
+      }
+    }
   }
 
   setupItemBar() {
@@ -3002,7 +3951,11 @@ class LevelScene extends Phaser.Scene {
   }
 
   setupChoiceFrames() {
-    // Set up click/touch handlers for DOM choice frames using InputHandler
+    // Initialize SwipeCardManager for portrait mode
+    SwipeCardManager.init();
+
+    // In portrait swipe mode, traditional choice frames are hidden via CSS
+    // Still set up click handlers for landscape mode
     const choiceA = UIManager.get('choice-a-frame');
     const choiceB = UIManager.get('choice-b-frame');
 
@@ -3068,19 +4021,32 @@ class LevelScene extends Phaser.Scene {
     const questionText = document.getElementById('question-text');
     if (questionText) questionText.textContent = j.prompt;
 
-    // Update DOM-based choice frames
-    j.opts.forEach((opt, i) => {
-      const pts = (opt.pts >= 0 ? '+' : '') + opt.pts + ' pts';
-      const hp = (opt.hp >= 0 ? '+' : '') + opt.hp + ' HP';
-      const choiceText = document.getElementById(i === 0 ? 'choice-a-text' : 'choice-b-text');
-      if (choiceText) {
-        choiceText.innerHTML = `${opt.text}<br><span style="font-size:14px;color:#FFD700;">(${pts}, ${hp})</span>`;
-      }
-    });
+    // Check if we should use swipe mode (portrait orientation)
+    if (SwipeCardManager.shouldUseSwipeMode()) {
+      // Portrait mode: show swipe card instead of traditional choices
+      this.showQuestionFrames(true);
+      // Hide the choices container (CSS also hides it, but ensure it)
+      const choicesContainer = document.getElementById('choices-container');
+      if (choicesContainer) choicesContainer.style.display = 'none';
 
-    // Show the frames and enable interaction
-    this.showQuestionFrames(true);
-    this.enableChoiceFrames(true);
+      // Show swipe card with callback to handleChoice
+      SwipeCardManager.show(j.opts[0], j.opts[1], (idx) => this.handleChoice(idx));
+    } else {
+      // Landscape mode: traditional side-by-side choices
+      // Update DOM-based choice frames
+      j.opts.forEach((opt, i) => {
+        const pts = (opt.pts >= 0 ? '+' : '') + opt.pts + ' pts';
+        const hp = (opt.hp >= 0 ? '+' : '') + opt.hp + ' HP';
+        const choiceText = document.getElementById(i === 0 ? 'choice-a-text' : 'choice-b-text');
+        if (choiceText) {
+          choiceText.innerHTML = `${opt.text}<br><span style="font-size:14px;color:#FFD700;">(${pts}, ${hp})</span>`;
+        }
+      });
+
+      // Show the frames and enable interaction
+      this.showQuestionFrames(true);
+      this.enableChoiceFrames(true);
+    }
 
     // Also keep Phaser text as fallback (hidden for now)
     this.promptText.setText(j.prompt).setVisible(false);
@@ -3136,6 +4102,9 @@ class LevelScene extends Phaser.Scene {
     this.promptText.setAlpha(0);
     const btnNextHide = document.getElementById('btn-next');
     if (btnNextHide) { btnNextHide.style.display='none'; btnNextHide.onclick=null; }
+
+    // Hide swipe card if in portrait mode
+    SwipeCardManager.hide();
 
     // Show consequence frame
     const consContainer = document.getElementById('consequence-container');
@@ -3200,6 +4169,9 @@ class LevelScene extends Phaser.Scene {
     });
   }
   onLevelComplete() {
+    // Hide swipe card if in portrait mode
+    SwipeCardManager.hide();
+
     const currentLevel = this.registry.get('level');
     const zoneId = this.registry.get('zone') || 1;
     const isPerfect = this.damageTaken === 0;
@@ -3455,6 +4427,16 @@ class LevelScene extends Phaser.Scene {
 
   // Cleanup event listeners when scene shuts down
   shutdown() {
+    // Clean up orientation change handlers
+    if (this._orientationHandler) {
+      window.removeEventListener('resize', this._orientationHandler);
+      window.removeEventListener('orientationchange', this._orientationHandler);
+      this._orientationHandler = null;
+    }
+
+    // Hide swipe card
+    SwipeCardManager.hide();
+
     // Clear choice frame handlers
     const choiceA = UIManager.get('choice-a-frame');
     const choiceB = UIManager.get('choice-b-frame');
