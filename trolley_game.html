@@ -589,19 +589,19 @@
         line-height: 1.2 !important;
       }
 
-      /* Zone progress tracker - compact at bottom with fixed height */
+      /* Zone progress tracker - spans from below choices to near screen bottom */
       #zone-progress-tracker {
-        top: auto !important;  /* Remove top positioning */
-        bottom: 5px !important;  /* 5px from screen bottom */
-        height: 50px !important;  /* Fixed compact height */
+        top: calc(140px + min(75px, 16vh) + 5px) !important;  /* 5px below choice boxes */
+        bottom: 10px !important;  /* 10px from screen bottom */
+        height: auto !important;  /* Height determined by top/bottom */
         width: min(85vw, 500px) !important;
       }
       #zone-progress-tracker > div:first-child {
-        /* Dark background with extra padding */
+        /* Dark background with padding */
         left: -10px !important;
-        top: -8px !important;
+        top: -5px !important;
         right: -10px !important;
-        bottom: -8px !important;
+        bottom: -5px !important;
       }
       #progress-trolley {
         width: 40px !important;
