@@ -1309,10 +1309,13 @@
       }
 
       /* Safe area - scaled down 20% vertically, 10% horizontally */
+      /* Original: top/bottom 8% (84% height), left/right 34% (32% width) */
+      /* 20% vertical reduction: 84% * 0.8 = 67.2% height → 16.4% insets */
+      /* 10% horizontal reduction: 32% * 0.9 = 28.8% width → 35.6% insets */
       #zone-detail-safe-area {
         top: 16% !important;
-        left: 12% !important;
-        right: 12% !important;
+        left: 36% !important;
+        right: 36% !important;
         bottom: 16% !important;
         overflow: hidden !important;
       }
@@ -5043,17 +5046,17 @@ class WorldMapScene extends Phaser.Scene {
         worldmapContainer.style.display = 'none';
         this.scene.start('MainMenuScene');
       };
-      // Portrait mode: top-left, 50% scale
+      // Portrait mode: top-left, 50% scale - use setProperty with important to override any CSS
       const isPortrait = window.innerHeight > window.innerWidth && window.innerWidth <= 900;
       console.log('[DEBUG WorldMap] isPortrait:', isPortrait);
       if (isPortrait) {
         console.log('[DEBUG WorldMap] Applying portrait positioning to menu button');
-        menuBtn.style.left = '8px';
-        menuBtn.style.top = '8px';
-        menuBtn.style.right = 'auto';
-        menuBtn.style.bottom = 'auto';
-        menuBtn.style.transform = 'scale(0.25)';
-        menuBtn.style.transformOrigin = 'top left';
+        menuBtn.style.setProperty('left', '8px', 'important');
+        menuBtn.style.setProperty('top', '8px', 'important');
+        menuBtn.style.setProperty('right', 'auto', 'important');
+        menuBtn.style.setProperty('bottom', 'auto', 'important');
+        menuBtn.style.setProperty('transform', 'scale(0.25)', 'important');
+        menuBtn.style.setProperty('transform-origin', 'top left', 'important');
         console.log('[DEBUG WorldMap] Menu button styles applied:', menuBtn.style.cssText);
       }
     }
