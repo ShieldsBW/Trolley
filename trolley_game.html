@@ -1974,11 +1974,21 @@ const ZoneProgressTracker = {
   reset(maxStages = 5) {
     this.choices = [];
     this.maxStages = maxStages;
-    this.render();
+    // Reset transform values to defaults
+    this.renderScale = 1;
+    this.renderOffsetY = 0;
+    // Only render if container is visible (has dimensions)
+    if (this.container && this.container.offsetWidth > 0) {
+      this.render();
+    }
   },
 
   show() {
-    if (this.container) this.container.style.display = 'block';
+    if (this.container) {
+      this.container.style.display = 'block';
+      // Re-render now that container is visible and has dimensions
+      this.render();
+    }
   },
 
   hide() {
@@ -2842,7 +2852,9 @@ class LevelScene extends Phaser.Scene {
       const canUse = owned > 0 && (!itemConfig.onePerLevel || this.pointMultiplier === 1);
 
       if (canUse) {
-        btn.style.display = 'inline-block';
+        btn.style.display = 'block';
+        btn.style.width = '100%';
+        btn.style.minHeight = '32px'; // Minimum touch target
         btn.textContent = `${itemConfig.buttonLabel} (${owned})`;
         btn.style.background = itemConfig.buttonColor;
         btn.onclick = () => this.useConsumable(itemConfig.id, itemConfig.value);
