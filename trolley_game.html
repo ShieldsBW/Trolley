@@ -356,16 +356,6 @@
 
     /* Landscape orientation on mobile */
     @media screen and (max-height: 480px) and (orientation: landscape) {
-      #question-frame {
-        top: 80px !important;
-      }
-      #choices-container {
-        top: 280px !important;
-      }
-      #game-hud {
-        padding: 8px !important;
-      }
-
       /* Login screen - compact for landscape mobile */
       #login-container > div {
         top: 50% !important;
@@ -398,34 +388,56 @@
       #menu-logo {
         left: 5% !important;
         top: 5% !important;
-        width: min(250px, 35vw) !important;
+        width: min(220px, 30vw) !important;
       }
       #menu-welcome-display {
-        top: 28% !important;
-        font-size: 14px !important;
+        top: 45% !important;
+        left: 5% !important;
+        font-size: 12px !important;
+        transform: none !important;
+        text-align: left !important;
       }
       #menu-points-display {
-        top: 38% !important;
-        font-size: 14px !important;
+        top: 55% !important;
+        left: 5% !important;
+        font-size: 12px !important;
+        transform: none !important;
+        text-align: left !important;
       }
       #btn-worldmap {
-        top: 52% !important;
-        height: 60px !important;
+        top: 50% !important;
+        left: 50% !important;
+        transform: translateX(-50%) !important;
+        height: 55px !important;
       }
       #btn-shop, #btn-leaderboard, #btn-profile {
-        top: 75% !important;
-        height: 40px !important;
+        top: 78% !important;
+        height: 35px !important;
+      }
+      #btn-shop {
+        left: calc(50% - 100px) !important;
+      }
+      #btn-leaderboard {
+        left: 50% !important;
+      }
+      #btn-profile {
+        left: calc(50% + 100px) !important;
       }
       #btn-logout {
-        bottom: 8px !important;
-        height: 35px !important;
+        bottom: 5px !important;
+        left: 50% !important;
+        height: 30px !important;
+      }
+      /* Hide quit button on mobile */
+      #btn-quit {
+        display: none !important;
       }
 
       /* World map - adjust for landscape */
       #worldmap-title {
-        font-size: 20px !important;
-        left: 15px !important;
-        top: 10px !important;
+        font-size: 18px !important;
+        left: 10px !important;
+        top: 8px !important;
       }
       #zone-markers {
         width: 48% !important;
@@ -437,86 +449,352 @@
         overflow: visible !important;
       }
       .zone-marker {
-        width: min(60px, 15vw) !important;
-        height: min(60px, 15vw) !important;
+        width: min(55px, 14vw) !important;
+        height: min(55px, 14vw) !important;
       }
+      /* Zone detail frame - scaled to 80% */
       #zone-detail-frame {
-        width: min(380px, 48vw) !important;
-        right: 1% !important;
-        height: calc(var(--vh, 1vh) * 85) !important;
+        width: min(300px, 40vw) !important;
+        right: 2% !important;
+        height: calc(var(--vh, 1vh) * 80) !important;
       }
+      /* Safe zone - 75% of frame */
       #zone-detail-safe-area {
-        top: 12% !important;
-        left: 28% !important;
-        right: 28% !important;
-        bottom: 12% !important;
+        top: 12.5% !important;
+        left: 12.5% !important;
+        right: 12.5% !important;
+        bottom: 12.5% !important;
       }
       #zone-detail-safe-area h2 {
-        font-size: 18px !important;
+        font-size: 14px !important;
+        margin-bottom: 4px !important;
       }
       #zone-detail-safe-area p {
+        font-size: 10px !important;
+        margin-bottom: 6px !important;
+      }
+      #zone-detail-safe-area > div {
+        margin-bottom: 6px !important;
+      }
+      #zone-detail-safe-area span {
+        font-size: 9px !important;
+      }
+      #zone-detail-safe-area > div > div {
         font-size: 11px !important;
       }
-
-      /* Zone progress tracker - compact */
-      #zone-progress-tracker {
-        height: 50px !important;
-        bottom: 2% !important;
-        width: min(85vw, 600px) !important;
+      #btn-zone-start {
+        width: 120px !important;
+        margin-top: 5px !important;
       }
-      #progress-trolley {
-        width: 40px !important;
-        height: 40px !important;
+      .difficulty-btn {
+        width: 28px !important;
+        height: 28px !important;
+        font-size: 12px !important;
       }
-
-      /* Level complete text and next level button */
-      #level-complete-text {
-        top: 20% !important;
-        font-size: clamp(18px, 4vh, 28px) !important;
-        max-width: 80vw !important;
-      }
-      #btn-next {
-        top: 45% !important;
-        height: 50px !important;
-        width: auto !important;
+      #zone-difficulty-multiplier {
+        font-size: 10px !important;
       }
 
       /* Game HUD - more compact for mobile */
       #game-hud {
-        top: 5px !important;
+        top: 3px !important;
         left: 5px !important;
         right: 5px !important;
-        padding: 5px 10px !important;
-        font-size: 12px !important;
+        padding: 4px 8px !important;
+        font-size: 11px !important;
       }
       #hud-health, #hud-points {
-        font-size: 14px !important;
+        font-size: 12px !important;
+        margin-bottom: 2px !important;
       }
       #hud-level, #hud-stage, #hud-zone {
-        font-size: 12px !important;
+        font-size: 10px !important;
+        margin-bottom: 1px !important;
       }
 
-      /* Question and choice frames */
+      /* Question frame - scaled down 10% horizontally and vertically */
       #question-frame {
-        top: 60px !important;
-        width: min(90vw, 500px) !important;
-        height: min(120px, 25vh) !important;
+        top: 45px !important;
+        width: min(81vw, 450px) !important;
+        height: min(100px, 22vh) !important;
       }
+      #question-safe-area {
+        top: 16% !important;
+        left: 7% !important;
+        right: 7% !important;
+        bottom: 16% !important;
+      }
+      #question-text {
+        font-size: clamp(11px, 2.5vw, 16px) !important;
+        line-height: 1.3 !important;
+      }
+
+      /* Choice boxes - raised up, scaled to 75% width */
       #choices-container {
-        top: auto !important;
-        bottom: 70px !important;
+        top: 160px !important;
+        bottom: auto !important;
       }
+      #choice-a-frame, #choice-b-frame,
       .choice-frame {
-        width: min(42vw, 200px) !important;
-        height: min(100px, 18vh) !important;
+        width: min(31vw, 150px) !important;
+        height: min(75px, 16vh) !important;
+      }
+      #choice-a-safe-area, #choice-b-safe-area {
+        top: 16% !important;
+        left: 8% !important;
+        right: 8% !important;
+        bottom: 16% !important;
+      }
+      #choice-a-text, #choice-b-text {
+        font-size: clamp(10px, 2vw, 13px) !important;
+        line-height: 1.2 !important;
+      }
+
+      /* Zone progress tracker - visible at bottom */
+      #zone-progress-tracker {
+        height: 45px !important;
+        bottom: 5px !important;
+        width: min(80vw, 550px) !important;
+        display: flex !important;
+      }
+      #progress-trolley {
+        width: 35px !important;
+        height: 35px !important;
+      }
+
+      /* Level complete text and next level button */
+      #level-complete-text {
+        top: 15% !important;
+        font-size: clamp(16px, 3.5vh, 24px) !important;
+        max-width: 75vw !important;
+      }
+      #btn-next {
+        top: 40% !important;
+        height: 45px !important;
+        width: auto !important;
+      }
+
+      /* Consequence frame - scaled up 20% */
+      #consequence-frame {
+        height: calc(var(--vh, 1vh) * 72) !important;
+        width: calc(var(--vh, 1vh) * 72 * 1.5) !important;
+      }
+      /* Consequence safe area - scaled down 5% vertically */
+      #consequence-safe-area {
+        top: 20% !important;
+        bottom: 13% !important;
+      }
+      #consequence-text {
+        font-size: clamp(14px, 2.5vh, 20px) !important;
+      }
+      #consequence-stats {
+        font-size: clamp(12px, 2vh, 16px) !important;
+      }
+
+      /* Zone complete popup - similar scaling */
+      #zone-complete-frame {
+        height: calc(var(--vh, 1vh) * 72) !important;
+        width: calc(var(--vh, 1vh) * 72 * 1.5) !important;
+      }
+      #zone-complete-safe-area {
+        top: 20% !important;
+        bottom: 13% !important;
+      }
+      #zone-complete-title {
+        font-size: clamp(20px, 4vh, 32px) !important;
+      }
+      #zone-complete-subtitle {
+        font-size: clamp(12px, 2.5vh, 18px) !important;
       }
 
       /* Menu button position */
       #btn-menu {
-        right: 8px !important;
-        bottom: 8px !important;
-        transform: scale(0.4) !important;
+        right: 6px !important;
+        bottom: 6px !important;
+        transform: scale(0.35) !important;
         transform-origin: bottom right !important;
+      }
+
+      /* Game Over screen - redesigned for landscape */
+      #go-title {
+        left: 15% !important;
+        top: 20% !important;
+        transform: none !important;
+        height: auto !important;
+        width: min(30vw, 250px) !important;
+      }
+      #go-total-points {
+        left: 15% !important;
+        top: 55% !important;
+        transform: none !important;
+        text-align: left !important;
+        font-size: 18px !important;
+      }
+      #go-btn-container {
+        left: 70% !important;
+        top: 50% !important;
+        transform: translate(-50%, -50%) !important;
+        flex-direction: column !important;
+        gap: 8px !important;
+        width: auto !important;
+      }
+      #go-btn-container img {
+        width: min(180px, 25vw) !important;
+        height: auto !important;
+      }
+
+      /* Shop page - landscape layout */
+      #shop-frame {
+        width: calc(var(--vh, 1vh) * 85 * 1.2) !important;
+        height: calc(var(--vh, 1vh) * 85) !important;
+      }
+      #shop-safe-area {
+        top: 8% !important;
+        left: 8% !important;
+        right: 8% !important;
+        bottom: 8% !important;
+      }
+      #shop-title {
+        font-size: clamp(18px, 4vh, 28px) !important;
+        margin-bottom: 0.5vh !important;
+      }
+      #shop-points {
+        font-size: clamp(11px, 2vh, 14px) !important;
+        margin-bottom: 0.5vh !important;
+      }
+      #shop-tabs button {
+        padding: 5px 12px !important;
+        font-size: clamp(10px, 1.8vh, 13px) !important;
+      }
+      #shop-items {
+        padding: 6px !important;
+      }
+      #shop-items-grid > div {
+        width: calc(33% - 8px) !important;
+        min-width: 90px !important;
+        max-width: 120px !important;
+        margin: 3px !important;
+        padding: 6px !important;
+      }
+      #shop-items-grid > div img {
+        width: 40px !important;
+        height: 40px !important;
+      }
+      #shop-items-grid > div span {
+        font-size: 10px !important;
+      }
+      #shop-items-grid > div button {
+        padding: 4px 8px !important;
+        font-size: 10px !important;
+      }
+      #shop-pagination {
+        padding-top: 5px !important;
+        margin-top: 5px !important;
+      }
+      #shop-pagination button {
+        padding: 3px 8px !important;
+        font-size: 12px !important;
+      }
+      #shop-page-info {
+        font-size: 10px !important;
+      }
+
+      /* Profile page - landscape layout */
+      #profile-frame {
+        width: calc(var(--vh, 1vh) * 85 * 1.2) !important;
+        height: calc(var(--vh, 1vh) * 85) !important;
+      }
+      #profile-safe-area {
+        top: 8% !important;
+        left: 8% !important;
+        right: 8% !important;
+        bottom: 8% !important;
+      }
+      #profile-title {
+        font-size: clamp(18px, 4vh, 28px) !important;
+        margin-bottom: 0.5vh !important;
+      }
+      #profile-tabs button {
+        padding: 5px 10px !important;
+        font-size: clamp(9px, 1.6vh, 12px) !important;
+      }
+      #profile-tab-content {
+        padding: 8px !important;
+        font-size: 11px !important;
+      }
+      #profile-tab-content h3 {
+        font-size: 14px !important;
+        margin: 8px 0 4px 0 !important;
+      }
+      #profile-tab-content > div {
+        margin-bottom: 4px !important;
+      }
+
+      /* Leaderboard page - landscape layout */
+      #leaderboard-frame {
+        width: calc(var(--vh, 1vh) * 85 * 1.2) !important;
+        height: calc(var(--vh, 1vh) * 85) !important;
+      }
+      #leaderboard-safe-area {
+        top: 8% !important;
+        left: 8% !important;
+        right: 8% !important;
+        bottom: 8% !important;
+      }
+      #leaderboard-title {
+        font-size: clamp(18px, 4vh, 28px) !important;
+        margin-bottom: 1vh !important;
+      }
+      #leaderboard-entries {
+        gap: 0.5vh !important;
+      }
+      #leaderboard-entries > div {
+        font-size: clamp(11px, 2vh, 14px) !important;
+        padding: 4px 8px !important;
+      }
+
+      /* Item bar - compact */
+      #item-bar {
+        bottom: 55px !important;
+        padding: 5px 10px !important;
+        font-size: 10px !important;
+      }
+      #item-bar button {
+        padding: 4px 8px !important;
+        font-size: 10px !important;
+      }
+      #items-used {
+        font-size: 9px !important;
+      }
+
+      /* Game inventory overlay */
+      #game-inventory-panel {
+        max-width: 280px !important;
+        padding: 12px !important;
+        max-height: 60vh !important;
+      }
+      #game-inventory-panel h2 {
+        font-size: 18px !important;
+        margin-bottom: 10px !important;
+      }
+      #game-inventory-items > div {
+        padding: 8px !important;
+      }
+      #game-inventory-limit {
+        font-size: 10px !important;
+      }
+      #game-inventory-close {
+        padding: 8px 16px !important;
+        font-size: 12px !important;
+      }
+      #hud-inventory-btn {
+        width: 32px !important;
+        height: 32px !important;
+        top: 70px !important;
+        right: 10px !important;
+      }
+      #hud-inventory-btn span {
+        font-size: 16px !important;
       }
     }
   </style>
