@@ -1380,65 +1380,85 @@
         left: 6% !important;
         right: 6% !important;
         bottom: 6% !important;
-        overflow-y: auto !important;
+        overflow: hidden !important;
       }
 
       /* Shop title smaller */
       #shop-safe-area h2, #profile-safe-area h2 {
-        font-size: 18px !important;
-        margin-bottom: 8px !important;
+        font-size: 16px !important;
+        margin-bottom: 6px !important;
+      }
+
+      /* Shop points display */
+      #shop-points {
+        font-size: 12px !important;
+        margin-bottom: 6px !important;
       }
 
       /* Shop tabs */
       #shop-tabs {
-        margin-bottom: 8px !important;
+        margin-bottom: 6px !important;
       }
 
       #shop-tabs button {
-        padding: 6px 12px !important;
-        font-size: 11px !important;
+        padding: 5px 10px !important;
+        font-size: 10px !important;
       }
 
-      /* Shop grid - 2 columns x 3 rows for 6 items */
+      /* Shop grid - 2 columns, no scroll - pagination handles overflow */
       #shop-items-grid {
         display: grid !important;
         grid-template-columns: repeat(2, 1fr) !important;
-        gap: 6px !important;
-        max-height: calc(100% - 80px) !important;
-        overflow-y: auto !important;
+        gap: 5px !important;
+        overflow: hidden !important;
       }
 
       .shop-item {
-        padding: 6px !important;
+        padding: 5px !important;
         min-height: auto !important;
       }
 
       .shop-item-name {
-        font-size: 10px !important;
+        font-size: 9px !important;
         margin-bottom: 2px !important;
       }
 
       .shop-item-desc {
-        font-size: 8px !important;
+        font-size: 7px !important;
         line-height: 1.2 !important;
-        margin-bottom: 4px !important;
+        margin-bottom: 3px !important;
       }
 
       .shop-item-price {
-        font-size: 9px !important;
-        margin-bottom: 4px !important;
+        font-size: 8px !important;
+        margin-bottom: 3px !important;
       }
 
       .shop-item button {
+        padding: 3px 6px !important;
+        font-size: 8px !important;
+        min-height: 22px !important;
+      }
+
+      /* Shop pagination */
+      #shop-pagination {
+        margin-top: 6px !important;
+      }
+
+      #shop-pagination button {
         padding: 4px 8px !important;
-        font-size: 9px !important;
-        min-height: 24px !important;
+        font-size: 10px !important;
+      }
+
+      #shop-page-info {
+        font-size: 10px !important;
       }
 
       /* Profile grid - 2 columns */
       #profile-items-grid {
         grid-template-columns: repeat(2, 1fr) !important;
-        gap: 6px !important;
+        gap: 5px !important;
+        overflow: hidden !important;
       }
 
       /* ========== LEADERBOARD PORTRAIT ========== */
@@ -5165,8 +5185,21 @@ class ShopScene extends Phaser.Scene {
 
     this.currentTab = 'cosmetics';
     this.currentPage = 0;
-    this.itemsPerPage = 6; // 2 rows x 3 columns to fill the grid
+    // Use 4 items per page in portrait mode (2x2), 6 in landscape
+    this.itemsPerPage = this._isPortraitMode() ? 4 : 6;
     this.renderShop();
+
+    // Update items per page on orientation change
+    this._orientationHandler = () => {
+      const newItemsPerPage = this._isPortraitMode() ? 4 : 6;
+      if (newItemsPerPage !== this.itemsPerPage) {
+        this.itemsPerPage = newItemsPerPage;
+        this.currentPage = 0;
+        this.renderShop();
+      }
+    };
+    window.addEventListener('resize', this._orientationHandler);
+    window.addEventListener('orientationchange', this._orientationHandler);
 
     // Setup tabs
     const tabCosmetics = document.getElementById('tab-cosmetics');
@@ -5474,6 +5507,20 @@ class ShopScene extends Phaser.Scene {
     // Clear and append fragment in single DOM operation (performance optimization)
     itemsGrid.innerHTML = '';
     itemsGrid.appendChild(fragment);
+  }
+
+  // Check if in portrait mode
+  _isPortraitMode() {
+    return window.innerHeight > window.innerWidth && window.innerWidth <= 900;
+  }
+
+  // Cleanup on scene shutdown
+  shutdown() {
+    if (this._orientationHandler) {
+      window.removeEventListener('resize', this._orientationHandler);
+      window.removeEventListener('orientationchange', this._orientationHandler);
+      this._orientationHandler = null;
+    }
   }
 }
 
