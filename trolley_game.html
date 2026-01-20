@@ -977,7 +977,7 @@
     /* ============================================
        PORTRAIT ORIENTATION SUPPORT (Mobile)
        ============================================ */
-    @media screen and (orientation: portrait) and (max-width: 900px) {
+    @media screen and (orientation: portrait) and (max-width: 1200px) {
       /* CSS Variables for portrait mode */
       :root {
         --swipe-card-width: min(85vw, 350px);
@@ -1308,15 +1308,15 @@
         outline: 3px solid lime !important;
       }
 
-      /* Safe area - scaled down 20% vertically, 10% horizontally */
-      /* Original: top/bottom 8% (84% height), left/right 34% (32% width) */
-      /* 20% vertical reduction: 84% * 0.8 = 67.2% height → 16.4% insets */
-      /* 10% horizontal reduction: 32% * 0.9 = 28.8% width → 35.6% insets */
+      /* Safe area - user requested: 20% smaller vertically, 10% wider horizontally from current */
+      /* Current: 68% height (16% insets), 28% width (36% insets) */
+      /* 20% smaller vertically: 68% * 0.8 = 54.4% → 23% insets */
+      /* 10% wider horizontally: 28% * 1.1 = 30.8% → 30% insets (rounded for visible change) */
       #zone-detail-safe-area {
-        top: 16% !important;
-        left: 36% !important;
-        right: 36% !important;
-        bottom: 16% !important;
+        top: 23% !important;
+        left: 30% !important;
+        right: 30% !important;
+        bottom: 23% !important;
         overflow: hidden !important;
       }
 
@@ -3225,7 +3225,7 @@ const SwipeCardManager = {
   // Check if we should use swipe mode (portrait orientation on mobile)
   shouldUseSwipeMode() {
     const isPortrait = window.innerHeight > window.innerWidth;
-    const isMobile = window.innerWidth <= 900;
+    const isMobile = window.innerWidth <= 1200;
     return isPortrait && isMobile;
   },
 
@@ -3864,7 +3864,7 @@ class LevelScene extends Phaser.Scene {
       domMenuBtn2.onclick = () => this.scene.start('MainMenuScene');
 
       // Portrait mode: top-left, smaller scale
-      if (window.innerHeight > window.innerWidth && window.innerWidth <= 900) {
+      if (window.innerHeight > window.innerWidth && window.innerWidth <= 1200) {
         domMenuBtn2.style.left = '8px';
         domMenuBtn2.style.top = '8px';
         domMenuBtn2.style.right = 'auto';
@@ -5047,7 +5047,7 @@ class WorldMapScene extends Phaser.Scene {
         this.scene.start('MainMenuScene');
       };
       // Portrait mode: top-left, 50% scale - use setProperty with important to override any CSS
-      const isPortrait = window.innerHeight > window.innerWidth && window.innerWidth <= 900;
+      const isPortrait = window.innerHeight > window.innerWidth && window.innerWidth <= 1200;
       console.log('[DEBUG WorldMap] isPortrait:', isPortrait);
       if (isPortrait) {
         console.log('[DEBUG WorldMap] Applying portrait positioning to menu button');
@@ -5057,6 +5057,8 @@ class WorldMapScene extends Phaser.Scene {
         menuBtn.style.setProperty('bottom', 'auto', 'important');
         menuBtn.style.setProperty('transform', 'scale(0.25)', 'important');
         menuBtn.style.setProperty('transform-origin', 'top left', 'important');
+        // DEBUG: red border to show JS ran
+        menuBtn.style.setProperty('outline', '3px solid red', 'important');
         console.log('[DEBUG WorldMap] Menu button styles applied:', menuBtn.style.cssText);
       }
     }
@@ -5529,7 +5531,7 @@ class ShopScene extends Phaser.Scene {
 
   // Check if in portrait mode
   _isPortraitMode() {
-    return window.innerHeight > window.innerWidth && window.innerWidth <= 900;
+    return window.innerHeight > window.innerWidth && window.innerWidth <= 1200;
   }
 
   // Cleanup on scene shutdown
