@@ -992,13 +992,18 @@
         display: none !important;
       }
 
-      /* Question frame repositioned to top */
+      /* Question frame repositioned to top - below HUD */
       #question-frame {
-        top: var(--portrait-question-top) !important;
-        width: min(95vw, 600px) !important;
+        top: 14% !important;
+        width: min(92vw, 500px) !important;
         height: auto !important;
-        min-height: 100px !important;
+        min-height: 80px !important;
         transform: translateX(-50%) !important;
+      }
+
+      #question-text {
+        font-size: 14px !important;
+        line-height: 1.3 !important;
       }
 
       /* Zone progress tracker at bottom */
@@ -1009,88 +1014,148 @@
         transform: translateX(-50%) !important;
       }
 
-      /* Game HUD for portrait */
+      /* Trolley icon in progress tracker - 10% smaller */
+      #zone-progress-tracker .trolley-icon,
+      #zone-progress-tracker [style*="trolley"] {
+        transform: scale(0.9) !important;
+      }
+
+      /* Game HUD for portrait - reorganized layout */
       #game-hud {
         top: 3px !important;
         left: 50% !important;
         right: auto !important;
         transform: translateX(-50%) !important;
         width: auto !important;
-        max-width: 90vw !important;
-        padding: 5px 15px !important;
-        font-size: 12px !important;
+        max-width: 95vw !important;
+        padding: 4px 10px !important;
+        font-size: 11px !important;
+        display: flex !important;
+        flex-wrap: wrap !important;
+        justify-content: center !important;
+        gap: 2px 10px !important;
+      }
+
+      /* HUD items - keep on one line */
+      #game-hud span {
+        white-space: nowrap !important;
+      }
+
+      /* Order: Stage, Level on top row; Health, Points on bottom */
+      #hud-stage { order: 1 !important; }
+      #hud-level { order: 2 !important; }
+      #hud-health { order: 3 !important; }
+      #hud-points { order: 4 !important; }
+      #hud-zone { order: 5 !important; display: none !important; }
+
+      /* Menu button - top left like world map */
+      #btn-menu {
+        left: 8px !important;
+        top: 8px !important;
+        right: auto !important;
+        bottom: auto !important;
+        transform: scale(0.375) !important;
+        transform-origin: top left !important;
+      }
+
+      /* Inventory button - below menu button */
+      #hud-inventory-btn {
+        left: 8px !important;
+        top: 55px !important;
+        right: auto !important;
+        width: 28px !important;
+        height: 28px !important;
+      }
+
+      #hud-inventory-btn span {
+        font-size: 14px !important;
       }
 
       /* Item bar repositioned for portrait */
       #item-bar {
         left: 5px !important;
-        top: 80px !important;
+        top: 90px !important;
         bottom: auto !important;
         transform: none !important;
-        width: 55px !important;
-        padding: 5px !important;
-        font-size: 9px !important;
+        width: 50px !important;
+        padding: 4px !important;
+        font-size: 8px !important;
       }
 
-      /* Menu button - reposition for portrait */
-      #btn-menu {
-        right: 10px !important;
-        bottom: auto !important;
-        top: 60px !important;
-        transform: scale(0.4) !important;
-        transform-origin: top right !important;
+      /* Level Complete - next button above visualization */
+      #btn-next {
+        top: 35% !important;
+        z-index: 65 !important;
       }
 
-      /* Swipe card container styles */
+      /* Swipe card container styles - properly centered */
       #swipe-card-container {
         position: fixed !important;
         left: 50% !important;
-        top: var(--portrait-card-center) !important;
+        top: 52% !important;
         transform: translate(-50%, -50%) !important;
-        width: var(--swipe-card-width) !important;
+        width: min(94vw, 380px) !important;
         z-index: 60 !important;
         touch-action: pan-y !important;
       }
 
-      /* The swipeable card */
+      /* The swipeable card - side by side layout */
       #swipe-card {
         width: 100% !important;
         background: rgba(20, 20, 30, 0.95) !important;
         border: 3px solid #FFD700 !important;
-        border-radius: 15px !important;
-        padding: 20px !important;
+        border-radius: 12px !important;
+        padding: 12px !important;
         box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5) !important;
-        transition: transform 0.1s ease-out !important;
+        transition: transform 0.1s ease-out, border-color 0.15s ease !important;
         cursor: grab !important;
+        box-sizing: border-box !important;
       }
 
       #swipe-card:active {
         cursor: grabbing !important;
       }
 
-      /* Swipe card choice sections */
+      /* Side-by-side choices container */
+      .swipe-choices-row {
+        display: flex !important;
+        gap: 8px !important;
+      }
+
+      /* Swipe card choice sections - side by side */
       .swipe-choice-section {
-        padding: 15px 10px !important;
-        margin: 5px 0 !important;
+        flex: 1 !important;
+        padding: 10px 8px !important;
         border-radius: 8px !important;
         background: rgba(255, 255, 255, 0.05) !important;
+        min-height: 120px !important;
+        display: flex !important;
+        flex-direction: column !important;
       }
 
       .swipe-choice-section.left {
-        border-left: 4px solid #e94560 !important;
+        border-left: 3px solid #e94560 !important;
+        border-top: none !important;
       }
 
       .swipe-choice-section.right {
-        border-left: 4px solid #4ecdc4 !important;
+        border-right: 3px solid #4ecdc4 !important;
+        border-left: none !important;
       }
 
       .swipe-direction-label {
-        font-size: 10px !important;
+        font-size: 11px !important;
         font-weight: bold !important;
         text-transform: uppercase !important;
-        letter-spacing: 1px !important;
-        margin-bottom: 8px !important;
-        opacity: 0.7 !important;
+        letter-spacing: 0.5px !important;
+        margin-bottom: 6px !important;
+        display: flex !important;
+        align-items: center !important;
+        gap: 4px !important;
+      }
+
+      .swipe-direction-label .arrow {
+        font-size: 16px !important;
       }
 
       .swipe-choice-section.left .swipe-direction-label {
@@ -1099,121 +1164,90 @@
 
       .swipe-choice-section.right .swipe-direction-label {
         color: #4ecdc4 !important;
+        justify-content: flex-end !important;
       }
 
       .swipe-choice-text {
         color: #F5DEB3 !important;
         font-family: Georgia, serif !important;
-        font-size: 14px !important;
-        line-height: 1.4 !important;
-        margin-bottom: 8px !important;
+        font-size: 12px !important;
+        line-height: 1.3 !important;
+        margin-bottom: 6px !important;
+        flex: 1 !important;
       }
 
       .swipe-choice-stats {
         color: #FFD700 !important;
-        font-size: 12px !important;
+        font-size: 10px !important;
         font-family: Arial, sans-serif !important;
       }
 
-      /* Swipe indicators */
+      /* Swipe indicators - hidden in new layout */
       .swipe-indicator {
-        position: absolute !important;
-        top: 50% !important;
-        transform: translateY(-50%) !important;
-        font-size: 48px !important;
-        opacity: 0 !important;
-        transition: opacity 0.15s ease !important;
-        pointer-events: none !important;
-        z-index: 61 !important;
+        display: none !important;
       }
 
-      .swipe-indicator.left {
-        left: -60px !important;
-        color: #e94560 !important;
-      }
-
-      .swipe-indicator.right {
-        right: -60px !important;
-        color: #4ecdc4 !important;
-      }
-
-      /* Bottom direction hints */
+      /* Hide bottom hints - no longer needed */
       .swipe-hints {
-        display: flex !important;
-        justify-content: space-between !important;
-        margin-top: 15px !important;
-        padding: 0 5px !important;
-        font-family: Arial, sans-serif !important;
-        font-size: 11px !important;
-        font-weight: bold !important;
+        display: none !important;
       }
 
-      .swipe-hint-left {
-        color: #e94560 !important;
-      }
-
-      .swipe-hint-right {
-        color: #4ecdc4 !important;
-      }
-
-      /* Divider between choices */
+      /* Hide divider - no longer needed */
       .swipe-divider {
-        height: 1px !important;
-        background: linear-gradient(90deg, transparent, #FFD700, transparent) !important;
-        margin: 10px 0 !important;
+        display: none !important;
       }
 
       /* ========== MAIN MENU PORTRAIT ========== */
       #menu-logo {
         left: 50% !important;
-        top: 8% !important;
+        top: 5% !important;
         transform: translateX(-50%) !important;
-        width: min(80vw, 350px) !important;
+        width: min(70vw, 300px) !important;
       }
 
       #menu-welcome-display {
-        top: 28% !important;
+        top: 26% !important;
         left: 50% !important;
         transform: translateX(-50%) !important;
         text-align: center !important;
-        font-size: 14px !important;
+        font-size: 13px !important;
         width: 90vw !important;
       }
 
       #menu-points-display {
-        top: 34% !important;
+        top: 30% !important;
         left: 50% !important;
         transform: translateX(-50%) !important;
         text-align: center !important;
-        font-size: 14px !important;
+        font-size: 13px !important;
       }
 
       #btn-worldmap {
-        top: 45% !important;
+        top: 38% !important;
         left: 50% !important;
-        height: 70px !important;
+        height: 60px !important;
       }
 
       #btn-shop {
-        top: 58% !important;
+        top: 50% !important;
         left: 50% !important;
-        height: 45px !important;
+        height: 40px !important;
       }
 
       #btn-leaderboard {
-        top: 68% !important;
+        top: 58% !important;
         left: 50% !important;
-        height: 45px !important;
+        height: 40px !important;
       }
 
       #btn-profile {
-        top: 78% !important;
+        top: 66% !important;
         left: 50% !important;
-        height: 45px !important;
+        height: 40px !important;
       }
 
       #btn-logout {
-        bottom: 5% !important;
+        bottom: 8% !important;
         left: 50% !important;
         height: 35px !important;
       }
@@ -1227,24 +1261,51 @@
         top: 10px !important;
         left: 50% !important;
         transform: translateX(-50%) !important;
+        font-size: 16px !important;
+      }
+
+      /* Debug buttons - top right, side by side */
+      #debug-btn {
+        top: 8px !important;
+        right: 45px !important;
+        left: auto !important;
+        bottom: auto !important;
         font-size: 18px !important;
       }
 
-      /* Zone markers in horizontal row at top */
+      #debug-unlock-btn {
+        top: 8px !important;
+        right: 10px !important;
+        left: auto !important;
+        bottom: auto !important;
+        font-size: 18px !important;
+      }
+
+      /* Zone markers in horizontal row at top - shifted left for better centering */
       #zone-markers {
-        top: 8% !important;
-        left: 50% !important;
+        top: 6% !important;
+        left: calc(50% - 10px) !important;
         transform: translateX(-50%) !important;
-        width: 95vw !important;
-        height: 35% !important;
+        width: 90vw !important;
+        height: 32% !important;
         display: flex !important;
         justify-content: center !important;
         align-items: flex-start !important;
       }
 
       .zone-marker {
-        width: min(60px, 18vw) !important;
-        height: min(60px, 18vw) !important;
+        width: min(55px, 16vw) !important;
+        height: min(55px, 16vw) !important;
+      }
+
+      /* Menu button - top left, 75% scale */
+      #btn-menu {
+        left: 8px !important;
+        top: 8px !important;
+        right: auto !important;
+        bottom: auto !important;
+        transform: scale(0.375) !important;
+        transform-origin: top left !important;
       }
 
       /* Zone detail panel at bottom half */
@@ -1255,129 +1316,233 @@
         top: auto !important;
         bottom: 2% !important;
         transform: translateX(-50%) !important;
-        width: 95vw !important;
-        height: 50vh !important;
-        max-height: 50vh !important;
+        width: 92vw !important;
+        height: 52vh !important;
+        max-height: 52vh !important;
       }
 
+      /* Safe area includes zone name and start button */
       #zone-detail-safe-area {
-        top: 12% !important;
-        left: 10% !important;
-        right: 10% !important;
-        bottom: 15% !important;
+        top: 8% !important;
+        left: 8% !important;
+        right: 8% !important;
+        bottom: 8% !important;
+        overflow-y: auto !important;
       }
 
       #zone-detail-name {
-        font-size: 16px !important;
+        font-size: 14px !important;
+        margin-bottom: 4px !important;
       }
 
       #zone-detail-desc {
-        font-size: 11px !important;
+        font-size: 10px !important;
+        line-height: 1.3 !important;
+        margin-bottom: 6px !important;
+      }
+
+      #zone-detail-safe-area p {
+        font-size: 9px !important;
+        line-height: 1.2 !important;
+        margin-bottom: 4px !important;
+      }
+
+      #zone-detail-safe-area > div {
+        margin-bottom: 4px !important;
       }
 
       .difficulty-btn {
-        width: 30px !important;
-        height: 30px !important;
-        font-size: 14px !important;
+        width: 24px !important;
+        height: 24px !important;
+        font-size: 12px !important;
+        min-width: 24px !important;
+        min-height: 24px !important;
+      }
+
+      #zone-difficulty-multiplier {
+        font-size: 8px !important;
       }
 
       #btn-zone-start {
-        width: 100px !important;
+        width: 90px !important;
+        margin-top: 6px !important;
       }
 
       /* ========== SHOP/PROFILE PORTRAIT ========== */
       #shop-frame, #profile-frame {
         width: 95vw !important;
-        height: 90vh !important;
+        height: 92vh !important;
         max-width: 95vw !important;
       }
 
       #shop-safe-area, #profile-safe-area {
-        top: 8% !important;
-        left: 8% !important;
-        right: 8% !important;
-        bottom: 8% !important;
+        top: 6% !important;
+        left: 6% !important;
+        right: 6% !important;
+        bottom: 6% !important;
+        overflow-y: auto !important;
       }
 
-      /* Shop grid - 2 columns for portrait */
+      /* Shop title smaller */
+      #shop-safe-area h2, #profile-safe-area h2 {
+        font-size: 18px !important;
+        margin-bottom: 8px !important;
+      }
+
+      /* Shop tabs */
+      #shop-tabs {
+        margin-bottom: 8px !important;
+      }
+
+      #shop-tabs button {
+        padding: 6px 12px !important;
+        font-size: 11px !important;
+      }
+
+      /* Shop grid - 2 columns x 3 rows for 6 items */
       #shop-items-grid {
         display: grid !important;
         grid-template-columns: repeat(2, 1fr) !important;
-        gap: 10px !important;
+        gap: 6px !important;
+        max-height: calc(100% - 80px) !important;
+        overflow-y: auto !important;
       }
 
       .shop-item {
-        padding: 10px !important;
+        padding: 6px !important;
+        min-height: auto !important;
       }
 
       .shop-item-name {
-        font-size: 12px !important;
+        font-size: 10px !important;
+        margin-bottom: 2px !important;
+      }
+
+      .shop-item-desc {
+        font-size: 8px !important;
+        line-height: 1.2 !important;
+        margin-bottom: 4px !important;
       }
 
       .shop-item-price {
-        font-size: 11px !important;
+        font-size: 9px !important;
+        margin-bottom: 4px !important;
+      }
+
+      .shop-item button {
+        padding: 4px 8px !important;
+        font-size: 9px !important;
+        min-height: 24px !important;
       }
 
       /* Profile grid - 2 columns */
       #profile-items-grid {
         grid-template-columns: repeat(2, 1fr) !important;
+        gap: 6px !important;
       }
 
       /* ========== LEADERBOARD PORTRAIT ========== */
+      #leaderboard-container {
+        display: flex !important;
+        align-items: center !important;
+        justify-content: center !important;
+      }
+
       #leaderboard-frame {
+        position: relative !important;
+        left: auto !important;
+        top: auto !important;
+        transform: none !important;
         width: 90vw !important;
-        height: auto !important;
+        height: 85vh !important;
         max-height: 85vh !important;
       }
 
       #leaderboard-safe-area {
-        top: 10% !important;
-        bottom: 10% !important;
+        top: 12% !important;
+        left: 12% !important;
+        right: 12% !important;
+        bottom: 12% !important;
+      }
+
+      #leaderboard-title {
+        font-size: 20px !important;
+        margin-bottom: 10px !important;
+      }
+
+      #leaderboard-entries {
+        gap: 6px !important;
+        overflow-y: auto !important;
+      }
+
+      #leaderboard-entries > div {
+        font-size: 11px !important;
+        padding: 6px 10px !important;
+      }
+
+      #leaderboard-btn-container {
+        margin-top: 10px !important;
+      }
+
+      #leaderboard-btn-container img {
+        height: 40px !important;
       }
 
       /* ========== GAME OVER PORTRAIT ========== */
       #go-title {
-        top: 8% !important;
-        width: min(80vw, 300px) !important;
+        top: 5% !important;
+        width: min(70vw, 280px) !important;
         height: auto !important;
       }
 
       #go-total-points {
-        top: 22% !important;
-        font-size: 16px !important;
+        top: 20% !important;
+        font-size: 14px !important;
       }
 
       #btn-submit {
-        top: 35% !important;
-        width: min(150px, 40vw) !important;
+        top: 30% !important;
+        width: min(140px, 38vw) !important;
+      }
+
+      /* Menu button - centered below submit, 2x size */
+      #btn-menu {
+        left: 50% !important;
+        top: 42% !important;
+        right: auto !important;
+        bottom: auto !important;
+        transform: translateX(-50%) scale(1) !important;
+        transform-origin: center !important;
       }
 
       #btn-try {
-        top: 50% !important;
-        width: min(200px, 55vw) !important;
+        top: 55% !important;
+        width: min(180px, 50vw) !important;
       }
 
       #btn-worldmap-go {
-        top: 65% !important;
-        width: min(200px, 55vw) !important;
+        top: 68% !important;
+        width: min(180px, 50vw) !important;
       }
 
       /* ========== CONSEQUENCE POPUP PORTRAIT ========== */
       #consequence-frame {
-        width: 90vw !important;
-        max-width: 90vw !important;
+        width: 85vw !important;
+        max-width: 85vw !important;
+        transform: translateX(-50%) scaleY(0.9) !important;
       }
 
       #consequence-safe-area {
-        padding: 15px !important;
+        padding: 12px !important;
       }
 
       #consequence-text {
-        font-size: 14px !important;
+        font-size: 13px !important;
+        line-height: 1.3 !important;
       }
 
       #consequence-stats {
-        font-size: 12px !important;
+        font-size: 11px !important;
       }
     }
 
@@ -3145,6 +3310,9 @@ const SwipeCardManager = {
   },
 
   // Create the card content
+  // Default border color for reset
+  defaultBorderColor: '#FFD700',
+
   _createCardContent(choiceA, choiceB) {
     const formatStats = (opt) => {
       const pts = (opt.pts >= 0 ? '+' : '') + opt.pts + ' pts';
@@ -3152,84 +3320,79 @@ const SwipeCardManager = {
       return `(${pts}, ${hp})`;
     };
 
+    // New side-by-side layout
     return `
-      <div class="swipe-choice-section left" style="
-        padding: 15px 10px;
-        margin: 5px 0;
-        border-radius: 8px;
-        background: rgba(255, 255, 255, 0.05);
-        border-left: 4px solid #e94560;
-      ">
-        <div class="swipe-direction-label" style="
-          font-size: 10px;
-          font-weight: bold;
-          text-transform: uppercase;
-          letter-spacing: 1px;
-          margin-bottom: 8px;
-          opacity: 0.7;
-          color: #e94560;
-        ">← SWIPE LEFT</div>
-        <div class="swipe-choice-text" style="
-          color: #F5DEB3;
-          font-family: Georgia, serif;
-          font-size: 14px;
-          line-height: 1.4;
-          margin-bottom: 8px;
-        ">${choiceA.text}</div>
-        <div class="swipe-choice-stats" style="
-          color: #FFD700;
-          font-size: 12px;
-          font-family: Arial, sans-serif;
-        ">${formatStats(choiceA)}</div>
-      </div>
+      <div class="swipe-choices-row" style="display: flex; gap: 8px;">
+        <div class="swipe-choice-section left" style="
+          flex: 1;
+          padding: 10px 8px;
+          border-radius: 8px;
+          background: rgba(255, 255, 255, 0.05);
+          border-left: 3px solid #e94560;
+          display: flex;
+          flex-direction: column;
+        ">
+          <div class="swipe-direction-label" style="
+            font-size: 11px;
+            font-weight: bold;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 6px;
+            color: #e94560;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+          "><span class="arrow" style="font-size: 18px;">◀</span> LEFT</div>
+          <div class="swipe-choice-text" style="
+            color: #F5DEB3;
+            font-family: Georgia, serif;
+            font-size: 12px;
+            line-height: 1.3;
+            margin-bottom: 6px;
+            flex: 1;
+          ">${choiceA.text}</div>
+          <div class="swipe-choice-stats" style="
+            color: #FFD700;
+            font-size: 10px;
+            font-family: Arial, sans-serif;
+          ">${formatStats(choiceA)}</div>
+        </div>
 
-      <div class="swipe-divider" style="
-        height: 1px;
-        background: linear-gradient(90deg, transparent, #FFD700, transparent);
-        margin: 10px 0;
-      "></div>
-
-      <div class="swipe-choice-section right" style="
-        padding: 15px 10px;
-        margin: 5px 0;
-        border-radius: 8px;
-        background: rgba(255, 255, 255, 0.05);
-        border-left: 4px solid #4ecdc4;
-      ">
-        <div class="swipe-direction-label" style="
-          font-size: 10px;
-          font-weight: bold;
-          text-transform: uppercase;
-          letter-spacing: 1px;
-          margin-bottom: 8px;
-          opacity: 0.7;
-          color: #4ecdc4;
-        ">SWIPE RIGHT →</div>
-        <div class="swipe-choice-text" style="
-          color: #F5DEB3;
-          font-family: Georgia, serif;
-          font-size: 14px;
-          line-height: 1.4;
-          margin-bottom: 8px;
-        ">${choiceB.text}</div>
-        <div class="swipe-choice-stats" style="
-          color: #FFD700;
-          font-size: 12px;
-          font-family: Arial, sans-serif;
-        ">${formatStats(choiceB)}</div>
-      </div>
-
-      <div class="swipe-hints" style="
-        display: flex;
-        justify-content: space-between;
-        margin-top: 15px;
-        padding: 0 5px;
-        font-family: Arial, sans-serif;
-        font-size: 11px;
-        font-weight: bold;
-      ">
-        <span class="swipe-hint-left" style="color: #e94560;">◀ CHOICE A</span>
-        <span class="swipe-hint-right" style="color: #4ecdc4;">CHOICE B ▶</span>
+        <div class="swipe-choice-section right" style="
+          flex: 1;
+          padding: 10px 8px;
+          border-radius: 8px;
+          background: rgba(255, 255, 255, 0.05);
+          border-right: 3px solid #4ecdc4;
+          display: flex;
+          flex-direction: column;
+        ">
+          <div class="swipe-direction-label" style="
+            font-size: 11px;
+            font-weight: bold;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 6px;
+            color: #4ecdc4;
+            display: flex;
+            align-items: center;
+            justify-content: flex-end;
+            gap: 4px;
+          ">RIGHT <span class="arrow" style="font-size: 18px;">▶</span></div>
+          <div class="swipe-choice-text" style="
+            color: #F5DEB3;
+            font-family: Georgia, serif;
+            font-size: 12px;
+            line-height: 1.3;
+            margin-bottom: 6px;
+            flex: 1;
+          ">${choiceB.text}</div>
+          <div class="swipe-choice-stats" style="
+            color: #FFD700;
+            font-size: 10px;
+            font-family: Arial, sans-serif;
+          ">${formatStats(choiceB)}</div>
+        </div>
       </div>
     `;
   },
@@ -3250,26 +3413,33 @@ const SwipeCardManager = {
 
         this.card.style.transform = `translateX(${deltaX}px) rotate(${clampedRotation}deg)`;
 
-        // Show directional indicators based on swipe direction
+        // Tint border color based on swipe direction
         if (deltaX < -20) {
-          this.leftIndicator.style.opacity = Math.min(progress, 1);
-          this.rightIndicator.style.opacity = 0;
+          // Swiping left - red border
+          this.card.style.borderColor = '#e94560';
+          if (this.leftIndicator) this.leftIndicator.style.opacity = Math.min(progress, 1);
+          if (this.rightIndicator) this.rightIndicator.style.opacity = 0;
         } else if (deltaX > 20) {
-          this.rightIndicator.style.opacity = Math.min(progress, 1);
-          this.leftIndicator.style.opacity = 0;
+          // Swiping right - blue/teal border
+          this.card.style.borderColor = '#4ecdc4';
+          if (this.rightIndicator) this.rightIndicator.style.opacity = Math.min(progress, 1);
+          if (this.leftIndicator) this.leftIndicator.style.opacity = 0;
         } else {
-          this.leftIndicator.style.opacity = 0;
-          this.rightIndicator.style.opacity = 0;
+          // Neutral - reset to default gold
+          this.card.style.borderColor = this.defaultBorderColor;
+          if (this.leftIndicator) this.leftIndicator.style.opacity = 0;
+          if (this.rightIndicator) this.rightIndicator.style.opacity = 0;
         }
       },
 
       onDragEnd: (data) => {
-        // Snap back animation
-        this.card.style.transition = 'transform 0.2s ease-out';
+        // Snap back animation and reset border color
+        this.card.style.transition = 'transform 0.2s ease-out, border-color 0.15s ease';
         this.card.style.transform = 'translateX(0) rotate(0deg)';
+        this.card.style.borderColor = this.defaultBorderColor;
         this.card.style.cursor = 'grab';
-        this.leftIndicator.style.opacity = 0;
-        this.rightIndicator.style.opacity = 0;
+        if (this.leftIndicator) this.leftIndicator.style.opacity = 0;
+        if (this.rightIndicator) this.rightIndicator.style.opacity = 0;
       },
 
       onSwipeLeft: (data) => {
