@@ -1259,17 +1259,19 @@
         height: 60px !important;
       }
 
-      /* Shop and Profile side by side */
+      /* Shop and Profile side by side with 20px gap */
       #btn-shop {
         top: 56% !important;
-        left: 30% !important;
-        height: 40px !important;
+        left: calc(50% - 10px) !important;
+        transform: translateX(-100%) !important;
+        height: 52px !important;
       }
 
       #btn-profile {
         top: 56% !important;
-        left: 70% !important;
-        height: 40px !important;
+        left: calc(50% + 10px) !important;
+        transform: translateX(0%) !important;
+        height: 52px !important;
       }
 
       #btn-leaderboard {
