@@ -1082,8 +1082,18 @@
 
       /* Level Complete - next button above visualization */
       #btn-next {
-        top: 35% !important;
+        top: 40% !important;
         z-index: 65 !important;
+        width: min(50vw, 200px) !important;
+        height: auto !important;
+      }
+
+      /* Level complete text - position above button */
+      #level-complete-text {
+        top: 18% !important;
+        max-width: 85vw !important;
+        font-size: clamp(20px, 4vh, 32px) !important;
+        padding: 10px 15px !important;
       }
 
       /* Swipe card container styles - properly centered */
