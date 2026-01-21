@@ -2344,12 +2344,19 @@ Analytics.load();
         // Rebind click handler with unlocked status
         if (zone && worldMapScene) {
           marker.onclick = () => {
-            // Get fresh user data when clicking
+            console.log('[DEBUG] Zone clicked:', zoneId);
+            // Get fresh user data and zone markers when clicking
             const freshUser = getUser();
-            worldMapScene.showZoneDetails(zone, freshUser, true);
-            zoneMarkers.forEach(m => m.classList.remove('selected'));
+            const allMarkers = document.querySelectorAll('.zone-marker');
+
+            // Remove selected from all, add to clicked
+            allMarkers.forEach(m => m.classList.remove('selected'));
             marker.classList.add('selected');
+
+            // Update scene and show details
             worldMapScene.selectedZone = zoneId;
+            worldMapScene.showZoneDetails(zone, freshUser, true);
+            console.log('[DEBUG] showZoneDetails called for zone:', zone.name);
           };
         }
       });
