@@ -994,7 +994,7 @@
 
       /* Question frame repositioned to top - below HUD, moved down 50px, 20% taller */
       #question-frame {
-        top: 14% !important;
+        top: calc(14% + 15px) !important;
         width: min(92vw, 500px) !important;
         height: auto !important;
         min-height: 150px !important;
@@ -1055,13 +1055,21 @@
 
       /* Menu button positioning handled per-scene via JavaScript */
 
-      /* Inventory button - below menu button */
+      /* Inventory button - below menu button (adjusted for smaller menu button) */
       #hud-inventory-btn {
         left: 8px !important;
-        top: 55px !important;
+        top: 45px !important;
         right: auto !important;
         width: 28px !important;
         height: 28px !important;
+      }
+
+      /* Debug button - far top right in game screen */
+      #debug-btn {
+        top: 8px !important;
+        right: 8px !important;
+        left: auto !important;
+        bottom: auto !important;
       }
 
       #hud-inventory-btn span {
@@ -3912,7 +3920,7 @@ class LevelScene extends Phaser.Scene {
         domMenuBtn2.style.setProperty('right', 'auto', 'important');
         domMenuBtn2.style.setProperty('bottom', 'auto', 'important');
         domMenuBtn2.style.setProperty('transform-origin', 'top left', 'important');
-        domMenuBtn2.style.setProperty('transform', 'scale(0.375)', 'important');
+        domMenuBtn2.style.setProperty('transform', 'scale(0.3)', 'important');
       } else {
         // Landscape: bottom-right placement at 50% scale
         domMenuBtn2.style.right = '16px';
