@@ -5575,7 +5575,7 @@ class LeaderboardScene extends Phaser.Scene {
       board.forEach((e, i) => {
         const entry = document.createElement('div');
         entry.id = `leaderboard-entry-${i}`;
-        entry.style.cssText = 'display:flex;justify-content:space-between;font-family:Arial,sans-serif;font-size:clamp(14px, 2.5vh, 24px);color:#fff;flex-shrink:0;';
+        entry.style.cssText = 'display:flex;justify-content:space-between;font-family:Arial,sans-serif;font-size:clamp(22px, 4vh, 38px);color:#fff;flex-shrink:0;';
         entry.innerHTML = `<span id="leaderboard-entry-${i}-name">${i+1}. ${e.initials}</span><span id="leaderboard-entry-${i}-score">${e.score}</span>`;
         entriesContainer.appendChild(entry);
       });
