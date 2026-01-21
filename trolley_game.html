@@ -1259,18 +1259,20 @@
         height: 60px !important;
       }
 
-      /* Shop and Profile side by side with 20px gap */
-      #btn-shop {
+      /* Shop and Profile container - centered with flexbox */
+      #menu-shop-profile-container {
         top: 56% !important;
-        left: calc(50% - 10px) !important;
-        transform: translateX(-100%) !important;
-        height: 52px !important;
+        left: 50% !important;
+        transform: translateX(-50%) !important;
+        display: flex !important;
+        flex-direction: row !important;
+        gap: 20px !important;
       }
 
-      #btn-profile {
-        top: 56% !important;
-        left: calc(50% + 10px) !important;
-        transform: translateX(0%) !important;
+      #menu-shop-profile-container #btn-shop,
+      #menu-shop-profile-container #btn-profile {
+        position: static !important;
+        transform: none !important;
         height: 52px !important;
       }
 
@@ -1703,14 +1705,14 @@
 <img id="btn-worldmap" src="assets/buttons/button_worldMap.png" alt="World Map"
      style="position:fixed;left:50%;top:400px;transform:translateX(-50%);
             height:105px;width:auto;z-index:3;display:none;cursor:pointer;"/>
-<img id="btn-shop" src="assets/buttons/button_shop.png" alt="Shop"
-     style="position:fixed;left:calc(50% - 120px);top:525px;transform:translateX(-50%);
-            height:55px;width:auto;z-index:3;display:none;cursor:pointer;"/>
+<div id="menu-shop-profile-container" style="position:fixed;left:50%;top:525px;transform:translateX(-50%);display:none;z-index:3;gap:20px;">
+  <img id="btn-shop" src="assets/buttons/button_shop.png" alt="Shop"
+       style="height:55px;width:auto;cursor:pointer;"/>
+  <img id="btn-profile" src="assets/buttons/button_profile.png" alt="Profile"
+       style="height:55px;width:auto;cursor:pointer;"/>
+</div>
 <img id="btn-leaderboard" src="assets/buttons/button_leaderboard.png" alt="Leaderboard"
      style="position:fixed;left:50%;top:525px;transform:translateX(-50%);
-            height:55px;width:auto;z-index:3;display:none;cursor:pointer;"/>
-<img id="btn-profile" src="assets/buttons/button_profile.png" alt="Profile"
-     style="position:fixed;left:calc(50% + 120px);top:525px;transform:translateX(-50%);
             height:55px;width:auto;z-index:3;display:none;cursor:pointer;"/>
 <img id="btn-logout" src="assets/buttons/button_logout.png" alt="Logout"
      style="position:fixed;left:calc(50% - 70px);bottom:30px;transform:translateX(-50%);
@@ -2806,7 +2808,8 @@ const UIManager = {
 
     // Hide all containers
     ['login-container', 'worldmap-container', 'shop-container', 'profile-container',
-     'consequence-container', 'zone-complete-container', 'leaderboard-container', 'game-inventory-overlay', 'debug-unlock-btn'].forEach(id => {
+     'consequence-container', 'zone-complete-container', 'leaderboard-container', 'game-inventory-overlay', 'debug-unlock-btn',
+     'menu-shop-profile-container'].forEach(id => {
       const el = this.get(id);
       if (el) el.style.display = 'none';
     });
@@ -4219,6 +4222,10 @@ class MainMenuScene extends Phaser.Scene {
       btnLeaderboard.style.display = 'block';
       btnLeaderboard.onclick = () => this.scene.start('LeaderboardScene');
     }
+
+    // Show shop/profile container and buttons
+    const shopProfileContainer = document.getElementById('menu-shop-profile-container');
+    if (shopProfileContainer) shopProfileContainer.style.display = 'flex';
 
     const btnShop = document.getElementById('btn-shop');
     if (btnShop) {
