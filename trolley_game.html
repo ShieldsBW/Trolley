@@ -1332,21 +1332,29 @@
         font-size: 18px !important;
       }
 
-      /* Zone markers in horizontal row at top - shifted left for better centering */
+      /* Zone markers container - centered on screen */
       #zone-markers {
         top: 6% !important;
-        left: calc(50% - 30px) !important;
+        left: 50% !important;
         transform: translateX(-50%) !important;
         width: 90vw !important;
         height: 32% !important;
-        display: flex !important;
-        justify-content: center !important;
-        align-items: flex-start !important;
       }
 
       .zone-marker {
         width: min(55px, 16vw) !important;
         height: min(55px, 16vw) !important;
+      }
+
+      /* Shift zone icons left within container for better visual centering */
+      .zone-marker[data-zone="1"] { left: 8% !important; }
+      .zone-marker[data-zone="2"] { left: 33% !important; }
+      .zone-marker[data-zone="3"] { left: 58% !important; }
+      .zone-marker[data-zone="4"] { left: 78% !important; }
+
+      /* Shift SVG connecting lines to match icon positions */
+      #zone-markers svg line {
+        transform: translateX(-7%) !important;
       }
 
       /* Hide menu button by default in portrait - scenes will show via JS if needed */
