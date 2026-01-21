@@ -202,6 +202,11 @@ The game consists of 8 main scenes built with Phaser.js:
 - Consequence popup (after choice)
 - Level Complete overlay (after completing all stages)
 
+**Portrait Mode Input:**
+- Swipe cards with Tinder-style gestures (swipe left/right to choose)
+- Tap on choice text also works
+- Visual feedback: cards tint red (left) or blue (right) while swiping
+
 **Gameplay Flow:**
 ```
 Start Level
@@ -376,4 +381,4 @@ Hold the magnifying glass button to show debug outlines:
 
 ---
 
-*Document updated: January 19, 2026 (v1.1)*
+*Document updated: January 21, 2026 (v1.2)*

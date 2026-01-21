@@ -1,7 +1,7 @@
 # The Trolley Problem - Game Design Document
 
-> **Version:** 1.1
-> **Last Updated:** January 19, 2026
+> **Version:** 1.2
+> **Last Updated:** January 21, 2026
 > **Status:** Living Document - Updated as features evolve
 
 ---
@@ -484,22 +484,26 @@ Hold magnifying glass button (top-right during gameplay) to show colored outline
 
 The game supports mobile devices with responsive layouts:
 
-**Portrait Mode:**
-- Scaled UI elements for smaller screens
+**Portrait Mode (Primary Mobile Experience):**
+- Optimized layout for `orientation: portrait` and `max-width: 1200px` viewports
+- **Swipe Gestures:** Tinder-style swipe left/right for making choices (in addition to tap)
+- **HUD Layout:** 2-row layout with Stage/Level on top row, Health/Points on second row
+- **World Map:** Zone icons arranged horizontally with connecting lines hidden
+- **Main Menu:** Reorganized with shop/profile buttons side-by-side, enhanced world map button with glow effect
 - Touch-friendly button sizes (minimum 44px touch targets)
+- Scaled UI elements optimized for phone screens
 
-**Landscape Mode (Primary Mobile Experience):**
-- Optimized layout for max-height: 480px viewports
+**Landscape Mode:**
 - Compact HUD with reduced text sizes
 - Item bar on left side with vertical layout
 - Zone progress tracker spans bottom of screen
 - Level complete UI positioned above tracker
-- Shop/Profile frames repositioned for landscape
 
 **Responsive Features:**
 - CSS `clamp()` for fluid typography
 - Viewport-relative sizing (vw, vh, calc)
-- Media queries for orientation and height breakpoints
+- Media queries for orientation and width/height breakpoints
+- `setProperty()` with `!important` for portrait-specific JS overrides
 
 ### 7.6 Zone Progress Tracker
 
@@ -623,6 +627,9 @@ To add a new zone:
 **Recently Completed:**
 - ✅ Animated Trolley - Zone Progress Tracker with animated trolley visualization
 - ✅ Mobile Support - Full responsive layout for portrait and landscape modes
+- ✅ Portrait Mode Primary - Portrait orientation is now the primary mobile experience
+- ✅ Swipe Gestures - Tinder-style swipe left/right for making choices in portrait mode
+- ✅ Portrait UI Polish - HUD reorganization, world map layout, leaderboard improvements
 
 ### 9.2 Balancing Guidelines
 

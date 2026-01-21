@@ -733,21 +733,36 @@ The game uses a carefully managed z-index hierarchy to ensure proper layering of
 
 ## 11.6 Mobile Support
 
-The game is designed to work on mobile devices in landscape orientation.
+The game is designed to work on mobile devices with **portrait mode as the primary mobile experience**.
 
 **Breakpoints:**
-- Mobile landscape: `max-height: 480px` and `orientation: landscape`
+- Mobile portrait (primary): `orientation: portrait` and `max-width: 1200px`
+- Mobile landscape (secondary): `max-height: 480px` and `orientation: landscape`
+
+**Portrait Mode Features:**
+- **Swipe Gestures:** Tinder-style swipe left/right cards for making choices
+- **HUD Layout:** 2-row flexbox layout (Stage+Level row, Health+Points row)
+- **World Map:** Zone icons arranged horizontally, connecting SVG lines hidden
+- **Main Menu:** Shop/Profile buttons side-by-side in centered container, world map button with glow and tap animation
+- **Leaderboard:** Scaled up text and title, menu button inside safe area
 
 **Mobile-Specific Adjustments:**
 - Touch targets: Minimum 32-44px for all interactive elements
 - Font scaling: Uses `clamp()` and viewport units
 - Layout: Compact spacing, reduced padding
 - Z-index: Some elements need higher z-index for touch accessibility
+- Use `setProperty('display', 'block', 'important')` to override portrait CSS from JavaScript
 
-**CSS Pattern:**
+**CSS Patterns:**
 ```css
+/* Portrait mode (primary mobile) */
+@media screen and (orientation: portrait) and (max-width: 1200px) {
+  /* Portrait mobile styles */
+}
+
+/* Landscape mode (secondary mobile) */
 @media screen and (max-height: 480px) and (orientation: landscape) {
-  /* Mobile landscape styles */
+  /* Landscape mobile styles */
 }
 ```
 
@@ -922,6 +937,6 @@ Reference the existing assets: [attach reference images]
 
 ---
 
-*Document Version: 1.4*
-*Last Updated: January 19, 2026*
+*Document Version: 1.5*
+*Last Updated: January 21, 2026*
 *For use with automated asset generation pipeline*
