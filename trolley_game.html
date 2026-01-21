@@ -1054,16 +1054,24 @@
         display: contents !important;
       }
 
-      /* HUD items - keep label and value on same line */
+      /* HUD items - keep label and value on same line, 2 per row */
       #hud-stage, #hud-level, #hud-health, #hud-points {
         white-space: nowrap !important;
         margin: 0 !important;
         position: static !important;
+        flex: 0 0 auto !important;
       }
 
       /* Order: Stage, Level on top row; Health, Points on bottom */
       #hud-stage { order: 1 !important; }
       #hud-level { order: 2 !important; }
+      /* Force line break after Level */
+      #hud-level::after {
+        content: '' !important;
+        flex-basis: 100% !important;
+        height: 0 !important;
+        order: 2 !important;
+      }
       #hud-health { order: 3 !important; }
       #hud-points { order: 4 !important; }
       #hud-zone { display: none !important; }
