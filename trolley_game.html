@@ -3915,6 +3915,17 @@ class LevelScene extends Phaser.Scene {
         domMenuBtn2.style.setProperty('bottom', 'auto', 'important');
         domMenuBtn2.style.setProperty('transform-origin', 'top left', 'important');
         domMenuBtn2.style.setProperty('transform', 'scale(0.3)', 'important');
+
+        // Position inventory button below menu button in portrait
+        const inventoryBtn = document.getElementById('hud-inventory-btn');
+        if (inventoryBtn) {
+          inventoryBtn.style.setProperty('position', 'fixed', 'important');
+          inventoryBtn.style.setProperty('left', '8px', 'important');
+          inventoryBtn.style.setProperty('top', '45px', 'important');
+          inventoryBtn.style.setProperty('right', 'auto', 'important');
+          inventoryBtn.style.setProperty('width', '28px', 'important');
+          inventoryBtn.style.setProperty('height', '28px', 'important');
+        }
       } else {
         // Landscape: bottom-right placement at 50% scale
         domMenuBtn2.style.right = '16px';
