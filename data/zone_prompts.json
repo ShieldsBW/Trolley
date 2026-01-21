@@ -1,0 +1,54 @@
+{
+  "version": "1.0",
+  "description": "Zone-themed dilemmas for The Trolley Problem game. Edit this file to add/modify questions without touching the main game code.",
+  "zones": {
+    "1": {
+      "name": "Starter Rails",
+      "prompts": [
+        {"prompt": "Help child cross or save luggage?", "opts": [{"text": "Help child", "pts": 8, "hp": 0}, {"text": "Save luggage", "pts": 4, "hp": 0}]},
+        {"prompt": "Find water or conserve energy?", "opts": [{"text": "Find water", "pts": 3, "hp": 3}, {"text": "Conserve energy", "pts": 5, "hp": 0}]},
+        {"prompt": "Use first aid or press on?", "opts": [{"text": "Use first aid", "pts": 2, "hp": 4}, {"text": "Press on", "pts": 8, "hp": -1}]},
+        {"prompt": "Steer on grass or hit barrier?", "opts": [{"text": "Grass", "pts": 6, "hp": -2}, {"text": "Barrier", "pts": 12, "hp": -5}]},
+        {"prompt": "Warn engineer or do nothing?", "opts": [{"text": "Warn", "pts": 10, "hp": -1}, {"text": "Nothing", "pts": 0, "hp": 0}]},
+        {"prompt": "Take shortcut or stay on track?", "opts": [{"text": "Shortcut", "pts": 7, "hp": -2}, {"text": "Stay safe", "pts": 3, "hp": 1}]},
+        {"prompt": "Help stranded motorist?", "opts": [{"text": "Help them", "pts": 6, "hp": -1}, {"text": "Keep moving", "pts": 2, "hp": 0}]}
+      ]
+    },
+    "2": {
+      "name": "Industrial District",
+      "prompts": [
+        {"prompt": "Divert through factory or main line?", "opts": [{"text": "Factory", "pts": 12, "hp": -3}, {"text": "Main line", "pts": 5, "hp": -1}]},
+        {"prompt": "Warn workers or maintain speed?", "opts": [{"text": "Warn workers", "pts": 8, "hp": 0}, {"text": "Maintain speed", "pts": 15, "hp": -4}]},
+        {"prompt": "Use emergency brake?", "opts": [{"text": "Pull brake", "pts": 4, "hp": 2}, {"text": "Coast through", "pts": 10, "hp": -2}]},
+        {"prompt": "Take cargo shortcut?", "opts": [{"text": "Risk it", "pts": 14, "hp": -4}, {"text": "Standard route", "pts": 6, "hp": 0}]},
+        {"prompt": "Help trapped worker?", "opts": [{"text": "Rescue", "pts": 10, "hp": -2}, {"text": "Call for backup", "pts": 5, "hp": 0}]},
+        {"prompt": "Navigate steam vents?", "opts": [{"text": "Push through", "pts": 9, "hp": -3}, {"text": "Wait", "pts": 3, "hp": 1}]},
+        {"prompt": "Cross unstable bridge?", "opts": [{"text": "Cross fast", "pts": 13, "hp": -4}, {"text": "Find alternate", "pts": 5, "hp": -1}]}
+      ]
+    },
+    "3": {
+      "name": "City Center",
+      "prompts": [
+        {"prompt": "Rush hour crossing?", "opts": [{"text": "Force through", "pts": 18, "hp": -5}, {"text": "Wait for clear", "pts": 6, "hp": 0}]},
+        {"prompt": "Detour through park?", "opts": [{"text": "Park route", "pts": 12, "hp": -2}, {"text": "Street route", "pts": 8, "hp": -3}]},
+        {"prompt": "Emergency vehicle approaching!", "opts": [{"text": "Yield", "pts": 5, "hp": 0}, {"text": "Race ahead", "pts": 16, "hp": -4}]},
+        {"prompt": "Construction zone ahead!", "opts": [{"text": "Plow through", "pts": 20, "hp": -6}, {"text": "Detour", "pts": 8, "hp": -1}]},
+        {"prompt": "School zone - children present!", "opts": [{"text": "Slow down", "pts": 4, "hp": 2}, {"text": "Maintain speed", "pts": 12, "hp": -3}]},
+        {"prompt": "Traffic signal malfunction!", "opts": [{"text": "Go anyway", "pts": 15, "hp": -4}, {"text": "Wait", "pts": 3, "hp": 1}]},
+        {"prompt": "Pedestrian on tracks!", "opts": [{"text": "Emergency stop", "pts": 6, "hp": 3}, {"text": "Swerve", "pts": 14, "hp": -5}]}
+      ]
+    },
+    "4": {
+      "name": "Summit Line",
+      "prompts": [
+        {"prompt": "Avalanche warning - push through or wait?", "opts": [{"text": "Risk it", "pts": 22, "hp": -6}, {"text": "Wait it out", "pts": 5, "hp": 0}]},
+        {"prompt": "Tracks frozen over - salt reserves low!", "opts": [{"text": "Use all salt", "pts": 10, "hp": 2}, {"text": "Slide through", "pts": 18, "hp": -5}]},
+        {"prompt": "Stranded climbers spotted off the pass!", "opts": [{"text": "Stop to rescue", "pts": 14, "hp": -3}, {"text": "Radio for help", "pts": 6, "hp": 0}]},
+        {"prompt": "Narrow cliff edge - rockslide blocking half!", "opts": [{"text": "Squeeze past", "pts": 20, "hp": -7}, {"text": "Clear debris", "pts": 8, "hp": -2}]},
+        {"prompt": "Blizzard reducing visibility to zero!", "opts": [{"text": "Push blind", "pts": 24, "hp": -7}, {"text": "Emergency stop", "pts": 4, "hp": 1}]},
+        {"prompt": "Wooden trestle bridge groaning under weight!", "opts": [{"text": "Full speed across", "pts": 25, "hp": -8}, {"text": "Slow crawl", "pts": 10, "hp": -3}]},
+        {"prompt": "Passenger suffering altitude sickness!", "opts": [{"text": "Descend now", "pts": 8, "hp": 3}, {"text": "Continue to summit", "pts": 16, "hp": -4}]}
+      ]
+    }
+  }
+}

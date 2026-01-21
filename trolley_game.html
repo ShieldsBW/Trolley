@@ -1765,7 +1765,7 @@
     <div id="hud-zone" style="color:#fff;font-family:Arial,sans-serif;font-size:16px;text-shadow:2px 2px 4px #000;">Zone Name</div>
   </div>
   <!-- Inventory icon button -->
-  <div id="hud-inventory-btn" style="position:absolute;right:20px;top:90px;width:40px;height:40px;background:rgba(0,0,0,0.6);border:2px solid #FFD700;border-radius:8px;cursor:pointer;display:flex;align-items:center;justify-content:center;" title="Inventory">
+  <div id="hud-inventory-btn" style="position:absolute;right:20px;top:90px;width:40px;height:40px;background:orange;border:2px solid #FFD700;border-radius:8px;cursor:pointer;display:flex;align-items:center;justify-content:center;" title="Inventory">
     <span style="font-size:20px;">🎒</span>
   </div>
 </div>
@@ -2007,6 +2007,195 @@ function isMobileDevice() {
          (window.matchMedia && window.matchMedia('(max-width: 900px)').matches && 'ontouchstart' in window);
 }
 
+// =====================================================
+// ERROR BOUNDARIES - Safe scene transitions
+// =====================================================
+// Wraps scene transitions in try/catch to prevent white screens on errors.
+// If a transition fails, logs the error and falls back to MainMenuScene.
+const SceneTransition = {
+  // Perform a safe scene transition with error handling
+  goto(scene, targetScene, data = {}) {
+    try {
+      if (!scene || !scene.scene) {
+        console.error('[SceneTransition] Invalid scene context');
+        return false;
+      }
+      scene.scene.start(targetScene, data);
+      return true;
+    } catch (error) {
+      console.error(`[SceneTransition] Failed to transition to ${targetScene}:`, error);
+      // Attempt fallback to MainMenu if not already there
+      if (targetScene !== 'MainMenuScene') {
+        try {
+          scene.scene.start('MainMenuScene');
+        } catch (fallbackError) {
+          console.error('[SceneTransition] Fallback to MainMenu also failed:', fallbackError);
+          // Last resort: reload the page
+          alert('An error occurred. The page will reload.');
+          window.location.reload();
+        }
+      }
+      return false;
+    }
+  }
+};
+
+// =====================================================
+// ANALYTICS - Track player choices and behavior
+// =====================================================
+// Tracks player decisions, game events, and behavior patterns.
+// Data is stored locally and can be exported for analysis.
+// Useful for game balance insights and understanding player preferences.
+const Analytics = {
+  _events: [],
+  _sessionId: 'session_' + Date.now(),
+  _maxEvents: 1000, // Prevent unbounded growth
+
+  // Track a player choice during gameplay
+  trackChoice(data) {
+    this._addEvent('choice', {
+      zone: data.zone,
+      level: data.level,
+      stage: data.stage,
+      prompt: data.prompt,
+      chosenOption: data.chosenOption,
+      chosenText: data.chosenText,
+      pointsGained: data.pointsGained,
+      hpChange: data.hpChange,
+      healthAfter: data.healthAfter,
+      timestamp: Date.now()
+    });
+  },
+
+  // Track game events (level complete, game over, etc.)
+  trackEvent(eventType, data = {}) {
+    this._addEvent(eventType, {
+      ...data,
+      timestamp: Date.now()
+    });
+  },
+
+  // Track item usage
+  trackItemUse(itemId, itemValue, context) {
+    this._addEvent('item_use', {
+      itemId,
+      itemValue,
+      zone: context.zone,
+      level: context.level,
+      healthBefore: context.healthBefore,
+      healthAfter: context.healthAfter,
+      timestamp: Date.now()
+    });
+  },
+
+  // Internal: add event with size management
+  _addEvent(type, data) {
+    this._events.push({
+      type,
+      sessionId: this._sessionId,
+      ...data
+    });
+    // Trim old events if exceeding max
+    if (this._events.length > this._maxEvents) {
+      this._events = this._events.slice(-this._maxEvents);
+    }
+    this._persist();
+  },
+
+  // Persist to localStorage
+  _persist() {
+    try {
+      localStorage.setItem('trolley_analytics', JSON.stringify(this._events));
+    } catch (e) {
+      // Storage full or unavailable - silently fail
+      console.warn('[Analytics] Could not persist:', e.message);
+    }
+  },
+
+  // Load existing analytics from storage
+  load() {
+    try {
+      const data = localStorage.getItem('trolley_analytics');
+      if (data) {
+        this._events = JSON.parse(data);
+      }
+    } catch (e) {
+      this._events = [];
+    }
+  },
+
+  // Get summary statistics
+  getSummary() {
+    const choices = this._events.filter(e => e.type === 'choice');
+    const byZone = {};
+    choices.forEach(c => {
+      if (!byZone[c.zone]) byZone[c.zone] = { total: 0, avgPoints: 0, avgHpChange: 0 };
+      byZone[c.zone].total++;
+      byZone[c.zone].avgPoints += c.pointsGained || 0;
+      byZone[c.zone].avgHpChange += c.hpChange || 0;
+    });
+    // Calculate averages
+    Object.keys(byZone).forEach(z => {
+      if (byZone[z].total > 0) {
+        byZone[z].avgPoints /= byZone[z].total;
+        byZone[z].avgHpChange /= byZone[z].total;
+      }
+    });
+    return {
+      totalChoices: choices.length,
+      totalSessions: new Set(this._events.map(e => e.sessionId)).size,
+      byZone,
+      itemsUsed: this._events.filter(e => e.type === 'item_use').length
+    };
+  },
+
+  // Export all data as JSON (for external analysis)
+  exportData() {
+    return JSON.stringify(this._events, null, 2);
+  },
+
+  // Clear all analytics data
+  clear() {
+    this._events = [];
+    localStorage.removeItem('trolley_analytics');
+  }
+};
+
+// Initialize analytics on load
+Analytics.load();
+
+// =====================================================
+// DEBUG MODE DOCUMENTATION
+// =====================================================
+// Debug mode provides visual inspection of UI elements during development.
+//
+// HOW TO USE:
+// 1. Click and HOLD the magnifying glass button (🔍) in the top-right corner
+// 2. While holding, colored outlines appear around different UI element types
+// 3. Release to hide the outlines
+//
+// COLOR CODING:
+// - Red:         Frames (containers with borders)
+// - Lime:        Safe areas (content zones)
+// - Cyan:        Buttons and tabs
+// - Yellow:      Text elements and descriptions
+// - Magenta:     Containers and content wrappers
+// - Orange:      Logos
+// - White:       Welcome messages and currency displays
+// - Coral:       Titles and headings
+// - Gold:        Zone-related elements
+// - Violet:      Shop and profile elements
+// - Spring Green: Progress indicators
+// - Deep Sky Blue: Item elements
+// - Light Salmon: Leaderboard elements
+// - Tomato:      Consequence popups
+// - Dodger Blue: HUD elements
+// - Lime Green:  Game over elements
+//
+// ADDITIONAL DEBUG FEATURES:
+// - On WorldMapScene: A second button (🔓) appears to unlock all zones/difficulties
+// - Console logs prefixed with [DEBUG] indicate debug-related operations
+//
 // Debug button - hold to show outlines
 (function() {
   const debugBtn = document.getElementById('debug-btn');
@@ -2227,8 +2416,22 @@ const ZoneConfig = [
   }
 ];
 
-// Zone-themed prompts for variety
-const ZonePrompts = {
+// =====================================================
+// ZONE PROMPTS - Dilemmas/questions for each zone
+// =====================================================
+// These prompts can be edited externally via data/zone_prompts.json
+// The PromptLoader will attempt to load from external JSON first,
+// falling back to these inline prompts if loading fails.
+//
+// Each prompt has:
+// - prompt: The question text displayed to the player
+// - opts: Array of 2 options, each with:
+//   - text: Option label
+//   - pts: Points awarded for this choice
+//   - hp: Health change (positive = heal, negative = damage)
+
+// Inline fallback prompts (used if external JSON fails to load)
+const ZonePromptsInline = {
   1: [ // Starter Rails
     {prompt:'Help child cross or save luggage?',opts:[{text:'Help child',pts:8,hp:0},{text:'Save luggage',pts:4,hp:0}]},
     {prompt:'Find water or conserve energy?',opts:[{text:'Find water',pts:3,hp:3},{text:'Conserve energy',pts:5,hp:0}]},
@@ -2266,6 +2469,72 @@ const ZonePrompts = {
     {prompt:'Passenger suffering altitude sickness!',opts:[{text:'Descend now',pts:8,hp:3},{text:'Continue to summit',pts:16,hp:-4}]}
   ]
 };
+
+// Prompt Loader - manages loading prompts from external JSON or inline fallback
+const PromptLoader = {
+  _prompts: null,
+  _loaded: false,
+  _source: 'inline', // 'inline' or 'external'
+
+  // Get prompts (loads if not already loaded)
+  getPrompts() {
+    if (!this._prompts) {
+      this._prompts = ZonePromptsInline;
+    }
+    return this._prompts;
+  },
+
+  // Attempt to load from external JSON file
+  // Call this early in game initialization if you want to use external prompts
+  async loadExternal(path = 'data/zone_prompts.json') {
+    try {
+      const response = await fetch(path);
+      if (!response.ok) {
+        throw new Error(`HTTP ${response.status}`);
+      }
+      const data = await response.json();
+
+      // Convert external format to internal format
+      const prompts = {};
+      if (data.zones) {
+        Object.keys(data.zones).forEach(zoneId => {
+          prompts[zoneId] = data.zones[zoneId].prompts;
+        });
+      }
+
+      // Validate that we have prompts for all zones
+      if (Object.keys(prompts).length > 0) {
+        this._prompts = prompts;
+        this._source = 'external';
+        this._loaded = true;
+        console.log('[PromptLoader] Loaded prompts from external JSON');
+        return true;
+      }
+    } catch (e) {
+      console.log('[PromptLoader] External load failed, using inline prompts:', e.message);
+    }
+
+    // Fallback to inline
+    this._prompts = ZonePromptsInline;
+    this._source = 'inline';
+    this._loaded = true;
+    return false;
+  },
+
+  // Get the source of currently loaded prompts
+  getSource() {
+    return this._source;
+  },
+
+  // Get prompts for a specific zone
+  getZonePrompts(zoneId) {
+    const prompts = this.getPrompts();
+    return prompts[zoneId] || [];
+  }
+};
+
+// For backwards compatibility, ZonePrompts references the loader
+const ZonePrompts = PromptLoader.getPrompts();
 
 // =====================================================
 // SHOP ITEMS CONFIGURATION
@@ -2859,12 +3128,165 @@ function hideAllContainers() {
 // =====================================================
 // STATE MANAGER (Phase 4: Debounced saves, cached state)
 // =====================================================
+// Default user data structure - used for validation and repair
+const DEFAULT_USER_STRUCTURE = {
+  userId: null,
+  username: 'Guest',
+  isGuest: true,
+  createdAt: null,
+  lastLogin: null,
+  dataVersion: 1,
+  progress: {
+    currentZone: 1,
+    completedLevels: [],
+    highScores: {},
+    zoneCompletions: {}
+  },
+  stats: {
+    totalGames: 0,
+    totalPoints: 0,
+    totalDeaths: 0,
+    choicesMade: 0,
+    perfectLevels: 0,
+    zonesCompleted: 0
+  },
+  inventory: {
+    currency: 0,
+    cosmetics: ['trolley_default'],
+    consumables: {
+      hp_small: 0,
+      hp_large: 0,
+      point_boost: 0
+    }
+  },
+  equipped: {
+    trolleyAppearance: 'trolley_default'
+  },
+  achievements: []
+};
+
 const StateManager = {
   _userCache: null,
   _saveTimeout: null,
   _pendingSave: false,
 
-  // Get user (from cache if available)
+  // Validate and repair user data structure
+  // Ensures all required fields exist with proper types
+  _validateUser(user) {
+    if (!user || typeof user !== 'object') {
+      console.warn('[StateManager] Invalid user data - not an object');
+      return null;
+    }
+
+    let wasRepaired = false;
+
+    // Ensure required top-level fields
+    if (!user.userId || typeof user.userId !== 'string') {
+      console.warn('[StateManager] Missing or invalid userId');
+      return null; // Can't repair missing userId - data is corrupt
+    }
+
+    // Validate and repair username
+    if (typeof user.username !== 'string' || user.username.trim() === '') {
+      user.username = DEFAULT_USER_STRUCTURE.username;
+      wasRepaired = true;
+    }
+
+    // Validate dataVersion
+    if (typeof user.dataVersion !== 'number') {
+      user.dataVersion = DEFAULT_USER_STRUCTURE.dataVersion;
+      wasRepaired = true;
+    }
+
+    // Validate and repair progress object
+    if (!user.progress || typeof user.progress !== 'object') {
+      user.progress = JSON.parse(JSON.stringify(DEFAULT_USER_STRUCTURE.progress));
+      wasRepaired = true;
+    } else {
+      // Ensure progress sub-fields exist
+      if (!Array.isArray(user.progress.completedLevels)) {
+        user.progress.completedLevels = [];
+        wasRepaired = true;
+      }
+      if (typeof user.progress.highScores !== 'object' || user.progress.highScores === null) {
+        user.progress.highScores = {};
+        wasRepaired = true;
+      }
+      if (typeof user.progress.zoneCompletions !== 'object' || user.progress.zoneCompletions === null) {
+        user.progress.zoneCompletions = {};
+        wasRepaired = true;
+      }
+      if (typeof user.progress.currentZone !== 'number') {
+        user.progress.currentZone = 1;
+        wasRepaired = true;
+      }
+    }
+
+    // Validate and repair stats object
+    if (!user.stats || typeof user.stats !== 'object') {
+      user.stats = JSON.parse(JSON.stringify(DEFAULT_USER_STRUCTURE.stats));
+      wasRepaired = true;
+    } else {
+      // Ensure all stat fields are numbers
+      const statFields = ['totalGames', 'totalPoints', 'totalDeaths', 'choicesMade', 'perfectLevels', 'zonesCompleted'];
+      statFields.forEach(field => {
+        if (typeof user.stats[field] !== 'number') {
+          user.stats[field] = 0;
+          wasRepaired = true;
+        }
+      });
+    }
+
+    // Validate and repair inventory
+    if (!user.inventory || typeof user.inventory !== 'object') {
+      user.inventory = JSON.parse(JSON.stringify(DEFAULT_USER_STRUCTURE.inventory));
+      wasRepaired = true;
+    } else {
+      if (typeof user.inventory.currency !== 'number') {
+        user.inventory.currency = 0;
+        wasRepaired = true;
+      }
+      if (!Array.isArray(user.inventory.cosmetics)) {
+        user.inventory.cosmetics = ['trolley_default'];
+        wasRepaired = true;
+      }
+      if (!user.inventory.consumables || typeof user.inventory.consumables !== 'object') {
+        user.inventory.consumables = JSON.parse(JSON.stringify(DEFAULT_USER_STRUCTURE.inventory.consumables));
+        wasRepaired = true;
+      } else {
+        // Ensure consumable counts are numbers
+        ['hp_small', 'hp_large', 'point_boost'].forEach(item => {
+          if (typeof user.inventory.consumables[item] !== 'number') {
+            user.inventory.consumables[item] = 0;
+            wasRepaired = true;
+          }
+        });
+      }
+    }
+
+    // Validate and repair equipped
+    if (!user.equipped || typeof user.equipped !== 'object') {
+      user.equipped = JSON.parse(JSON.stringify(DEFAULT_USER_STRUCTURE.equipped));
+      wasRepaired = true;
+    } else if (typeof user.equipped.trolleyAppearance !== 'string') {
+      user.equipped.trolleyAppearance = 'trolley_default';
+      wasRepaired = true;
+    }
+
+    // Validate achievements array
+    if (!Array.isArray(user.achievements)) {
+      user.achievements = [];
+      wasRepaired = true;
+    }
+
+    if (wasRepaired) {
+      console.log('[StateManager] User data was repaired');
+    }
+
+    return user;
+  },
+
+  // Get user (from cache if available) with validation
   getUser() {
     if (this._userCache) {
       return this._userCache;
@@ -2872,9 +3294,18 @@ const StateManager = {
     const data = localStorage.getItem('trolley_user');
     if (!data) return null;
     try {
-      this._userCache = JSON.parse(data);
+      let user = JSON.parse(data);
+      // Validate and repair if needed
+      user = this._validateUser(user);
+      if (!user) {
+        console.error('[StateManager] User data validation failed - clearing corrupt data');
+        localStorage.removeItem('trolley_user');
+        return null;
+      }
+      this._userCache = user;
       return this._userCache;
     } catch(e) {
+      console.error('[StateManager] Failed to parse user data:', e);
       return null;
     }
   },
@@ -3864,6 +4295,10 @@ class LevelScene extends Phaser.Scene {
     const gameHud = document.getElementById('game-hud');
     if (gameHud) gameHud.style.display = 'block';
 
+    // DEBUG: Very early test - turn inventory button purple
+    const earlyTestBtn = document.getElementById('hud-inventory-btn');
+    if (earlyTestBtn) earlyTestBtn.style.background = 'purple';
+
     const hudHealth = document.getElementById('hud-health');
     const hudPoints = document.getElementById('hud-points');
     const hudLevel = document.getElementById('hud-level');
@@ -3915,17 +4350,6 @@ class LevelScene extends Phaser.Scene {
         domMenuBtn2.style.setProperty('bottom', 'auto', 'important');
         domMenuBtn2.style.setProperty('transform-origin', 'top left', 'important');
         domMenuBtn2.style.setProperty('transform', 'scale(0.3)', 'important');
-
-        // Position inventory button below menu button in portrait
-        const inventoryBtn = document.getElementById('hud-inventory-btn');
-        if (inventoryBtn) {
-          inventoryBtn.style.setProperty('position', 'fixed', 'important');
-          inventoryBtn.style.setProperty('left', '8px', 'important');
-          inventoryBtn.style.setProperty('top', '45px', 'important');
-          inventoryBtn.style.setProperty('right', 'auto', 'important');
-          inventoryBtn.style.setProperty('width', '28px', 'important');
-          inventoryBtn.style.setProperty('height', '28px', 'important');
-        }
       } else {
         // Landscape: bottom-right placement at 50% scale
         domMenuBtn2.style.right = '16px';
@@ -3934,6 +4358,41 @@ class LevelScene extends Phaser.Scene {
         domMenuBtn2.style.top = '';
         domMenuBtn2.style.transformOrigin = 'bottom right';
         domMenuBtn2.style.transform = 'scale(0.5)';
+      }
+    }
+
+    // Position inventory button based on orientation (independent of menu button)
+    const isPortraitMode = window.innerHeight > window.innerWidth && window.innerWidth <= 1200;
+    const inventoryBtnMain = document.getElementById('hud-inventory-btn');
+
+    // DEBUG: Always turn button green to confirm code is reached
+    if (inventoryBtnMain) {
+      inventoryBtnMain.style.setProperty('background', '#00ff00', 'important');
+    }
+
+    if (isPortraitMode && inventoryBtnMain) {
+      // Must move to body because game-hud has transform which breaks position:fixed
+      if (inventoryBtnMain.parentElement !== document.body) {
+        document.body.appendChild(inventoryBtnMain);
+      }
+      inventoryBtnMain.style.setProperty('position', 'fixed', 'important');
+      inventoryBtnMain.style.setProperty('left', '8px', 'important');
+      inventoryBtnMain.style.setProperty('top', '45px', 'important');
+      inventoryBtnMain.style.setProperty('right', 'auto', 'important');
+      inventoryBtnMain.style.setProperty('bottom', 'auto', 'important');
+      inventoryBtnMain.style.setProperty('width', '28px', 'important');
+      inventoryBtnMain.style.setProperty('height', '28px', 'important');
+      inventoryBtnMain.style.setProperty('z-index', '9999', 'important');
+      inventoryBtnMain.style.setProperty('display', 'flex', 'important');
+      // DEBUG: Make it bright red so we can confirm the code is running
+      inventoryBtnMain.style.setProperty('background', '#ff0000', 'important');
+      inventoryBtnMain.style.setProperty('border', '3px solid #ffff00', 'important');
+    } else if (inventoryBtnMain) {
+      // Landscape: move inventory button back to game-hud if needed
+      const gameHud = document.getElementById('game-hud');
+      if (gameHud && inventoryBtnMain.parentElement === document.body) {
+        gameHud.appendChild(inventoryBtnMain);
+        inventoryBtnMain.style.cssText = 'position:absolute;right:20px;top:90px;width:40px;height:40px;background:rgba(0,0,0,0.6);border:2px solid #FFD700;border-radius:8px;cursor:pointer;display:flex;align-items:center;justify-content:center;';
       }
     }
 
@@ -4163,6 +4622,8 @@ class LevelScene extends Phaser.Scene {
     const user = getUser();
     if (!user || user.inventory.consumables[itemId] <= 0) return;
 
+    const healthBefore = this.registry.values.health;
+
     // Deduct item
     user.inventory.consumables[itemId]--;
     saveUser(user);
@@ -4180,6 +4641,14 @@ class LevelScene extends Phaser.Scene {
 
     this.itemsUsedThisLevel++;
     this.registry.set('itemsUsedThisLevel', this.itemsUsedThisLevel);
+
+    // Track item usage for analytics
+    Analytics.trackItemUse(itemId, value, {
+      zone: this.registry.get('selectedZone'),
+      level: this.registry.get('currentLevel'),
+      healthBefore: healthBefore,
+      healthAfter: this.registry.values.health
+    });
 
     // Refresh item bar
     this.setupItemBar();
@@ -4314,6 +4783,20 @@ class LevelScene extends Phaser.Scene {
       if (user.inventory.currency < 0) user.inventory.currency = 0;
       saveUser(user);
     }
+
+    // Track choice for analytics
+    Analytics.trackChoice({
+      zone: this.registry.get('selectedZone'),
+      level: this.registry.get('currentLevel'),
+      stage: this.junctionIndex + 1,
+      prompt: j.prompt,
+      chosenOption: idx,
+      chosenText: opt.text,
+      pointsGained: pointsEarned,
+      hpChange: opt.hp,
+      healthAfter: this.registry.values.health
+    });
+
     {
       const currentStage = this.registry.get('stage');
       const maxStages = this.junctions.length;
@@ -4503,6 +4986,19 @@ class LevelScene extends Phaser.Scene {
       user.achievements = [...user.achievements, ...newAchievements];
 
       saveUser(user);
+
+      // Track level completion for analytics
+      Analytics.trackEvent('level_complete', {
+        zone: zoneId,
+        level: currentLevel,
+        score: currentScore,
+        isPerfect: isPerfect,
+        bonusPoints: bonusPoints,
+        totalPoints: totalLevelPoints,
+        difficulty: selectedDifficulty,
+        isZoneComplete: isZoneComplete,
+        newAchievements: newAchievements.map(a => a.id)
+      });
 
       // Show level complete with points earned (using DOM element for debug outline support)
       let completeMsg = `Level Complete!\n+${totalLevelPoints} Points`;
@@ -4694,6 +5190,14 @@ class LevelScene extends Phaser.Scene {
       const btn = document.getElementById(item.buttonId);
       if (btn) btn.onclick = null;
     });
+
+    // Move inventory button back to game-hud if it was moved to body for portrait mode
+    const inventoryBtn = document.getElementById('hud-inventory-btn');
+    const gameHud = document.getElementById('game-hud');
+    if (inventoryBtn && gameHud && inventoryBtn.parentElement === document.body) {
+      gameHud.appendChild(inventoryBtn);
+      inventoryBtn.style.cssText = 'position:absolute;right:20px;top:90px;width:40px;height:40px;background:rgba(0,0,0,0.6);border:2px solid #FFD700;border-radius:8px;cursor:pointer;display:flex;align-items:center;justify-content:center;';
+    }
   }
 }
 
@@ -4725,6 +5229,17 @@ class GameOverScene extends Phaser.Scene {
       user.achievements = [...new Set([...user.achievements, ...newAchievements])];
 
       saveUser(user);
+
+      // Track game over for analytics
+      Analytics.trackEvent('game_over', {
+        zone: this.registry.get('zone') || 1,
+        level: this.registry.get('level'),
+        finalScore: score,
+        totalPoints: user.inventory.currency,
+        healthAtDeath: this.registry.get('health'),
+        totalGames: user.stats.totalGames,
+        difficulty: this.registry.get('selectedDifficulty') || 1
+      });
     }
 
     // Reset point multiplier and item tracking
