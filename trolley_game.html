@@ -1033,7 +1033,7 @@
       }
 
       /* Game HUD for portrait - reorganized layout */
-      /* Note: display controlled by JS - don't force display here */
+      /* Note: display controlled by JS */
       #game-hud {
         top: 3px !important;
         left: 50% !important;
@@ -1043,7 +1043,6 @@
         max-width: 95vw !important;
         padding: 4px 10px !important;
         font-size: 11px !important;
-        display: flex !important;
         flex-wrap: wrap !important;
         justify-content: center !important;
         gap: 2px 12px !important;
@@ -2811,7 +2810,7 @@ const UIManager = {
     // Hide HUD & gameplay elements
     ['game-hud', 'question-frame', 'choices-container', 'item-bar', 'go-title', 'go-total-points',
      'menu-logo', 'menu-welcome-display', 'menu-points-display', 'zone-detail-frame', 'level-complete-text',
-     'zone-progress-tracker'].forEach(id => {
+     'zone-progress-tracker', 'hud-inventory-btn'].forEach(id => {
       const el = this.get(id);
       if (el) el.style.display = 'none';
     });
@@ -4342,7 +4341,8 @@ class LevelScene extends Phaser.Scene {
 
     // Show and update DOM-based HUD
     const gameHud = document.getElementById('game-hud');
-    if (gameHud) gameHud.style.display = 'block';
+    const isPortrait = window.innerHeight > window.innerWidth && window.innerWidth <= 1200;
+    if (gameHud) gameHud.style.display = isPortrait ? 'flex' : 'block';
 
     // Style inventory button
     const earlyTestBtn = document.getElementById('hud-inventory-btn');
