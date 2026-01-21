@@ -1765,7 +1765,7 @@
     <div id="hud-zone" style="color:#fff;font-family:Arial,sans-serif;font-size:16px;text-shadow:2px 2px 4px #000;">Zone Name</div>
   </div>
   <!-- Inventory icon button -->
-  <div id="hud-inventory-btn" style="position:absolute;right:20px;top:90px;width:40px;height:40px;background:orange;border:2px solid #FFD700;border-radius:8px;cursor:pointer;display:flex;align-items:center;justify-content:center;" title="Inventory">
+  <div id="hud-inventory-btn" style="position:absolute;right:20px;top:90px;width:40px;height:40px;background:rgba(0,0,0,0.6);border:2px solid #FFD700;border-radius:8px;cursor:pointer;display:flex;align-items:center;justify-content:center;" title="Inventory">
     <span style="font-size:20px;">🎒</span>
   </div>
 </div>
@@ -4295,9 +4295,9 @@ class LevelScene extends Phaser.Scene {
     const gameHud = document.getElementById('game-hud');
     if (gameHud) gameHud.style.display = 'block';
 
-    // DEBUG: Very early test - turn inventory button purple
+    // Style inventory button
     const earlyTestBtn = document.getElementById('hud-inventory-btn');
-    if (earlyTestBtn) earlyTestBtn.style.background = 'purple';
+    if (earlyTestBtn) earlyTestBtn.style.background = 'rgba(0,0,0,0.6)';
 
     const hudHealth = document.getElementById('hud-health');
     const hudPoints = document.getElementById('hud-points');
@@ -4365,9 +4365,9 @@ class LevelScene extends Phaser.Scene {
     const isPortraitMode = window.innerHeight > window.innerWidth && window.innerWidth <= 1200;
     const inventoryBtnMain = document.getElementById('hud-inventory-btn');
 
-    // DEBUG: Always turn button green to confirm code is reached
+    // Set consistent inventory button style
     if (inventoryBtnMain) {
-      inventoryBtnMain.style.setProperty('background', '#00ff00', 'important');
+      inventoryBtnMain.style.setProperty('background', 'rgba(0,0,0,0.6)', 'important');
     }
 
     if (isPortraitMode && inventoryBtnMain) {
@@ -4384,9 +4384,8 @@ class LevelScene extends Phaser.Scene {
       inventoryBtnMain.style.setProperty('height', '28px', 'important');
       inventoryBtnMain.style.setProperty('z-index', '9999', 'important');
       inventoryBtnMain.style.setProperty('display', 'flex', 'important');
-      // DEBUG: Make it bright red so we can confirm the code is running
-      inventoryBtnMain.style.setProperty('background', '#ff0000', 'important');
-      inventoryBtnMain.style.setProperty('border', '3px solid #ffff00', 'important');
+      inventoryBtnMain.style.setProperty('background', 'rgba(0,0,0,0.6)', 'important');
+      inventoryBtnMain.style.setProperty('border', '2px solid #FFD700', 'important');
     } else if (inventoryBtnMain) {
       // Landscape: move inventory button back to game-hud if needed
       const gameHud = document.getElementById('game-hud');
