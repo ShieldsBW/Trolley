@@ -4867,9 +4867,9 @@ class LevelScene extends Phaser.Scene {
         btnContinue.style.display = 'none';
         btnContinue.onclick = null;
         if (consContainer) consContainer.style.display = 'none';
-        // Restore menu and quit buttons
-        if (btnMenu) btnMenu.style.display = 'block';
-        if (btnQuit) btnQuit.style.display = 'block';
+        // Restore menu and quit buttons (use setProperty with important to override portrait CSS)
+        if (btnMenu) btnMenu.style.setProperty('display', 'block', 'important');
+        if (btnQuit) btnQuit.style.setProperty('display', 'block', 'important');
         this.promptText.setAlpha(1);
         this.promptText.setVisible(true);
         this.junctionIndex++;
