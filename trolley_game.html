@@ -1332,19 +1332,26 @@
         font-size: 18px !important;
       }
 
-      /* Zone markers in horizontal row at top - shifted left for better centering */
+      /* Zone markers in horizontal row at top - centered via flexbox */
       #zone-markers {
         top: 6% !important;
-        left: calc(50% - 10px) !important;
+        left: 50% !important;
         transform: translateX(-50%) !important;
         width: 90vw !important;
         height: 32% !important;
         display: flex !important;
+        flex-direction: row !important;
         justify-content: center !important;
         align-items: flex-start !important;
+        gap: 10px !important;
+      }
+
+      #zone-markers svg {
+        display: none !important;
       }
 
       .zone-marker {
+        position: static !important;
         width: min(55px, 16vw) !important;
         height: min(55px, 16vw) !important;
       }
