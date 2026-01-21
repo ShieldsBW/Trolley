@@ -1057,19 +1057,12 @@
 
       /* Inventory button - below menu button (adjusted for smaller menu button) */
       #hud-inventory-btn {
+        position: fixed !important;
         left: 8px !important;
         top: 45px !important;
         right: auto !important;
         width: 28px !important;
         height: 28px !important;
-      }
-
-      /* Debug button - far top right in game screen */
-      #debug-btn {
-        top: 8px !important;
-        right: 8px !important;
-        left: auto !important;
-        bottom: auto !important;
       }
 
       #hud-inventory-btn span {
@@ -1274,18 +1267,19 @@
         font-size: 16px !important;
       }
 
-      /* Debug buttons - top right, side by side */
+      /* Debug button - far top right */
       #debug-btn {
         top: 8px !important;
-        right: 45px !important;
+        right: 8px !important;
         left: auto !important;
         bottom: auto !important;
         font-size: 18px !important;
       }
 
+      /* Debug unlock button - world map only, next to debug btn */
       #debug-unlock-btn {
         top: 8px !important;
-        right: 10px !important;
+        right: 45px !important;
         left: auto !important;
         bottom: auto !important;
         font-size: 18px !important;
