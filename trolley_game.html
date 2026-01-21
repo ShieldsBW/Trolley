@@ -1110,7 +1110,7 @@
         position: fixed !important;
         left: 50% !important;
         top: 52% !important;
-        transform: translate(-50%, -50%) !important;
+        transform: translate(-50%, calc(-50% + 30px)) !important;
         width: min(94vw, 380px) !important;
         z-index: 60 !important;
         touch-action: pan-y !important;
@@ -1148,6 +1148,7 @@
         display: flex !important;
         flex-direction: column !important;
         align-items: center !important;
+        justify-content: center !important;
         text-align: center !important;
       }
 
