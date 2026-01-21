@@ -1256,7 +1256,14 @@
       #btn-worldmap {
         top: 44% !important;
         left: 50% !important;
-        height: 60px !important;
+        height: 80px !important;
+        filter: drop-shadow(0 0 8px rgba(255, 215, 0, 0.6)) drop-shadow(0 0 15px rgba(255, 215, 0, 0.4)) !important;
+        transition: transform 0.15s ease-out, filter 0.15s ease-out !important;
+      }
+
+      #btn-worldmap:active {
+        transform: translateX(-50%) scale(1.1) !important;
+        filter: drop-shadow(0 0 15px rgba(255, 215, 0, 0.9)) drop-shadow(0 0 25px rgba(255, 215, 0, 0.7)) brightness(1.2) !important;
       }
 
       /* Shop and Profile container - centered with flexbox */
