@@ -5587,7 +5587,7 @@ class LeaderboardScene extends Phaser.Scene {
     if (domMenuBtnLB && btnContainer) {
       // Move button into the leaderboard frame
       btnContainer.appendChild(domMenuBtnLB);
-      domMenuBtnLB.style.display = 'block';
+      domMenuBtnLB.style.setProperty('display', 'block', 'important');
       domMenuBtnLB.style.position = 'relative';
       domMenuBtnLB.style.left = '';
       domMenuBtnLB.style.top = '';
