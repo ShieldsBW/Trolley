@@ -1585,6 +1585,23 @@
         width: min(180px, 50vw) !important;
       }
 
+      /* ========== ZONE COMPLETE POPUP PORTRAIT ========== */
+      #zone-complete-frame {
+        width: 90vw !important;
+        max-width: 90vw !important;
+        height: auto !important;
+        aspect-ratio: 1.5 / 1 !important;
+        max-height: 55vh !important;
+      }
+
+      #zone-complete-title {
+        font-size: clamp(18px, 4vw, 28px) !important;
+      }
+
+      #zone-complete-subtitle {
+        font-size: clamp(12px, 3vw, 18px) !important;
+      }
+
       /* ========== CONSEQUENCE POPUP PORTRAIT ========== */
       #consequence-frame {
         width: 90vw !important;
@@ -5130,6 +5147,12 @@ class LevelScene extends Phaser.Scene {
 
     if (!container || !frame) return;
 
+    // Hide menu and inventory buttons while zone complete is showing
+    const btnMenu = document.getElementById('btn-menu');
+    const btnInventory = document.getElementById('hud-inventory-btn');
+    if (btnMenu) btnMenu.style.display = 'none';
+    if (btnInventory) btnInventory.style.display = 'none';
+
     // Determine next zone name or if all zones complete
     const nextZone = ZoneConfig.find(z => z.id === zoneId + 1);
     const isAllComplete = !nextZone;
@@ -5150,6 +5173,10 @@ class LevelScene extends Phaser.Scene {
       // Hide popup
       container.style.display = 'none';
       frame.classList.remove('zone-complete-animate');
+
+      // Restore menu and inventory buttons
+      if (btnMenu) btnMenu.style.setProperty('display', 'block', 'important');
+      if (btnInventory) btnInventory.style.setProperty('display', 'flex', 'important');
 
       if (isAllComplete) {
         // Return to main menu
