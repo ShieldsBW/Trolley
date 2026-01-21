@@ -2328,38 +2328,13 @@ Analytics.load();
       saveUser(user);
       console.log('[DEBUG] Unlocked all zones and difficulties');
 
-      // Directly update all zone markers visually and rebind click handlers
-      const zoneMarkers = document.querySelectorAll('.zone-marker');
-      const worldMapScene = window.game ? window.game.scene.getScene('WorldMapScene') : null;
-
-      zoneMarkers.forEach(marker => {
-        const zoneId = parseInt(marker.getAttribute('data-zone'));
-        const zone = typeof ZoneConfig !== 'undefined' ? ZoneConfig.find(z => z.id === zoneId) : null;
-
-        // Remove locked state visually
-        marker.classList.remove('locked');
-        const lockOverlay = marker.querySelector('.zone-lock-overlay');
-        if (lockOverlay) lockOverlay.style.display = 'none';
-
-        // Rebind click handler with unlocked status
-        if (zone && worldMapScene) {
-          marker.onclick = () => {
-            console.log('[DEBUG] Zone clicked:', zoneId);
-            // Get fresh user data and zone markers when clicking
-            const freshUser = getUser();
-            const allMarkers = document.querySelectorAll('.zone-marker');
-
-            // Remove selected from all, add to clicked
-            allMarkers.forEach(m => m.classList.remove('selected'));
-            marker.classList.add('selected');
-
-            // Update scene and show details
-            worldMapScene.selectedZone = zoneId;
-            worldMapScene.showZoneDetails(zone, freshUser, true);
-            console.log('[DEBUG] showZoneDetails called for zone:', zone.name);
-          };
-        }
-      });
+      // Go to main menu and immediately back to world map to fully refresh
+      if (window.game) {
+        window.game.scene.start('MainMenuScene');
+        setTimeout(() => {
+          window.game.scene.start('WorldMapScene');
+        }, 50);
+      }
     });
   }
 })();
