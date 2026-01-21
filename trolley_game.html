@@ -4827,11 +4827,13 @@ class LevelScene extends Phaser.Scene {
     const consContainer = document.getElementById('consequence-container');
     if (consContainer) consContainer.style.display = 'block';
 
-    // Hide menu and quit buttons while consequence is showing
+    // Hide menu, quit, and inventory buttons while consequence is showing
     const btnMenu = document.getElementById('btn-menu');
     const btnQuit = document.getElementById('btn-quit');
+    const btnInventory = document.getElementById('hud-inventory-btn');
     if (btnMenu) btnMenu.style.display = 'none';
     if (btnQuit) btnQuit.style.display = 'none';
+    if (btnInventory) btnInventory.style.display = 'none';
 
     // Populate consequence text using DOM elements
     const consText = document.getElementById('consequence-text');
@@ -4867,9 +4869,10 @@ class LevelScene extends Phaser.Scene {
         btnContinue.style.display = 'none';
         btnContinue.onclick = null;
         if (consContainer) consContainer.style.display = 'none';
-        // Restore menu and quit buttons (use setProperty with important to override portrait CSS)
+        // Restore menu, quit, and inventory buttons (use setProperty with important to override portrait CSS)
         if (btnMenu) btnMenu.style.setProperty('display', 'block', 'important');
         if (btnQuit) btnQuit.style.setProperty('display', 'block', 'important');
+        if (btnInventory) btnInventory.style.setProperty('display', 'flex', 'important');
         this.promptText.setAlpha(1);
         this.promptText.setVisible(true);
         this.junctionIndex++;
