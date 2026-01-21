@@ -1231,7 +1231,7 @@
       /* ========== MAIN MENU PORTRAIT ========== */
       #menu-logo {
         left: 50% !important;
-        top: 5% !important;
+        top: calc(5% - 20px) !important;
         transform: translateX(-50%) !important;
         width: min(70vw, 300px) !important;
       }
@@ -1242,7 +1242,10 @@
         transform: translateX(-50%) !important;
         text-align: center !important;
         font-size: 13px !important;
-        width: 90vw !important;
+        width: auto !important;
+        background: rgba(0, 0, 0, 0.2) !important;
+        padding: 6px 15px !important;
+        border-radius: 6px !important;
       }
 
       #menu-points-display {
@@ -1251,6 +1254,9 @@
         transform: translateX(-50%) !important;
         text-align: center !important;
         font-size: 13px !important;
+        background: rgba(0, 0, 0, 0.2) !important;
+        padding: 6px 15px !important;
+        border-radius: 6px !important;
       }
 
       #btn-worldmap {
@@ -1269,7 +1275,7 @@
 
       /* Shop and Profile container - centered with flexbox */
       #menu-shop-profile-container {
-        top: calc(56% + 20px) !important;
+        top: calc(56% + 45px) !important;
         left: 50% !important;
         transform: translateX(-50%) !important;
         display: flex !important;
@@ -1285,7 +1291,7 @@
       }
 
       #btn-leaderboard {
-        top: calc(66% + 20px) !important;
+        top: calc(66% + 45px) !important;
         left: 50% !important;
         height: 40px !important;
       }
