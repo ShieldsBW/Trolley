@@ -2328,14 +2328,26 @@ Analytics.load();
       saveUser(user);
       console.log('[DEBUG] Unlocked all zones and difficulties');
 
-      // Go to main menu and back to world map with delays to fully refresh
+      // Go to main menu and back to world map using scene's own methods
       if (window.game) {
-        setTimeout(() => {
-          window.game.scene.start('MainMenuScene');
+        const worldMapScene = window.game.scene.getScene('WorldMapScene');
+        if (worldMapScene && worldMapScene.scene) {
+          // Hide world map container first like back button does
+          const worldmapContainer = document.getElementById('worldmap-container');
+          if (worldmapContainer) worldmapContainer.style.display = 'none';
+          const detailPanel = document.getElementById('zone-detail-frame');
+          if (detailPanel) detailPanel.style.display = 'none';
+
           setTimeout(() => {
-            window.game.scene.start('WorldMapScene');
+            worldMapScene.scene.start('MainMenuScene');
+            setTimeout(() => {
+              const mainMenuScene = window.game.scene.getScene('MainMenuScene');
+              if (mainMenuScene && mainMenuScene.scene) {
+                mainMenuScene.scene.start('WorldMapScene');
+              }
+            }, 100);
           }, 50);
-        }, 50);
+        }
       }
     });
   }
