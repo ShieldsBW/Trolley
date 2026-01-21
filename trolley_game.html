@@ -2344,7 +2344,9 @@ Analytics.load();
         // Rebind click handler with unlocked status
         if (zone && worldMapScene) {
           marker.onclick = () => {
-            worldMapScene.showZoneDetails(zone, user, true);
+            // Get fresh user data when clicking
+            const freshUser = getUser();
+            worldMapScene.showZoneDetails(zone, freshUser, true);
             zoneMarkers.forEach(m => m.classList.remove('selected'));
             marker.classList.add('selected');
             worldMapScene.selectedZone = zoneId;
