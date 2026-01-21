@@ -2328,9 +2328,12 @@ Analytics.load();
       saveUser(user);
       console.log('[DEBUG] Unlocked all zones and difficulties');
 
-      // Refresh the world map if we're on it
-      if (window.game && window.game.scene.isActive('WorldMapScene')) {
-        window.game.scene.getScene('WorldMapScene').scene.restart();
+      // Refresh the world map - button is only visible on world map so we can restart directly
+      if (window.game) {
+        const worldMapScene = window.game.scene.getScene('WorldMapScene');
+        if (worldMapScene) {
+          worldMapScene.scene.restart();
+        }
       }
     });
   }
