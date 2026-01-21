@@ -4395,23 +4395,10 @@ class LevelScene extends Phaser.Scene {
       }
     }
 
-    // Quit button (DOM image) bottom-right, offset from Menu
-    // Hide quit button on mobile since window.close() doesn't work in browsers
+    // Hide quit button in game view
     const btnQuitLV = document.getElementById('btn-quit');
     if (btnQuitLV) {
-      if (isMobileDevice()) {
-        btnQuitLV.style.display = 'none';
-      } else {
-        btnQuitLV.style.display = 'block';
-        btnQuitLV.style.height = 'auto'; // Override HTML's height:45px
-        btnQuitLV.style.right = '180px';
-        btnQuitLV.style.bottom = '16px';
-        btnQuitLV.style.left = '';
-        btnQuitLV.style.top = '';
-        btnQuitLV.style.transformOrigin = 'bottom right';
-        btnQuitLV.style.transform = 'scale(0.524)';
-        btnQuitLV.onclick = () => window.close();
-      }
+      btnQuitLV.style.display = 'none';
     }
 
     // Set up DOM-based choice frames
@@ -4827,12 +4814,10 @@ class LevelScene extends Phaser.Scene {
     const consContainer = document.getElementById('consequence-container');
     if (consContainer) consContainer.style.display = 'block';
 
-    // Hide menu, quit, and inventory buttons while consequence is showing
+    // Hide menu and inventory buttons while consequence is showing
     const btnMenu = document.getElementById('btn-menu');
-    const btnQuit = document.getElementById('btn-quit');
     const btnInventory = document.getElementById('hud-inventory-btn');
     if (btnMenu) btnMenu.style.display = 'none';
-    if (btnQuit) btnQuit.style.display = 'none';
     if (btnInventory) btnInventory.style.display = 'none';
 
     // Populate consequence text using DOM elements
@@ -4869,9 +4854,8 @@ class LevelScene extends Phaser.Scene {
         btnContinue.style.display = 'none';
         btnContinue.onclick = null;
         if (consContainer) consContainer.style.display = 'none';
-        // Restore menu, quit, and inventory buttons (use setProperty with important to override portrait CSS)
+        // Restore menu and inventory buttons (use setProperty with important to override portrait CSS)
         if (btnMenu) btnMenu.style.setProperty('display', 'block', 'important');
-        if (btnQuit) btnQuit.style.setProperty('display', 'block', 'important');
         if (btnInventory) btnInventory.style.setProperty('display', 'flex', 'important');
         this.promptText.setAlpha(1);
         this.promptText.setVisible(true);
