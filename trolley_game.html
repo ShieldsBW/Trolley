@@ -1581,8 +1581,8 @@
       }
 
       #leaderboard-entries > div {
-        font-size: clamp(18px, 4vw, 32px) !important;
-        padding: 6px 10px !important;
+        font-size: clamp(12px, 3vw, 22px) !important;
+        padding: 4px 8px !important;
       }
 
       #leaderboard-btn-container {
@@ -1605,10 +1605,6 @@
         font-size: 14px !important;
       }
 
-      #btn-submit {
-        top: 38% !important;
-        width: min(140px, 38vw) !important;
-      }
 
       /* Menu button - no portrait-specific positioning here
          Each scene controls its own positioning via JavaScript */
@@ -1759,9 +1755,6 @@
 <img id="btn-menu" src="assets/buttons/button_menu.png" alt="Menu"
      style="position:fixed;right:16px;bottom:16px;transform-origin: bottom right;transform: scale(0.5);
             width:auto;height:auto;z-index:10;display:none;cursor:pointer;"/>
-<img id="btn-submit" src="assets/buttons/button_submitScore.png" alt="Submit Score"
-     style="position:fixed;left:50%;top:335px;transform:translateX(-50%);
-            width:154px;height:auto;z-index:10;display:none;cursor:pointer;"/>
 <img id="btn-try" src="assets/buttons/button_tryAgain.png" alt="Try Again"
      style="position:fixed;left:50%;top:440px;transform:translateX(-50%);
             width:260px;height:auto;z-index:10;display:none;cursor:pointer;"/>
@@ -2351,6 +2344,33 @@ function getLeaderboard() {
 }
 function saveLeaderboard(list) {
   localStorage.setItem('trolley_leaderboard', JSON.stringify(list));
+}
+
+// Rank system - point thresholds for titles
+const RANK_THRESHOLDS = [
+  { points: 500, title: 'Rail Master General' },
+  { points: 200, title: 'Engineer' },
+  { points: 0,   title: 'Coal Shoveler' }
+];
+
+function getRank(points) {
+  for (const rank of RANK_THRESHOLDS) {
+    if (points >= rank.points) return rank.title;
+  }
+  return RANK_THRESHOLDS[RANK_THRESHOLDS.length - 1].title;
+}
+
+// Update leaderboard entry for a user (one entry per user, auto-updated)
+function updateLeaderboardEntry(username, totalPoints) {
+  const board = getLeaderboard();
+  const existing = board.findIndex(e => e.username === username);
+  if (existing >= 0) {
+    board[existing].score = totalPoints;
+  } else {
+    board.push({ username: username, score: totalPoints });
+  }
+  board.sort((a, b) => b.score - a.score);
+  saveLeaderboard(board.slice(0, 10));
 }
 
 // =====================================================
@@ -5089,6 +5109,9 @@ class LevelScene extends Phaser.Scene {
 
       saveUser(user);
 
+      // Auto-save to leaderboard
+      updateLeaderboardEntry(user.username, user.inventory.currency);
+
       // Track level completion for analytics
       Analytics.trackEvent('level_complete', {
         zone: zoneId,
@@ -5342,6 +5365,9 @@ class GameOverScene extends Phaser.Scene {
 
       saveUser(user);
 
+      // Auto-save to leaderboard
+      updateLeaderboardEntry(user.username, user.inventory.currency);
+
       // Track game over for analytics
       Analytics.trackEvent('game_over', {
         zone: this.registry.get('zone') || 1,
@@ -5401,14 +5427,13 @@ class GameOverScene extends Phaser.Scene {
     const btnContainer = document.getElementById('go-btn-container');
     const btnWorldMapGo = document.getElementById('btn-worldmap-go');
     const btnTry = document.getElementById('btn-try');
-    const btnSubmit = document.getElementById('btn-submit');
     const btnMenu = document.getElementById('btn-menu');
     const CONTAINER_WIDTH = 180;
 
     // Helper to hide all game over buttons and container
     const hideAllGOButtons = () => {
       // Move buttons back to body to preserve them for next game over
-      [btnWorldMapGo, btnTry, btnSubmit, btnMenu].forEach(btn => {
+      [btnWorldMapGo, btnTry, btnMenu].forEach(btn => {
         if (btn && btn.parentElement === btnContainer) {
           btn.style.display = 'none';
           btn.style.position = 'fixed';
@@ -5426,7 +5451,7 @@ class GameOverScene extends Phaser.Scene {
       btnContainer.style.display = 'flex';
       btnContainer.style.top = '240px';
 
-      // Button order: World Map, Try Again, Submit Score, Menu
+      // Button order: World Map, Try Again, Menu
       const buttons = [
         { el: btnWorldMapGo, action: () => { hideAllGOButtons(); this.scene.start('WorldMapScene'); } },
         { el: btnTry, action: () => {
@@ -5441,18 +5466,6 @@ class GameOverScene extends Phaser.Scene {
           ZoneProgressTracker.reset(zoneConfig.choicesPerLevel);
           hideAllGOButtons();
           this.scene.start('LevelScene');
-        }},
-        { el: btnSubmit, action: () => {
-          const initials = prompt('Enter initials', 'AAA') || '---';
-          const board = getLeaderboard();
-          const user = getUser();
-          const totalPoints = user ? user.inventory.currency : this.registry.get('points');
-          board.push({ initials: initials.slice(0, 3).toUpperCase(), score: totalPoints });
-          board.sort((a, b) => b.score - a.score);
-          saveLeaderboard(board.slice(0, 10));
-          const goBg = document.getElementById('gameover-bg'); if (goBg) goBg.style.display = 'none';
-          hideAllGOButtons();
-          this.scene.start('LeaderboardScene');
         }},
         { el: btnMenu, action: () => { hideAllGOButtons(); this.scene.start('MainMenuScene'); } }
       ];
@@ -5576,8 +5589,10 @@ class LeaderboardScene extends Phaser.Scene {
       board.forEach((e, i) => {
         const entry = document.createElement('div');
         entry.id = `leaderboard-entry-${i}`;
-        entry.style.cssText = 'display:flex;justify-content:space-between;font-family:Arial,sans-serif;font-size:clamp(40px, 7.2vh, 68px);color:#fff;flex-shrink:0;';
-        entry.innerHTML = `<span id="leaderboard-entry-${i}-name">${i+1}. ${e.initials}</span><span id="leaderboard-entry-${i}-score">${e.score}</span>`;
+        entry.style.cssText = 'display:flex;justify-content:space-between;align-items:center;font-family:Arial,sans-serif;font-size:clamp(14px, 3vh, 28px);color:#fff;flex-shrink:0;gap:8px;';
+        const displayName = e.username || e.initials || '---';
+        const rank = getRank(e.score);
+        entry.innerHTML = `<span id="leaderboard-entry-${i}-name" style="flex:1;text-align:left;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${i+1}. ${displayName}</span><span id="leaderboard-entry-${i}-rank" style="flex:1;text-align:center;color:#FFD700;font-style:italic;white-space:nowrap;">${rank}</span><span id="leaderboard-entry-${i}-score" style="flex:0 0 auto;text-align:right;">${e.score}</span>`;
         entriesContainer.appendChild(entry);
       });
     }
