@@ -5,6 +5,10 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
   <title>Trolley Problem Prototype</title>
   <script src="https://cdn.jsdelivr.net/npm/phaser@3/dist/phaser.min.js"></script>
+  <!-- Firebase SDK -->
+  <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
   <style>
     :root {
       --vh: 1vh; /* Will be set by JS to actual viewport height */
@@ -157,6 +161,114 @@
     body.debug-active .swipe-direction-label { outline: 1px solid yellow !important; }
     body.debug-active .swipe-choice-text { outline: 1px solid cyan !important; }
     body.debug-active .swipe-choice-stats { outline: 1px solid magenta !important; }
+
+    /* Toast notification */
+    #toast-container {
+      position: fixed;
+      top: 20px;
+      right: 20px;
+      z-index: 999999;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      pointer-events: none;
+    }
+    .toast-message {
+      background: rgba(0,0,0,0.85);
+      color: #F5DEB3;
+      font-family: Arial, sans-serif;
+      font-size: 14px;
+      padding: 10px 18px;
+      border-radius: 8px;
+      border-left: 4px solid #FFD700;
+      animation: toastSlideIn 0.3s ease-out;
+      pointer-events: auto;
+      max-width: 300px;
+    }
+    .toast-message.error { border-left-color: #e94560; }
+    .toast-message.success { border-left-color: #4CAF50; }
+    @keyframes toastSlideIn {
+      from { transform: translateX(100%); opacity: 0; }
+      to { transform: translateX(0); opacity: 1; }
+    }
+
+    /* Leaderboard tabs */
+    .leaderboard-tab {
+      padding: 6px 16px;
+      font-size: clamp(11px, 1.8vh, 15px);
+      background: #555;
+      color: #fff;
+      border: none;
+      border-radius: 6px 6px 0 0;
+      cursor: pointer;
+      font-family: Arial, sans-serif;
+      transition: background 0.2s;
+    }
+    .leaderboard-tab.active {
+      background: #FFD700;
+      color: #000;
+      font-weight: bold;
+    }
+
+    /* Friends container */
+    .friends-tab {
+      padding: 8px 16px;
+      font-size: clamp(11px, 1.8vh, 15px);
+      background: #555;
+      color: #fff;
+      border: none;
+      border-radius: 6px 6px 0 0;
+      cursor: pointer;
+      font-family: Arial, sans-serif;
+    }
+    .friends-tab.active {
+      background: #FFD700;
+      color: #000;
+      font-weight: bold;
+    }
+    .friends-list-item {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 8px 12px;
+      background: rgba(0,0,0,0.3);
+      border-radius: 6px;
+      margin-bottom: 6px;
+    }
+    .friends-list-item .friend-name {
+      color: #F5DEB3;
+      font-family: Arial, sans-serif;
+      font-size: clamp(12px, 2vh, 16px);
+    }
+    .friends-action-btn {
+      padding: 4px 10px;
+      font-size: clamp(10px, 1.5vh, 13px);
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      font-family: Arial, sans-serif;
+      margin-left: 6px;
+    }
+    .friends-action-btn.accept { background: #4CAF50; color: #fff; }
+    .friends-action-btn.decline { background: #e94560; color: #fff; }
+    .friends-action-btn.remove { background: #666; color: #fff; }
+    .friends-action-btn.add { background: #2196F3; color: #fff; }
+    .friends-search-input {
+      width: 100%;
+      padding: 8px 12px;
+      font-size: 14px;
+      border: none;
+      border-radius: 6px;
+      margin-bottom: 10px;
+      box-sizing: border-box;
+    }
+    .loading-spinner {
+      color: #FFD700;
+      font-family: Arial, sans-serif;
+      font-size: 14px;
+      text-align: center;
+      padding: 20px;
+    }
 
     /* Zone Complete popup animation */
     @keyframes zoneCompleteScaleIn {
@@ -1893,8 +2005,12 @@
     <p style="color:#F5DEB3;font-family:Georgia,serif;font-size:18px;margin-top:5px;margin-bottom:30px;text-shadow:1px 1px 3px #000;">Make your choices. Face the consequences.</p>
     <div style="background:rgba(0,0,0,0.7);padding:30px;border-radius:10px;margin-bottom:20px;">
       <input id="login-username" type="text" placeholder="Enter your username" maxlength="16"
+             style="width:250px;padding:12px;font-size:18px;border:none;border-radius:5px;margin-bottom:10px;text-align:center;"/>
+      <br/>
+      <input id="login-password" type="password" placeholder="Password" maxlength="64"
              style="width:250px;padding:12px;font-size:18px;border:none;border-radius:5px;margin-bottom:15px;text-align:center;"/>
       <br/>
+      <div id="login-error" style="color:#e94560;font-family:Arial,sans-serif;font-size:14px;margin-bottom:10px;min-height:20px;"></div>
       <button id="btn-login" style="width:200px;padding:12px;font-size:18px;background:#e94560;color:#fff;border:none;border-radius:5px;cursor:pointer;margin:5px;">
         Login / Create
       </button>
@@ -2059,6 +2175,26 @@
   </div>
 </div>
 
+<!-- Friends Scene Elements -->
+<div id="friends-container" style="position:fixed;left:0;top:0;width:100vw;height:calc(var(--vh, 1vh) * 100);background:transparent;display:none;z-index:100;">
+  <div id="friends-frame" style="position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);width:calc(var(--vh, 1vh) * 90 * 0.64);height:calc(var(--vh, 1vh) * 90);">
+    <img src="assets/frames/frame_leaderboard.png" style="position:absolute;inset:0;width:100%;height:100%;object-fit:fill;pointer-events:none;"/>
+    <div id="friends-safe-area" style="position:absolute;top:15%;left:15%;right:15%;bottom:15%;display:flex;flex-direction:column;align-items:center;overflow:hidden;">
+      <h1 id="friends-title" style="color:#FFD700;font-family:Georgia,serif;font-size:clamp(24px, 5vh, 48px);margin:0 0 1vh 0;text-shadow:2px 2px 4px #000;">FRIENDS</h1>
+      <div id="friends-tabs" style="display:flex;gap:0;margin-bottom:1vh;width:100%;justify-content:center;">
+        <button id="friends-tab-list" class="friends-tab active">Friends</button>
+        <button id="friends-tab-requests" class="friends-tab">Requests</button>
+        <button id="friends-tab-search" class="friends-tab">Search</button>
+      </div>
+      <div id="friends-tab-content" style="width:100%;flex:1;display:flex;flex-direction:column;overflow-y:auto;background:rgba(0,0,0,0.4);border-radius:0 8px 8px 8px;padding:10px;border-top:3px solid #FFD700;"></div>
+      <div id="friends-btn-container" style="margin-top:2vh;"></div>
+    </div>
+  </div>
+</div>
+
+<!-- Toast notification container -->
+<div id="toast-container"></div>
+
 <!-- Item Bar for Level Scene -->
 <div id="item-bar" style="position:fixed;left:10px;top:50%;transform:translateY(-50%);display:none;z-index:55;background:rgba(0,0,0,0.7);padding:8px;border-radius:8px;flex-direction:column;align-items:stretch;gap:6px;width:70px;">
   <span style="color:#fff;font-family:Arial;font-size:10px;text-align:center;">Items</span>
@@ -2082,6 +2218,379 @@ function isMobileDevice() {
   return /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) ||
          (window.matchMedia && window.matchMedia('(max-width: 900px)').matches && 'ontouchstart' in window);
 }
+
+// =====================================================
+// FIREBASE CONFIGURATION & MANAGER
+// =====================================================
+// IMPORTANT: Replace with your Firebase project config from console.firebase.google.com
+const FIREBASE_CONFIG = {
+  apiKey: "YOUR_API_KEY",
+  authDomain: "YOUR_PROJECT.firebaseapp.com",
+  projectId: "YOUR_PROJECT_ID",
+  storageBucket: "YOUR_PROJECT.appspot.com",
+  messagingSenderId: "YOUR_SENDER_ID",
+  appId: "YOUR_APP_ID"
+};
+
+// Initialize Firebase (only if config is set)
+let firebaseApp = null;
+let firebaseAuth = null;
+let firebaseDb = null;
+let firebaseReady = false;
+
+try {
+  if (FIREBASE_CONFIG.apiKey !== "YOUR_API_KEY" && typeof firebase !== 'undefined') {
+    firebaseApp = firebase.initializeApp(FIREBASE_CONFIG);
+    firebaseAuth = firebase.auth();
+    firebaseDb = firebase.firestore();
+    firebaseReady = true;
+  }
+} catch (e) {
+  console.warn('[Firebase] Init failed:', e.message);
+}
+
+// Toast notification utility
+function showToast(message, type = 'info', duration = 3000) {
+  const container = document.getElementById('toast-container');
+  if (!container) return;
+  const toast = document.createElement('div');
+  toast.className = 'toast-message' + (type !== 'info' ? ' ' + type : '');
+  toast.textContent = message;
+  container.appendChild(toast);
+  setTimeout(() => {
+    toast.style.opacity = '0';
+    toast.style.transition = 'opacity 0.3s';
+    setTimeout(() => toast.remove(), 300);
+  }, duration);
+}
+
+// Online/offline tracking
+let isOnline = navigator.onLine;
+window.addEventListener('online', () => { isOnline = true; showToast('Back online', 'success'); });
+window.addEventListener('offline', () => { isOnline = false; showToast('You are offline', 'error'); });
+
+const FirebaseManager = {
+  _currentUser: null, // Firebase auth user
+
+  // ---- AUTH METHODS ----
+  async loginWithUsername(username, password) {
+    if (!firebaseReady) throw new Error('Firebase not configured');
+    const email = username.toLowerCase().replace(/[^a-z0-9_]/g, '') + '@trolleygame.app';
+    const cred = await firebaseAuth.signInWithEmailAndPassword(email, password);
+    this._currentUser = cred.user;
+    return cred.user;
+  },
+
+  async registerWithUsername(username, password) {
+    if (!firebaseReady) throw new Error('Firebase not configured');
+    const usernameLower = username.toLowerCase().replace(/[^a-z0-9_]/g, '');
+    const email = usernameLower + '@trolleygame.app';
+
+    // Check if username is taken
+    const usernameDoc = await firebaseDb.collection('usernames').doc(usernameLower).get();
+    if (usernameDoc.exists) {
+      throw new Error('Username already taken');
+    }
+
+    // Create auth account
+    const cred = await firebaseAuth.createUserWithEmailAndPassword(email, password);
+    this._currentUser = cred.user;
+
+    // Reserve username
+    await firebaseDb.collection('usernames').doc(usernameLower).set({
+      uid: cred.user.uid,
+      username: username
+    });
+
+    // Create user document
+    await firebaseDb.collection('users').doc(cred.user.uid).set({
+      username: username,
+      usernameLower: usernameLower,
+      isGuest: false,
+      createdAt: firebase.firestore.FieldValue.serverTimestamp(),
+      lastLogin: firebase.firestore.FieldValue.serverTimestamp()
+    });
+
+    return cred.user;
+  },
+
+  async loginAsGuest() {
+    if (!firebaseReady) throw new Error('Firebase not configured');
+    const cred = await firebaseAuth.signInAnonymously();
+    this._currentUser = cred.user;
+    return cred.user;
+  },
+
+  async logout() {
+    if (!firebaseReady) return;
+    try {
+      await firebaseAuth.signOut();
+    } catch (e) { /* ignore */ }
+    this._currentUser = null;
+    clearUser();
+  },
+
+  getUid() {
+    return this._currentUser ? this._currentUser.uid : null;
+  },
+
+  // ---- CLOUD SYNC METHODS ----
+  async saveUserToCloud(user) {
+    if (!firebaseReady || !this._currentUser || !isOnline) return;
+    try {
+      const uid = this._currentUser.uid;
+      await firebaseDb.collection('users').doc(uid).set({
+        username: user.username,
+        usernameLower: (user.username || '').toLowerCase().replace(/[^a-z0-9_]/g, ''),
+        isGuest: user.isGuest || false,
+        lastLogin: firebase.firestore.FieldValue.serverTimestamp(),
+        progress: user.progress || {},
+        stats: user.stats || {},
+        inventory: user.inventory || {},
+        equipped: user.equipped || {},
+        achievements: user.achievements || []
+      }, { merge: true });
+    } catch (e) {
+      console.warn('[Firebase] Cloud save failed:', e.message);
+    }
+  },
+
+  async syncFromCloud() {
+    if (!firebaseReady || !this._currentUser || !isOnline) return null;
+    try {
+      const uid = this._currentUser.uid;
+      const doc = await firebaseDb.collection('users').doc(uid).get();
+      if (!doc.exists) return null;
+      const cloudData = doc.data();
+      const localUser = getUser();
+      if (!localUser) return cloudData;
+
+      // Merge: higher stats win, newer timestamps win
+      const merged = { ...localUser };
+      if (cloudData.stats) {
+        merged.stats.totalGames = Math.max(localUser.stats.totalGames || 0, cloudData.stats.totalGames || 0);
+        merged.stats.totalPoints = Math.max(localUser.stats.totalPoints || 0, cloudData.stats.totalPoints || 0);
+        merged.stats.totalDeaths = Math.max(localUser.stats.totalDeaths || 0, cloudData.stats.totalDeaths || 0);
+        merged.stats.choicesMade = Math.max(localUser.stats.choicesMade || 0, cloudData.stats.choicesMade || 0);
+        merged.stats.perfectLevels = Math.max(localUser.stats.perfectLevels || 0, cloudData.stats.perfectLevels || 0);
+        merged.stats.zonesCompleted = Math.max(localUser.stats.zonesCompleted || 0, cloudData.stats.zonesCompleted || 0);
+      }
+      if (cloudData.progress) {
+        merged.progress.currentZone = Math.max(localUser.progress.currentZone || 1, cloudData.progress.currentZone || 1);
+        // Merge completed levels
+        const localLevels = localUser.progress.completedLevels || [];
+        const cloudLevels = cloudData.progress.completedLevels || [];
+        const levelMap = {};
+        [...localLevels, ...cloudLevels].forEach(l => {
+          const key = `${l.zone}-${l.level}`;
+          if (!levelMap[key] || l.score > levelMap[key].score) levelMap[key] = l;
+        });
+        merged.progress.completedLevels = Object.values(levelMap);
+        // Merge high scores (higher wins)
+        const localHS = localUser.progress.highScores || {};
+        const cloudHS = cloudData.progress.highScores || {};
+        merged.progress.highScores = { ...localHS };
+        Object.keys(cloudHS).forEach(k => {
+          merged.progress.highScores[k] = Math.max(merged.progress.highScores[k] || 0, cloudHS[k]);
+        });
+        // Merge zone completions (higher difficulty wins)
+        const localZC = localUser.progress.zoneCompletions || {};
+        const cloudZC = cloudData.progress.zoneCompletions || {};
+        merged.progress.zoneCompletions = { ...localZC };
+        Object.keys(cloudZC).forEach(k => {
+          merged.progress.zoneCompletions[k] = Math.max(merged.progress.zoneCompletions[k] || 0, cloudZC[k]);
+        });
+      }
+      if (cloudData.inventory) {
+        merged.inventory.currency = Math.max(localUser.inventory.currency || 0, cloudData.inventory.currency || 0);
+        // Merge cosmetics (union)
+        const localCos = localUser.inventory.cosmetics || [];
+        const cloudCos = cloudData.inventory.cosmetics || [];
+        merged.inventory.cosmetics = [...new Set([...localCos, ...cloudCos])];
+      }
+      if (cloudData.achievements) {
+        merged.achievements = [...new Set([...(localUser.achievements || []), ...(cloudData.achievements || [])])];
+      }
+
+      saveUser(merged);
+      return merged;
+    } catch (e) {
+      console.warn('[Firebase] Sync from cloud failed:', e.message);
+      return null;
+    }
+  },
+
+  // ---- LEADERBOARD METHODS ----
+  async updateLeaderboardEntry(username, score) {
+    if (!firebaseReady || !this._currentUser || !isOnline) return;
+    try {
+      await firebaseDb.collection('leaderboard').doc(this._currentUser.uid).set({
+        username: username,
+        score: score,
+        updatedAt: firebase.firestore.FieldValue.serverTimestamp()
+      });
+    } catch (e) {
+      console.warn('[Firebase] Leaderboard update failed:', e.message);
+    }
+  },
+
+  async getGlobalLeaderboard() {
+    if (!firebaseReady || !isOnline) return null;
+    try {
+      const snap = await firebaseDb.collection('leaderboard')
+        .orderBy('score', 'desc')
+        .limit(10)
+        .get();
+      return snap.docs.map(d => ({ username: d.data().username, score: d.data().score }));
+    } catch (e) {
+      console.warn('[Firebase] Get leaderboard failed:', e.message);
+      return null;
+    }
+  },
+
+  async getFriendsLeaderboard() {
+    if (!firebaseReady || !this._currentUser || !isOnline) return null;
+    try {
+      const friends = await this.getFriendsList();
+      if (!friends || friends.length === 0) return [];
+      const friendUids = friends.map(f => f.uid);
+      // Include self
+      friendUids.push(this._currentUser.uid);
+      // Firestore 'in' queries limited to 30
+      const chunks = [];
+      for (let i = 0; i < friendUids.length; i += 30) {
+        chunks.push(friendUids.slice(i, i + 30));
+      }
+      let results = [];
+      for (const chunk of chunks) {
+        const snap = await firebaseDb.collection('leaderboard')
+          .where(firebase.firestore.FieldPath.documentId(), 'in', chunk)
+          .get();
+        snap.docs.forEach(d => results.push({ username: d.data().username, score: d.data().score }));
+      }
+      results.sort((a, b) => b.score - a.score);
+      return results.slice(0, 10);
+    } catch (e) {
+      console.warn('[Firebase] Friends leaderboard failed:', e.message);
+      return null;
+    }
+  },
+
+  // ---- FRIENDS METHODS ----
+  async searchUsers(query) {
+    if (!firebaseReady || !isOnline || !query) return [];
+    try {
+      const queryLower = query.toLowerCase().replace(/[^a-z0-9_]/g, '');
+      const snap = await firebaseDb.collection('usernames')
+        .where(firebase.firestore.FieldPath.documentId(), '>=', queryLower)
+        .where(firebase.firestore.FieldPath.documentId(), '<=', queryLower + '\uf8ff')
+        .limit(10)
+        .get();
+      return snap.docs
+        .filter(d => d.data().uid !== (this._currentUser ? this._currentUser.uid : ''))
+        .map(d => ({ uid: d.data().uid, username: d.data().username }));
+    } catch (e) {
+      console.warn('[Firebase] Search failed:', e.message);
+      return [];
+    }
+  },
+
+  async sendFriendRequest(toUid, toUsername) {
+    if (!firebaseReady || !this._currentUser || !isOnline) return;
+    const myUser = getUser();
+    const myUsername = myUser ? myUser.username : 'Unknown';
+    const myUid = this._currentUser.uid;
+
+    // Add to my outgoing
+    await firebaseDb.collection('users').doc(myUid)
+      .collection('friend_requests_outgoing').doc(toUid)
+      .set({ toUsername: toUsername, requestedAt: firebase.firestore.FieldValue.serverTimestamp() });
+
+    // Add to their incoming
+    await firebaseDb.collection('users').doc(toUid)
+      .collection('friend_requests_incoming').doc(myUid)
+      .set({ fromUsername: myUsername, requestedAt: firebase.firestore.FieldValue.serverTimestamp() });
+  },
+
+  async acceptFriendRequest(fromUid, fromUsername) {
+    if (!firebaseReady || !this._currentUser || !isOnline) return;
+    const myUid = this._currentUser.uid;
+    const myUser = getUser();
+    const myUsername = myUser ? myUser.username : 'Unknown';
+
+    const batch = firebaseDb.batch();
+
+    // Add to my friends
+    batch.set(firebaseDb.collection('users').doc(myUid).collection('friends').doc(fromUid),
+      { username: fromUsername, addedAt: firebase.firestore.FieldValue.serverTimestamp() });
+
+    // Add to their friends
+    batch.set(firebaseDb.collection('users').doc(fromUid).collection('friends').doc(myUid),
+      { username: myUsername, addedAt: firebase.firestore.FieldValue.serverTimestamp() });
+
+    // Remove incoming request
+    batch.delete(firebaseDb.collection('users').doc(myUid).collection('friend_requests_incoming').doc(fromUid));
+
+    // Remove their outgoing request
+    batch.delete(firebaseDb.collection('users').doc(fromUid).collection('friend_requests_outgoing').doc(myUid));
+
+    await batch.commit();
+  },
+
+  async declineFriendRequest(fromUid) {
+    if (!firebaseReady || !this._currentUser || !isOnline) return;
+    const myUid = this._currentUser.uid;
+
+    await firebaseDb.collection('users').doc(myUid)
+      .collection('friend_requests_incoming').doc(fromUid).delete();
+    await firebaseDb.collection('users').doc(fromUid)
+      .collection('friend_requests_outgoing').doc(myUid).delete();
+  },
+
+  async removeFriend(friendUid) {
+    if (!firebaseReady || !this._currentUser || !isOnline) return;
+    const myUid = this._currentUser.uid;
+
+    const batch = firebaseDb.batch();
+    batch.delete(firebaseDb.collection('users').doc(myUid).collection('friends').doc(friendUid));
+    batch.delete(firebaseDb.collection('users').doc(friendUid).collection('friends').doc(myUid));
+    await batch.commit();
+  },
+
+  async getFriendsList() {
+    if (!firebaseReady || !this._currentUser || !isOnline) return [];
+    try {
+      const snap = await firebaseDb.collection('users').doc(this._currentUser.uid)
+        .collection('friends').get();
+      return snap.docs.map(d => ({ uid: d.id, username: d.data().username }));
+    } catch (e) {
+      console.warn('[Firebase] Get friends failed:', e.message);
+      return [];
+    }
+  },
+
+  async getIncomingRequests() {
+    if (!firebaseReady || !this._currentUser || !isOnline) return [];
+    try {
+      const snap = await firebaseDb.collection('users').doc(this._currentUser.uid)
+        .collection('friend_requests_incoming').get();
+      return snap.docs.map(d => ({ uid: d.id, fromUsername: d.data().fromUsername }));
+    } catch (e) {
+      return [];
+    }
+  },
+
+  async getOutgoingRequests() {
+    if (!firebaseReady || !this._currentUser || !isOnline) return [];
+    try {
+      const snap = await firebaseDb.collection('users').doc(this._currentUser.uid)
+        .collection('friend_requests_outgoing').get();
+      return snap.docs.map(d => ({ uid: d.id, toUsername: d.data().toUsername }));
+    } catch (e) {
+      return [];
+    }
+  }
+};
 
 // =====================================================
 // ERROR BOUNDARIES - Safe scene transitions
@@ -2371,6 +2880,22 @@ function updateLeaderboardEntry(username, totalPoints) {
   }
   board.sort((a, b) => b.score - a.score);
   saveLeaderboard(board.slice(0, 10));
+  // Cloud dual-write (non-blocking)
+  FirebaseManager.updateLeaderboardEntry(username, totalPoints).catch(() => {});
+}
+
+// Async leaderboard fetcher (cloud with local fallback)
+async function getLeaderboardAsync(friendsOnly = false) {
+  try {
+    let cloudBoard = null;
+    if (friendsOnly) {
+      cloudBoard = await FirebaseManager.getFriendsLeaderboard();
+    } else {
+      cloudBoard = await FirebaseManager.getGlobalLeaderboard();
+    }
+    if (cloudBoard && cloudBoard.length > 0) return cloudBoard;
+  } catch (e) { /* fall through to local */ }
+  return getLeaderboard();
 }
 
 // =====================================================
@@ -2380,9 +2905,9 @@ function generateUserId() {
   return 'user_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9);
 }
 
-function createUser(username, isGuest = false) {
+function createUser(username, isGuest = false, firebaseUid = null) {
   const user = {
-    userId: generateUserId(),
+    userId: firebaseUid || generateUserId(),
     username: username,
     isGuest: isGuest,
     createdAt: Date.now(),
@@ -2806,7 +3331,7 @@ const UIManager = {
     'menu-bg', 'level-bg', 'login-bg', 'worldmap-bg', 'shop-bg', 'profile-bg', 'gameover-bg',
     // Containers
     'login-container', 'worldmap-container', 'shop-container', 'profile-container',
-    'consequence-container', 'zone-complete-container', 'leaderboard-container',
+    'consequence-container', 'zone-complete-container', 'leaderboard-container', 'friends-container',
     // Buttons
     'btn-worldmap', 'btn-shop', 'btn-leaderboard', 'btn-profile', 'btn-logout', 'btn-quit',
     'btn-continue', 'btn-next', 'btn-menu', 'btn-submit', 'btn-try', 'btn-worldmap-go',
@@ -2868,7 +3393,8 @@ const UIManager = {
 
     // Hide all containers
     ['login-container', 'worldmap-container', 'shop-container', 'profile-container',
-     'consequence-container', 'zone-complete-container', 'leaderboard-container', 'game-inventory-overlay', 'debug-unlock-btn',
+     'consequence-container', 'zone-complete-container', 'leaderboard-container', 'friends-container',
+     'game-inventory-overlay', 'debug-unlock-btn',
      'menu-shop-profile-container'].forEach(id => {
       const el = this.get(id);
       if (el) el.style.display = 'none';
@@ -3226,6 +3752,7 @@ const SCENE_LAYOUTS = {
   LevelScene: ['level-bg', 'game-hud', 'btn-menu', 'btn-quit'],
   GameOverScene: ['gameover-bg', 'go-title', 'go-total-points', 'go-btn-container'],
   LeaderboardScene: ['leaderboard-container'],
+  FriendsScene: ['friends-container'],
   WorldMapScene: ['worldmap-bg', 'worldmap-container'],
   ShopScene: ['shop-bg', 'shop-container'],
   ProfileScene: ['profile-bg', 'profile-container']
@@ -3465,6 +3992,8 @@ const StateManager = {
     this._userCache.lastLogin = Date.now();
     localStorage.setItem('trolley_user', JSON.stringify(this._userCache));
     this._pendingSave = false;
+    // Non-blocking cloud sync
+    FirebaseManager.saveUserToCloud(this._userCache).catch(() => {});
   },
 
   // Clear cache and user data
@@ -4164,37 +4693,112 @@ class LoginScene extends Phaser.Scene {
     const loginContainer = document.getElementById('login-container');
     if (loginContainer) loginContainer.style.display = 'block';
 
-    // Setup login button
     const btnLogin = document.getElementById('btn-login');
     const usernameInput = document.getElementById('login-username');
+    const passwordInput = document.getElementById('login-password');
+    const errorDiv = document.getElementById('login-error');
+
+    const showError = (msg) => { if (errorDiv) errorDiv.textContent = msg; };
+    const clearError = () => { if (errorDiv) errorDiv.textContent = ''; };
+
+    const completeLogin = async (firebaseUser, username, isGuest) => {
+      const uid = firebaseUser ? firebaseUser.uid : null;
+      let user = getUser();
+      if (user && user.username === username && user.userId === uid) {
+        saveUser(user);
+      } else {
+        user = createUser(username, isGuest, uid);
+      }
+      // Sync from cloud (non-blocking on first load)
+      if (firebaseUser && !isGuest) {
+        try {
+          await FirebaseManager.syncFromCloud();
+        } catch (e) { /* proceed with local */ }
+      }
+      loginContainer.style.display = 'none';
+      this.scene.start('MainMenuScene');
+    };
 
     if (btnLogin) {
-      btnLogin.onclick = () => {
+      btnLogin.onclick = async () => {
         const username = usernameInput ? usernameInput.value.trim() : '';
-        if (username.length < 1) {
-          alert('Please enter a username (1-16 characters)');
+        const password = passwordInput ? passwordInput.value : '';
+        clearError();
+
+        if (username.length < 1 || username.length > 16) {
+          showError('Username must be 1-16 characters');
           return;
         }
-        // Check if user exists or create new
-        let user = getUser();
-        if (user && user.username === username) {
-          // Existing user logging back in
-          saveUser(user);
-        } else {
-          // Create new account
-          user = createUser(username, false);
+        if (!firebaseReady) {
+          // Fallback: local-only login if Firebase not configured
+          let user = getUser();
+          if (user && user.username === username) {
+            saveUser(user);
+          } else {
+            user = createUser(username, false);
+          }
+          loginContainer.style.display = 'none';
+          this.scene.start('MainMenuScene');
+          return;
         }
-        loginContainer.style.display = 'none';
-        this.scene.start('MainMenuScene');
+        if (password.length < 6) {
+          showError('Password must be at least 6 characters');
+          return;
+        }
+
+        btnLogin.disabled = true;
+        btnLogin.textContent = 'Loading...';
+        try {
+          // Try login first
+          const fbUser = await FirebaseManager.loginWithUsername(username, password);
+          await completeLogin(fbUser, username, false);
+        } catch (loginErr) {
+          if (loginErr.code === 'auth/user-not-found' || loginErr.code === 'auth/invalid-credential') {
+            // Try register
+            try {
+              const fbUser = await FirebaseManager.registerWithUsername(username, password);
+              await completeLogin(fbUser, username, false);
+              showToast('Account created!', 'success');
+            } catch (regErr) {
+              if (regErr.message === 'Username already taken') {
+                showError('Username already taken');
+              } else if (regErr.code === 'auth/email-already-in-use') {
+                showError('Incorrect password');
+              } else if (regErr.code === 'auth/weak-password') {
+                showError('Password too weak (min 6 chars)');
+              } else {
+                showError(regErr.message || 'Registration failed');
+              }
+            }
+          } else if (loginErr.code === 'auth/wrong-password' || loginErr.code === 'auth/invalid-credential') {
+            showError('Incorrect password');
+          } else if (loginErr.code === 'auth/too-many-requests') {
+            showError('Too many attempts. Try again later.');
+          } else {
+            showError(loginErr.message || 'Login failed');
+          }
+        } finally {
+          btnLogin.disabled = false;
+          btnLogin.textContent = 'Login / Create';
+        }
       };
     }
 
     // Setup guest button
     const btnGuest = document.getElementById('btn-guest');
     if (btnGuest) {
-      btnGuest.onclick = () => {
+      btnGuest.onclick = async () => {
+        clearError();
         const guestId = 'Guest_' + Math.random().toString(36).substr(2, 6).toUpperCase();
-        const user = createUser(guestId, true);
+        if (firebaseReady) {
+          try {
+            const fbUser = await FirebaseManager.loginAsGuest();
+            await completeLogin(fbUser, guestId, true);
+            return;
+          } catch (e) { /* fall through to local */ }
+        }
+        // Local-only guest
+        createUser(guestId, true);
         loginContainer.style.display = 'none';
         this.scene.start('MainMenuScene');
       };
@@ -4203,11 +4807,20 @@ class LoginScene extends Phaser.Scene {
     // Allow Enter key to submit
     if (usernameInput) {
       usernameInput.onkeydown = (e) => {
-        if (e.key === 'Enter' && btnLogin) btnLogin.click();
+        if (e.key === 'Enter') {
+          if (passwordInput) passwordInput.focus();
+        }
       };
       usernameInput.value = '';
-      usernameInput.focus();
     }
+    if (passwordInput) {
+      passwordInput.onkeydown = (e) => {
+        if (e.key === 'Enter' && btnLogin) btnLogin.click();
+      };
+      passwordInput.value = '';
+    }
+    if (usernameInput) usernameInput.focus();
+    clearError();
   }
 }
 
@@ -4305,14 +4918,28 @@ class MainMenuScene extends Phaser.Scene {
       btnProfile.onclick = () => this.scene.start('ProfileScene');
     }
 
+    // Show Friends button (uses DOM button if no image asset)
+    let btnFriends = document.getElementById('btn-friends');
+    if (!btnFriends && shopProfileContainer) {
+      btnFriends = document.createElement('button');
+      btnFriends.id = 'btn-friends';
+      btnFriends.textContent = 'Friends';
+      btnFriends.style.cssText = 'height:55px;padding:0 18px;background:#444;color:#F5DEB3;border:2px solid #FFD700;border-radius:8px;font-family:Georgia,serif;font-size:16px;cursor:pointer;';
+      shopProfileContainer.appendChild(btnFriends);
+    }
+    if (btnFriends) {
+      btnFriends.style.display = 'block';
+      btnFriends.onclick = () => this.scene.start('FriendsScene');
+    }
+
     // Show Logout button at bottom (left of Quit)
     const btnLogout = document.getElementById('btn-logout');
     if (btnLogout && user) {
       btnLogout.style.display = 'block';
-      btnLogout.style.height = '53px'; // Match quit button's scaled height
+      btnLogout.style.height = '53px';
       btnLogout.style.width = 'auto';
-      btnLogout.onclick = () => {
-        clearUser();
+      btnLogout.onclick = async () => {
+        await FirebaseManager.logout();
         this.scene.start('LoginScene');
       };
     }
@@ -5559,7 +6186,6 @@ class LeaderboardScene extends Phaser.Scene {
     const btnWorldMapGoLB = document.getElementById('btn-worldmap-go'); if (btnWorldMapGoLB) { btnWorldMapGoLB.style.display='none'; btnWorldMapGoLB.onclick=null; }
     const consBgHideLB = document.getElementById('consequence-container'); if (consBgHideLB) consBgHideLB.style.display='none';
     const goTitleHideLB2 = document.getElementById('go-title'); if (goTitleHideLB2) goTitleHideLB2.style.display='none';
-    // Hide game over container (buttons are handled by hideAllContainers)
     const goBtnContainerLB = document.getElementById('go-btn-container'); if (goBtnContainerLB) goBtnContainerLB.style.display='none';
     const goTotalPointsLB = document.getElementById('go-total-points'); if (goTotalPointsLB) goTotalPointsLB.style.display='none';
 
@@ -5570,38 +6196,57 @@ class LeaderboardScene extends Phaser.Scene {
     const btnLogout = document.getElementById('btn-logout'); if (btnLogout) btnLogout.style.display='none';
     const btnQuitHide = document.getElementById('btn-quit'); if (btnQuitHide) btnQuitHide.style.display='none';
 
-    // Hide welcome and points displays
     const welcomeDisplay = document.getElementById('menu-welcome-display'); if (welcomeDisplay) welcomeDisplay.style.display='none';
     const pointsDisplay = document.getElementById('menu-points-display'); if (pointsDisplay) pointsDisplay.style.display='none';
 
-    // Set dark background and show leaderboard container
     document.body.style.backgroundColor = '#222';
 
-    // Show leaderboard container (frame is inside)
     const leaderboardContainer = document.getElementById('leaderboard-container');
     if (leaderboardContainer) leaderboardContainer.style.display = 'block';
 
-    // Populate entries using DOM elements (max 10 entries to fit in frame)
-    const entriesContainer = document.getElementById('leaderboard-entries');
-    if (entriesContainer) {
-      entriesContainer.innerHTML = ''; // Clear previous entries
-      const board = getLeaderboard().slice(0, 10); // Limit to top 10
-      board.forEach((e, i) => {
-        const entry = document.createElement('div');
-        entry.id = `leaderboard-entry-${i}`;
-        entry.style.cssText = 'display:flex;justify-content:space-between;align-items:center;font-family:Arial,sans-serif;font-size:clamp(14px, 3vh, 28px);color:#fff;flex-shrink:0;gap:8px;';
-        const displayName = e.username || e.initials || '---';
-        const rank = getRank(e.score);
-        entry.innerHTML = `<span id="leaderboard-entry-${i}-name" style="flex:1;text-align:left;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${i+1}. ${displayName}</span><span id="leaderboard-entry-${i}-rank" style="flex:1;text-align:center;color:#FFD700;font-style:italic;white-space:nowrap;">${rank}</span><span id="leaderboard-entry-${i}-score" style="flex:0 0 auto;text-align:right;">${e.score}</span>`;
-        entriesContainer.appendChild(entry);
-      });
+    // Add tab buttons above entries
+    const safeArea = document.getElementById('leaderboard-safe-area');
+    let tabBar = document.getElementById('leaderboard-tab-bar');
+    if (!tabBar && safeArea) {
+      tabBar = document.createElement('div');
+      tabBar.id = 'leaderboard-tab-bar';
+      tabBar.style.cssText = 'display:flex;gap:0;margin-bottom:1vh;width:100%;justify-content:center;';
+      const titleEl = document.getElementById('leaderboard-title');
+      if (titleEl && titleEl.nextSibling) {
+        safeArea.insertBefore(tabBar, titleEl.nextSibling);
+      } else {
+        safeArea.prepend(tabBar);
+      }
+    }
+    if (tabBar) {
+      tabBar.innerHTML = `
+        <button id="lb-tab-global" class="leaderboard-tab active">Global</button>
+        <button id="lb-tab-friends" class="leaderboard-tab">Friends</button>
+      `;
     }
 
-    // Back button (Menu button) - inside the frame's safe area
+    this.currentTab = 'global';
+    const loadTab = (tab) => {
+      this.currentTab = tab;
+      const globalBtn = document.getElementById('lb-tab-global');
+      const friendsBtn = document.getElementById('lb-tab-friends');
+      if (globalBtn) globalBtn.className = 'leaderboard-tab' + (tab === 'global' ? ' active' : '');
+      if (friendsBtn) friendsBtn.className = 'leaderboard-tab' + (tab === 'friends' ? ' active' : '');
+      this.loadEntries(tab === 'friends');
+    };
+
+    const globalBtn = document.getElementById('lb-tab-global');
+    const friendsBtn = document.getElementById('lb-tab-friends');
+    if (globalBtn) globalBtn.onclick = () => loadTab('global');
+    if (friendsBtn) friendsBtn.onclick = () => loadTab('friends');
+
+    // Initial load
+    this.loadEntries(false);
+
+    // Back button
     const btnContainer = document.getElementById('leaderboard-btn-container');
     const domMenuBtnLB = document.getElementById('btn-menu');
     if (domMenuBtnLB && btnContainer) {
-      // Move button into the leaderboard frame
       btnContainer.appendChild(domMenuBtnLB);
       domMenuBtnLB.style.setProperty('display', 'block', 'important');
       domMenuBtnLB.style.position = 'relative';
@@ -5613,7 +6258,6 @@ class LeaderboardScene extends Phaser.Scene {
       domMenuBtnLB.style.transform = 'scale(1.5) translateY(-15%)';
       domMenuBtnLB.style.transformOrigin = 'center';
       domMenuBtnLB.onclick = () => {
-        // Move button back to body before hiding
         document.body.appendChild(domMenuBtnLB);
         domMenuBtnLB.style.display = 'none';
         domMenuBtnLB.style.position = 'fixed';
@@ -5622,6 +6266,274 @@ class LeaderboardScene extends Phaser.Scene {
         if (lbContainer) lbContainer.style.display = 'none';
         this.scene.start('MainMenuScene');
       };
+    }
+  }
+
+  async loadEntries(friendsOnly) {
+    const entriesContainer = document.getElementById('leaderboard-entries');
+    if (!entriesContainer) return;
+
+    entriesContainer.innerHTML = '<div class="loading-spinner">Loading...</div>';
+
+    let board;
+    try {
+      board = await getLeaderboardAsync(friendsOnly);
+    } catch (e) {
+      board = getLeaderboard();
+    }
+
+    entriesContainer.innerHTML = '';
+    if (!board || board.length === 0) {
+      entriesContainer.innerHTML = `<div style="color:#888;font-family:Arial;font-size:14px;text-align:center;padding:20px;">${friendsOnly ? 'No friends on the leaderboard yet.' : 'No scores yet. Play a level!'}</div>`;
+      return;
+    }
+
+    board.slice(0, 10).forEach((e, i) => {
+      const entry = document.createElement('div');
+      entry.id = `leaderboard-entry-${i}`;
+      entry.style.cssText = 'display:flex;justify-content:space-between;align-items:center;font-family:Arial,sans-serif;font-size:clamp(14px, 3vh, 28px);color:#fff;flex-shrink:0;gap:8px;';
+      const displayName = e.username || e.initials || '---';
+      const rank = getRank(e.score);
+      entry.innerHTML = `<span style="flex:1;text-align:left;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${i+1}. ${displayName}</span><span style="flex:1;text-align:center;color:#FFD700;font-style:italic;white-space:nowrap;">${rank}</span><span style="flex:0 0 auto;text-align:right;">${e.score}</span>`;
+      entriesContainer.appendChild(entry);
+    });
+  }
+}
+
+// =====================================================
+// FRIENDS SCENE
+// =====================================================
+class FriendsScene extends Phaser.Scene {
+  constructor() { super('FriendsScene'); }
+
+  create() {
+    hideAllContainers();
+    const domBg = document.getElementById('menu-bg'); if (domBg) domBg.style.display = 'none';
+    const domLogo = document.getElementById('menu-logo'); if (domLogo) domLogo.style.display = 'none';
+    document.body.style.backgroundColor = '#222';
+
+    const friendsContainer = document.getElementById('friends-container');
+    if (friendsContainer) friendsContainer.style.display = 'block';
+
+    this.currentTab = 'list';
+
+    const tabList = document.getElementById('friends-tab-list');
+    const tabRequests = document.getElementById('friends-tab-requests');
+    const tabSearch = document.getElementById('friends-tab-search');
+
+    const setTab = (tab) => {
+      this.currentTab = tab;
+      [tabList, tabRequests, tabSearch].forEach(t => { if (t) t.className = 'friends-tab'; });
+      const activeEl = tab === 'list' ? tabList : (tab === 'requests' ? tabRequests : tabSearch);
+      if (activeEl) activeEl.className = 'friends-tab active';
+      if (tab === 'list') this.renderFriendsList();
+      else if (tab === 'requests') this.renderRequests();
+      else if (tab === 'search') this.renderSearch();
+    };
+
+    if (tabList) tabList.onclick = () => setTab('list');
+    if (tabRequests) tabRequests.onclick = () => setTab('requests');
+    if (tabSearch) tabSearch.onclick = () => setTab('search');
+
+    // Back button
+    const btnContainer = document.getElementById('friends-btn-container');
+    if (btnContainer) {
+      btnContainer.innerHTML = '';
+      const backBtn = document.createElement('img');
+      backBtn.src = 'assets/buttons/button_menu.png';
+      backBtn.alt = 'Menu';
+      backBtn.style.cssText = 'width:auto;height:clamp(40px, 8vh, 60px);cursor:pointer;transition:transform 0.1s;';
+      backBtn.onmouseover = () => backBtn.style.transform = 'scale(1.05)';
+      backBtn.onmouseout = () => backBtn.style.transform = 'scale(1)';
+      backBtn.onclick = () => {
+        friendsContainer.style.display = 'none';
+        this.scene.start('MainMenuScene');
+      };
+      btnContainer.appendChild(backBtn);
+    }
+
+    setTab('list');
+  }
+
+  async renderFriendsList() {
+    const content = document.getElementById('friends-tab-content');
+    if (!content) return;
+    content.innerHTML = '<div class="loading-spinner">Loading friends...</div>';
+
+    if (!firebaseReady || !FirebaseManager._currentUser) {
+      content.innerHTML = '<div style="color:#888;font-family:Arial;font-size:14px;text-align:center;padding:20px;">Log in with a username & password to use friends.</div>';
+      return;
+    }
+
+    try {
+      const friends = await FirebaseManager.getFriendsList();
+      if (friends.length === 0) {
+        content.innerHTML = '<div style="color:#888;font-family:Arial;font-size:14px;text-align:center;padding:20px;">No friends yet. Use the Search tab to find players!</div>';
+        return;
+      }
+      content.innerHTML = '';
+      friends.forEach(f => {
+        const item = document.createElement('div');
+        item.className = 'friends-list-item';
+        item.innerHTML = `
+          <span class="friend-name">${f.username}</span>
+          <button class="friends-action-btn remove" data-uid="${f.uid}">Remove</button>
+        `;
+        item.querySelector('.remove').onclick = async (e) => {
+          e.target.disabled = true;
+          try {
+            await FirebaseManager.removeFriend(f.uid);
+            showToast('Friend removed', 'info');
+            this.renderFriendsList();
+          } catch (err) {
+            showToast('Failed to remove friend', 'error');
+            e.target.disabled = false;
+          }
+        };
+        content.appendChild(item);
+      });
+    } catch (e) {
+      content.innerHTML = '<div style="color:#e94560;font-family:Arial;font-size:14px;text-align:center;padding:20px;">Failed to load friends.</div>';
+    }
+  }
+
+  async renderRequests() {
+    const content = document.getElementById('friends-tab-content');
+    if (!content) return;
+    content.innerHTML = '<div class="loading-spinner">Loading requests...</div>';
+
+    if (!firebaseReady || !FirebaseManager._currentUser) {
+      content.innerHTML = '<div style="color:#888;font-family:Arial;font-size:14px;text-align:center;padding:20px;">Log in with a username & password to use friends.</div>';
+      return;
+    }
+
+    try {
+      const requests = await FirebaseManager.getIncomingRequests();
+      if (requests.length === 0) {
+        content.innerHTML = '<div style="color:#888;font-family:Arial;font-size:14px;text-align:center;padding:20px;">No pending friend requests.</div>';
+        return;
+      }
+      content.innerHTML = '';
+      requests.forEach(r => {
+        const item = document.createElement('div');
+        item.className = 'friends-list-item';
+        item.innerHTML = `
+          <span class="friend-name">${r.fromUsername}</span>
+          <div>
+            <button class="friends-action-btn accept">Accept</button>
+            <button class="friends-action-btn decline">Decline</button>
+          </div>
+        `;
+        item.querySelector('.accept').onclick = async (e) => {
+          e.target.disabled = true;
+          try {
+            await FirebaseManager.acceptFriendRequest(r.uid, r.fromUsername);
+            showToast('Friend added!', 'success');
+            this.renderRequests();
+          } catch (err) {
+            showToast('Failed to accept request', 'error');
+            e.target.disabled = false;
+          }
+        };
+        item.querySelector('.decline').onclick = async (e) => {
+          e.target.disabled = true;
+          try {
+            await FirebaseManager.declineFriendRequest(r.uid);
+            this.renderRequests();
+          } catch (err) {
+            showToast('Failed to decline request', 'error');
+            e.target.disabled = false;
+          }
+        };
+        content.appendChild(item);
+      });
+    } catch (e) {
+      content.innerHTML = '<div style="color:#e94560;font-family:Arial;font-size:14px;text-align:center;padding:20px;">Failed to load requests.</div>';
+    }
+  }
+
+  renderSearch() {
+    const content = document.getElementById('friends-tab-content');
+    if (!content) return;
+
+    if (!firebaseReady || !FirebaseManager._currentUser) {
+      content.innerHTML = '<div style="color:#888;font-family:Arial;font-size:14px;text-align:center;padding:20px;">Log in with a username & password to search for friends.</div>';
+      return;
+    }
+
+    content.innerHTML = `
+      <input type="text" id="friends-search-input" class="friends-search-input" placeholder="Search by username..." maxlength="16"/>
+      <div id="friends-search-results"></div>
+    `;
+
+    const searchInput = document.getElementById('friends-search-input');
+    let searchTimeout = null;
+    if (searchInput) {
+      searchInput.oninput = () => {
+        if (searchTimeout) clearTimeout(searchTimeout);
+        searchTimeout = setTimeout(() => this.doSearch(searchInput.value.trim()), 400);
+      };
+      searchInput.focus();
+    }
+  }
+
+  async doSearch(query) {
+    const results = document.getElementById('friends-search-results');
+    if (!results) return;
+
+    if (!query || query.length < 1) {
+      results.innerHTML = '';
+      return;
+    }
+
+    results.innerHTML = '<div class="loading-spinner">Searching...</div>';
+
+    try {
+      const users = await FirebaseManager.searchUsers(query);
+      if (users.length === 0) {
+        results.innerHTML = '<div style="color:#888;font-family:Arial;font-size:13px;text-align:center;padding:10px;">No users found.</div>';
+        return;
+      }
+
+      // Get current friends and outgoing requests to show proper state
+      const [friends, outgoing] = await Promise.all([
+        FirebaseManager.getFriendsList(),
+        FirebaseManager.getOutgoingRequests()
+      ]);
+      const friendUids = new Set(friends.map(f => f.uid));
+      const pendingUids = new Set(outgoing.map(o => o.uid));
+
+      results.innerHTML = '';
+      users.forEach(u => {
+        const item = document.createElement('div');
+        item.className = 'friends-list-item';
+        let actionHtml = '';
+        if (friendUids.has(u.uid)) {
+          actionHtml = '<span style="color:#4CAF50;font-size:12px;font-family:Arial;">Already friends</span>';
+        } else if (pendingUids.has(u.uid)) {
+          actionHtml = '<span style="color:#FFD700;font-size:12px;font-family:Arial;">Request sent</span>';
+        } else {
+          actionHtml = `<button class="friends-action-btn add" data-uid="${u.uid}" data-name="${u.username}">Add</button>`;
+        }
+        item.innerHTML = `<span class="friend-name">${u.username}</span>${actionHtml}`;
+        const addBtn = item.querySelector('.add');
+        if (addBtn) {
+          addBtn.onclick = async (e) => {
+            e.target.disabled = true;
+            try {
+              await FirebaseManager.sendFriendRequest(u.uid, u.username);
+              e.target.outerHTML = '<span style="color:#FFD700;font-size:12px;font-family:Arial;">Request sent</span>';
+              showToast('Friend request sent!', 'success');
+            } catch (err) {
+              showToast('Failed to send request', 'error');
+              e.target.disabled = false;
+            }
+          };
+        }
+        results.appendChild(item);
+      });
+    } catch (e) {
+      results.innerHTML = '<div style="color:#e94560;font-family:Arial;font-size:13px;text-align:center;padding:10px;">Search failed.</div>';
     }
   }
 }
@@ -6470,11 +7382,11 @@ ZoneProgressTracker.init();
 const existingUser = getUser();
 
 // Build scene array with correct starting scene first
-const allScenes = [LoginScene, MainMenuScene, LevelScene, GameOverScene, LeaderboardScene, WorldMapScene, ShopScene, ProfileScene];
+const allScenes = [LoginScene, MainMenuScene, LevelScene, GameOverScene, LeaderboardScene, WorldMapScene, ShopScene, ProfileScene, FriendsScene];
 
 // If user exists, start with MainMenuScene; otherwise start with LoginScene
 const orderedScenes = existingUser
-  ? [MainMenuScene, LoginScene, LevelScene, GameOverScene, LeaderboardScene, WorldMapScene, ShopScene, ProfileScene]
+  ? [MainMenuScene, LoginScene, LevelScene, GameOverScene, LeaderboardScene, WorldMapScene, ShopScene, ProfileScene, FriendsScene]
   : allScenes;
 
 const config = {
