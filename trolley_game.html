@@ -2184,6 +2184,7 @@
       <div id="friends-tabs" style="display:flex;gap:0;margin-bottom:1vh;width:100%;justify-content:center;">
         <button id="friends-tab-list" class="friends-tab active">Friends</button>
         <button id="friends-tab-requests" class="friends-tab">Requests</button>
+        <button id="friends-tab-sent" class="friends-tab">Sent</button>
         <button id="friends-tab-search" class="friends-tab">Search</button>
       </div>
       <div id="friends-tab-content" style="width:100%;flex:1;display:flex;flex-direction:column;overflow-y:auto;background:rgba(0,0,0,0.4);border-radius:0 8px 8px 8px;padding:10px;border-top:3px solid #FFD700;"></div>
@@ -2589,6 +2590,19 @@ const FirebaseManager = {
     } catch (e) {
       return [];
     }
+  },
+
+  async cancelOutgoingRequest(toUid) {
+    if (!firebaseReady || !this._currentUser || !isOnline) return;
+    const myUid = this._currentUser.uid;
+
+    // Remove from my outgoing requests
+    await firebaseDb.collection('users').doc(myUid)
+      .collection('friend_requests_outgoing').doc(toUid).delete();
+
+    // Remove from their incoming requests
+    await firebaseDb.collection('users').doc(toUid)
+      .collection('friend_requests_incoming').doc(myUid).delete();
   }
 };
 
@@ -6326,20 +6340,23 @@ class FriendsScene extends Phaser.Scene {
 
     const tabList = document.getElementById('friends-tab-list');
     const tabRequests = document.getElementById('friends-tab-requests');
+    const tabSent = document.getElementById('friends-tab-sent');
     const tabSearch = document.getElementById('friends-tab-search');
 
     const setTab = (tab) => {
       this.currentTab = tab;
-      [tabList, tabRequests, tabSearch].forEach(t => { if (t) t.className = 'friends-tab'; });
-      const activeEl = tab === 'list' ? tabList : (tab === 'requests' ? tabRequests : tabSearch);
+      [tabList, tabRequests, tabSent, tabSearch].forEach(t => { if (t) t.className = 'friends-tab'; });
+      const activeEl = tab === 'list' ? tabList : (tab === 'requests' ? tabRequests : (tab === 'sent' ? tabSent : tabSearch));
       if (activeEl) activeEl.className = 'friends-tab active';
       if (tab === 'list') this.renderFriendsList();
       else if (tab === 'requests') this.renderRequests();
+      else if (tab === 'sent') this.renderSent();
       else if (tab === 'search') this.renderSearch();
     };
 
     if (tabList) tabList.onclick = () => setTab('list');
     if (tabRequests) tabRequests.onclick = () => setTab('requests');
+    if (tabSent) tabSent.onclick = () => setTab('sent');
     if (tabSearch) tabSearch.onclick = () => setTab('search');
 
     // Back button
@@ -6456,6 +6473,48 @@ class FriendsScene extends Phaser.Scene {
       });
     } catch (e) {
       content.innerHTML = '<div style="color:#e94560;font-family:Arial;font-size:14px;text-align:center;padding:20px;">Failed to load requests.</div>';
+    }
+  }
+
+  async renderSent() {
+    const content = document.getElementById('friends-tab-content');
+    if (!content) return;
+    content.innerHTML = '<div class="loading-spinner">Loading sent requests...</div>';
+
+    if (!firebaseReady || !FirebaseManager._currentUser) {
+      content.innerHTML = '<div style="color:#888;font-family:Arial;font-size:14px;text-align:center;padding:20px;">Log in with a username & password to use friends.</div>';
+      return;
+    }
+
+    try {
+      const requests = await FirebaseManager.getOutgoingRequests();
+      if (requests.length === 0) {
+        content.innerHTML = '<div style="color:#888;font-family:Arial;font-size:14px;text-align:center;padding:20px;">No pending sent requests.</div>';
+        return;
+      }
+      content.innerHTML = '';
+      requests.forEach(r => {
+        const item = document.createElement('div');
+        item.className = 'friends-list-item';
+        item.innerHTML = `
+          <span class="friend-name">${r.toUsername}</span>
+          <button class="friends-action-btn decline">Cancel</button>
+        `;
+        item.querySelector('.decline').onclick = async (e) => {
+          e.target.disabled = true;
+          try {
+            await FirebaseManager.cancelOutgoingRequest(r.uid);
+            showToast('Request cancelled', 'info');
+            this.renderSent();
+          } catch (err) {
+            showToast('Failed to cancel request', 'error');
+            e.target.disabled = false;
+          }
+        };
+        content.appendChild(item);
+      });
+    } catch (e) {
+      content.innerHTML = '<div style="color:#e94560;font-family:Arial;font-size:14px;text-align:center;padding:20px;">Failed to load sent requests.</div>';
     }
   }
 
