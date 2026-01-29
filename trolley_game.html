@@ -2592,6 +2592,13 @@ const FirebaseManager = {
   }
 };
 
+// Listen for Firebase auth state changes to restore _currentUser on page load/refresh
+if (firebaseReady && firebaseAuth) {
+  firebaseAuth.onAuthStateChanged((user) => {
+    FirebaseManager._currentUser = user;
+  });
+}
+
 // =====================================================
 // ERROR BOUNDARIES - Safe scene transitions
 // =====================================================
