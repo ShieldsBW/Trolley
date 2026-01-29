@@ -16,6 +16,7 @@ Thumbs.db
 documentation/keys*
 documentation/*.key
 documentation/*.keys
+documentation/firebaseConfig*
 .env
 .env.*
 *.env
