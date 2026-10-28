@@ -2225,7 +2225,7 @@ function isMobileDevice() {
 // =====================================================
 // IMPORTANT: Replace with your Firebase project config from console.firebase.google.com
 const FIREBASE_CONFIG = {
-  apiKey: "AIzaSyBJr6KItAijOvTO8VRQ1f0hjJaKvf7Mw6I",
+  apiKey: "AIzaSyAhxODes928XhRVXF54N-fB5Ww207L2d5o",
   authDomain: "trolley-7c966.firebaseapp.com",
   projectId: "trolley-7c966",
   storageBucket: "trolley-7c966.firebasestorage.app",
@@ -4795,6 +4795,10 @@ class LoginScene extends Phaser.Scene {
             showError('Incorrect password');
           } else if (loginErr.code === 'auth/too-many-requests') {
             showError('Too many attempts. Try again later.');
+          } else if (loginErr.code && loginErr.code.startsWith('auth/requests-from-referer')) {
+            showError(location.protocol === 'file:'
+              ? 'Online login needs a web server. Run serve.bat, or play as Guest.'
+              : 'This site is not allowed to use the game\'s API key.');
           } else {
             showError(loginErr.message || 'Login failed');
           }
