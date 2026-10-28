@@ -1,0 +1,60 @@
+rules_version = '2';
+
+// Firestore security rules for The Trolley Problem.
+// Paste into Firebase Console -> Firestore Database -> Rules, then Publish.
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    function signedIn() { return request.auth != null; }
+    function isUser(uid) { return signedIn() && request.auth.uid == uid; }
+
+    // Username -> uid lookup. Readable by anyone (checked before sign-up, and used by friend search).
+    // A username can only be claimed once, by the account it points to.
+    match /usernames/{name} {
+      allow read: if true;
+      allow create: if signedIn()
+        && request.resource.data.uid == request.auth.uid
+        && name.size() <= 32;
+      allow update, delete: if false;
+    }
+
+    // Global leaderboard: public to read, each player writes only their own entry.
+    match /leaderboard/{uid} {
+      allow read: if true;
+      allow write: if isUser(uid)
+        && request.resource.data.score is number
+        && request.resource.data.username is string
+        && request.resource.data.username.size() <= 32;
+    }
+
+    match /users/{uid} {
+      // Profile, progress, inventory: private to the owner.
+      allow read, write: if isUser(uid);
+
+      // Friends list. The owner manages their own list; the other person may add themselves
+      // only when accepting a pending request, and may remove themselves (unfriend).
+      match /friends/{friendUid} {
+        allow read: if isUser(uid);
+        allow create, update: if isUser(uid)
+          || (isUser(friendUid)
+              && exists(/databases/$(database)/documents/users/$(friendUid)/friend_requests_incoming/$(uid)));
+        allow delete: if isUser(uid) || isUser(friendUid);
+      }
+
+      // Requests others have sent to this user. Only the sender can create one;
+      // the owner (decline/accept) or the sender (cancel) can delete it.
+      match /friend_requests_incoming/{fromUid} {
+        allow read: if isUser(uid);
+        allow create, update: if isUser(fromUid) && fromUid != uid;
+        allow delete: if isUser(uid) || isUser(fromUid);
+      }
+
+      // Requests this user has sent. The recipient may delete it when accepting/declining.
+      match /friend_requests_outgoing/{toUid} {
+        allow read: if isUser(uid);
+        allow create, update: if isUser(uid) && toUid != uid;
+        allow delete: if isUser(uid) || isUser(toUid);
+      }
+    }
+  }
+}
